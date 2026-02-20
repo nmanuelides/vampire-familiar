@@ -68,17 +68,28 @@ export default function CharacterList() {
                       )}
                     </div>
                     <img
-                      src={`/src/assets/clans/${char.clan}.png`}
+                      src={
+                        new URL(
+                          `../assets/clans/${char.clan}.png`,
+                          import.meta.url,
+                        ).href
+                      }
                       alt={`${char.clan} logo`}
                       className="clan-icon"
                       onError={(e) => {
-                        // Fallback check for Tzimisce/Tzimice or missing files
                         const target = e.target as HTMLImageElement;
-                        if (
-                          char.clan === "Tzimisce" &&
-                          !target.src.includes("Tzimice.png")
-                        ) {
-                          target.src = "/src/assets/clans/Tzimice.png";
+                        // Avoid infinite loops if both fail
+                        if (target.dataset.triedFallback) {
+                          target.style.display = "none";
+                          return;
+                        }
+
+                        if (char.clan === "Tzimisce") {
+                          target.dataset.triedFallback = "true";
+                          target.src = new URL(
+                            "../assets/clans/Tzimice.png",
+                            import.meta.url,
+                          ).href;
                         } else {
                           target.style.display = "none";
                         }
