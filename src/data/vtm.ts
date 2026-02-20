@@ -102,12 +102,27 @@ export const VTM_TRANSLATIONS: Record<string, string> = {
 
   // Health
   bruised: "Magullado",
-  hurt: "Lastimado",
-  injured: "Lesionado",
-  wounded: "Herido",
-  mauled: "Malherido",
-  crippled: "Tullido",
+  hurt: "Lastimado (-1)",
+  injured: "Lesionado (-1)",
+  wounded: "Herido (-2)",
+  mauled: "Malherido (-2)",
+  crippled: "Tullido (-5)",
   incapacitated: "Incapacitado",
+
+  // Clans
+  Assamite: "Assamita",
+  Brujah: "Brujah",
+  "Followers of Set": "Seguidores de Set",
+  Gangrel: "Gangrel",
+  Giovanni: "Giovanni",
+  Lasombra: "Lasombra",
+  Malkavian: "Malkavian",
+  Nosferatu: "Nosferatu",
+  Ravnos: "Ravnos",
+  Toreador: "Toreador",
+  Tremere: "Tremere",
+  Tzimisce: "Tzimisce",
+  Ventrue: "Ventrue",
 };
 
 export const ATTR_SORT_ORDER: Record<string, number> = {

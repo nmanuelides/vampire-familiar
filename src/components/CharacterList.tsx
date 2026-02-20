@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useCharacterStore } from "../store/useCharacterStore";
+import { VTM_TRANSLATIONS } from "../data/vtm";
 import "./CharacterList.scss";
 
 export default function CharacterList() {
@@ -44,9 +45,29 @@ export default function CharacterList() {
                 onClick={() => navigate(`/character/${char.id}`)}
               >
                 <div className="character-info">
-                  <h3 className="char-name">{char.name}</h3>
+                  <div className="name-clan-row d-flex justify-between items-center">
+                    <h3 className="char-name">{char.name}</h3>
+                    <img
+                      src={`/src/assets/clans/${char.clan}.png`}
+                      alt={`${char.clan} logo`}
+                      className="clan-icon"
+                      onError={(e) => {
+                        // Fallback check for Tzimisce/Tzimice or missing files
+                        const target = e.target as HTMLImageElement;
+                        if (
+                          char.clan === "Tzimisce" &&
+                          !target.src.includes("Tzimice.png")
+                        ) {
+                          target.src = "/src/assets/clans/Tzimice.png";
+                        } else {
+                          target.style.display = "none";
+                        }
+                      }}
+                    />
+                  </div>
                   <span className="char-clan">
-                    {char.clan} - {char.generation}ª Generación
+                    {VTM_TRANSLATIONS[char.clan] || char.clan} -{" "}
+                    {char.generation}ª Generación
                   </span>
                 </div>
                 <div className="char-stats">

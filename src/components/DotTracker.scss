@@ -21,7 +21,7 @@
 }
 
 .dot-label {
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: lighten($text-color, 10%);
   text-transform: capitalize;
   cursor: help; // Indicate there's a tooltip
@@ -76,21 +76,30 @@
 .dots-container {
   .dot {
     cursor: pointer;
-    font-size: 1.2rem;
-    line-height: 1;
-    color: $border-color;
-    transition:
-      color $transition-speed ease,
-      transform $transition-speed ease;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1px solid $border-color;
+    display: inline-block;
+    transition: all $transition-speed ease;
     user-select: none;
 
     &.filled {
-      color: $accent-color;
+      background-color: $accent-color;
+      border-color: $accent-color;
+    }
+
+    &.empty {
+      background-color: transparent;
     }
 
     &:hover:not(.read-only) {
-      transform: scale(1.2);
-      color: lighten($accent-color, 20%);
+      transform: scale(1.3);
+      border-color: lighten($accent-color, 20%);
+
+      &.filled {
+        background-color: lighten($accent-color, 20%);
+      }
     }
 
     &.read-only {

@@ -33,9 +33,7 @@ export default function DotTracker({
         key={i}
         className={`dot ${i < value ? "filled" : "empty"} ${readOnly ? "read-only" : ""}`}
         onClick={() => handleClick(i)}
-      >
-        {i < value ? "●" : "○"}
-      </span>,
+      />,
     );
   }
 

@@ -100,13 +100,13 @@ export default function CharacterSheet() {
         <button className="back-btn" onClick={() => navigate("/")}>
           &larr; Volver
         </button>
-        <h1 className="title">Vampire: The Masquerade</h1>
+        <h1 className="title">Vampiro: La Mascarada</h1>
         <button className="delete-btn" onClick={handleDelete}>
           Destruir
         </button>
       </header>
 
-      <div className="sheet-body card">
+      <div className="sheet-body card" data-clan={character.clan}>
         <div className="top-info bg-dark">
           <div className="info-group">
             <span>Nombre:</span> {character.name}
@@ -127,7 +127,8 @@ export default function CharacterSheet() {
             <span>Concepto:</span> {character.concept}
           </div>
           <div className="info-group">
-            <span>Clan:</span> {character.clan}
+            <span>Clan:</span>{" "}
+            {VTM_TRANSLATIONS[character.clan] || character.clan}
           </div>
           <div className="info-group">
             <span>Generación:</span> {character.generation}ª

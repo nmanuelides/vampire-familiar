@@ -5,6 +5,7 @@
 }
 
 .sheet-header {
+  margin-top: 24px;
   margin-bottom: $spacing-lg;
 
   .title {
@@ -37,6 +38,78 @@
   background-color: #1a1a1a; // slightly darker for the sheet
   padding: 0; // overrides card padding
   overflow: hidden;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 55%; // Slightly lower to avoid top header info
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%; // Slightly smaller to keep it contained
+    height: 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    opacity: 0.2; // Slightly more visible for confirmation
+    pointer-events: none;
+    filter: grayscale(1); // Keep it monochrome
+  }
+
+  // Clan-specific backgrounds
+  &[data-clan="Tremere"]::before {
+    background-image: url("../assets/clans/Tremere.png");
+  }
+  // ... (rest of clans)
+  &[data-clan="Tzimisce"]::before {
+    background-image: url("../assets/clans/Tzimisce.png");
+  }
+  &[data-clan="Tzimice"]::before {
+    // Adding fallback for the typo in the file system
+    background-image: url("../assets/clans/Tzimice.png");
+  }
+  &[data-clan="Brujah"]::before {
+    background-image: url("../assets/clans/Brujah.png");
+  }
+  &[data-clan="Gangrel"]::before {
+    background-image: url("../assets/clans/Gangrel.png");
+  }
+  &[data-clan="Malkavian"]::before {
+    background-image: url("../assets/clans/Malkavian.png");
+  }
+  &[data-clan="Nosferatu"]::before {
+    background-image: url("../assets/clans/Nosferatu.png");
+  }
+  &[data-clan="Toreador"]::before {
+    background-image: url("../assets/clans/Toreador.png");
+  }
+  &[data-clan="Ventrue"]::before {
+    background-image: url("../assets/clans/Ventrue.png");
+  }
+  &[data-clan="Lasombra"]::before {
+    background-image: url("../assets/clans/Lasombra.png");
+  }
+  &[data-clan="Giovanni"]::before {
+    background-image: url("../assets/clans/Giovanni.png");
+  }
+  &[data-clan="Assamite"]::before {
+    background-image: url("../assets/clans/Assamite.png");
+  }
+  &[data-clan="Followers of Set"]::before {
+    background-image: url("../assets/clans/Followers of Set.png");
+  }
+  &[data-clan="Ravnos"]::before {
+    background-image: url("../assets/clans/Ravnos.png");
+  }
+  &[data-clan="Tzimisce"]::before,
+  &[data-clan="Tzimice"]::before {
+    background-image: url("../assets/clans/Tzimisce.png");
+  }
+  // Optional: handle if user really named it Tzimice.png
+  &[data-clan="Tzimisce"]::before {
+    background-image:
+      url("../assets/clans/Tzimisce.png"), url("../assets/clans/Tzimice.png"); // Fallback check? No, CSS doesn't work like that for existence.
+  }
 }
 
 .top-info {
@@ -44,9 +117,15 @@
   grid-template-columns: repeat(3, 1fr);
   gap: $spacing-sm;
   padding: $spacing-lg;
+  background-color: rgba(
+    17,
+    17,
+    17,
+    0.4
+  ); // Semi-transparent to let logo show through
   border-bottom: 2px solid $accent-color;
   border-radius: $border-radius;
-  background-color: #111;
+  backdrop-filter: blur(2px); // Subtle blur for premium feel
 
   .info-group {
     font-size: 0.95rem;
@@ -108,10 +187,11 @@
 
 .status-col {
   flex: 1;
-  background-color: rgba(255, 255, 255, 0.02);
+  background-color: rgba(0, 0, 0, 0.3); // Darker but semi-transparent
   padding: $spacing-lg;
   border-radius: $border-radius;
-  border: 1px solid $border-color;
+  border: 1px solid rgba($border-color, 0.5);
+  backdrop-filter: blur(1px);
 
   .section-title {
     font-size: 1.4rem;
@@ -120,27 +200,59 @@
 }
 
 .blood-pool-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  justify-content: center;
-  max-width: 200px;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 6px;
+  justify-items: center;
+  max-width: 300px; // Increased to fit 10 dots comfortably
+  margin: $spacing-md auto;
 
   .blood-box {
-    width: 25px;
-    height: 25px;
+    width: 22px;
+    height: 22px;
     border: 1px solid $accent-color;
     border-radius: 50%;
     background-color: transparent;
     cursor: pointer;
     transition: all $transition-speed ease;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: $accent-color;
+      border-radius: 50%;
+      transform: translateY(100%);
+      opacity: 0;
+      // Vaciado (vuelve al estado original): Todo sincronizado a 0.6s
+      transition:
+        transform 0.6s ease-in,
+        opacity 0.6s ease-in;
+    }
 
     &.filled {
-      background-color: $accent-color;
+      box-shadow: 0 0 8px rgba($accent-color, 0.4);
+
+      &::after {
+        transform: translateY(0);
+        opacity: 1;
+        // Llenado: Todo sincronizado a 0.4s
+        transition:
+          transform 0.4s ease-out,
+          opacity 0.4s ease-out;
+      }
     }
 
     &:hover {
-      box-shadow: 0 0 5px $accent-color;
+      box-shadow: 0 0 8px $accent-color;
       transform: scale(1.1);
     }
   }

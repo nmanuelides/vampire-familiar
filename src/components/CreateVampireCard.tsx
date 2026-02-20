@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useCharacterStore } from "../store/useCharacterStore";
 import { generateRandomVTMCharacter } from "../utils/vtmGenerator";
-import { CLANS } from "../data/vtm";
+import { CLANS, VTM_TRANSLATIONS } from "../data/vtm";
 import type { Clan } from "../types/vtm";
 
 export default function CreateVampireCard() {
@@ -128,7 +128,7 @@ export default function CreateVampireCard() {
             >
               {CLANS.map((c) => (
                 <option key={c} value={c}>
-                  {c}
+                  {VTM_TRANSLATIONS[c] || c}
                 </option>
               ))}
             </select>
@@ -150,7 +150,7 @@ export default function CreateVampireCard() {
         <button
           type="submit"
           disabled={loading}
-          style={{ width: "100%", marginTop: "1rem" }}
+          style={{ width: "100%", marginTop: "1rem", fontSize: "1.2rem" }}
         >
           {loading ? "Generando Abrazado..." : "Crear Vampiro"}
         </button>
