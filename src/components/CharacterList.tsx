@@ -1,10 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { useCharacterStore } from "../store/useCharacterStore";
+import { useAuthStore } from "../store/useAuthStore";
 import { VTM_TRANSLATIONS } from "../data/vtm";
 import "./CharacterList.scss";
 
 export default function CharacterList() {
   const { characters } = useCharacterStore();
+  const { user } = useAuthStore();
   const navigate = useNavigate();
 
   if (characters.length === 0) {
@@ -36,12 +38,35 @@ export default function CharacterList() {
             {chars.map((char) => (
               <div
                 key={char.id}
-                className="character-card"
+                className={`character-card ${char.user_id !== user?.id ? "is-shared" : ""}`}
                 onClick={() => navigate(`/character/${char.id}`)}
               >
                 <div className="character-info">
                   <div className="card-header">
-                    <h3 className="char-name">{char.name}</h3>
+                    <div className="char-name-group">
+                      <h3 className="char-name">{char.name}</h3>
+                      {char.user_id !== user?.id && char.creator_name && (
+                        <div
+                          className="creator-badge"
+                          title={`Creado por ${char.creator_name}`}
+                        >
+                          {char.creator_avatar_url ? (
+                            <img
+                              src={char.creator_avatar_url}
+                              alt={char.creator_name}
+                              className="creator-avatar"
+                            />
+                          ) : (
+                            <div className="creator-avatar-placeholder">
+                              {char.creator_name.charAt(0).toUpperCase()}
+                            </div>
+                          )}
+                          <span className="creator-name">
+                            {char.creator_name}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                     <img
                       src={`/src/assets/clans/${char.clan}.png`}
                       alt={`${char.clan} logo`}

@@ -34,6 +34,8 @@ export function generateRandomVTMCharacter(
   generation: number,
   chronicle: string,
   userId?: string,
+  creatorName?: string,
+  creatorAvatarUrl?: string,
 ): VTMCharacter {
   const maxTrait = getMaxTraitRating(generation);
   const maxBlood = getMaxBloodPool(generation);
@@ -175,5 +177,7 @@ export function generateRandomVTMCharacter(
       incapacitated: false,
     },
     created_at: new Date().toISOString(),
+    creator_name: creatorName,
+    creator_avatar_url: creatorAvatarUrl,
   };
 }

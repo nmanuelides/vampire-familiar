@@ -42,11 +42,17 @@
       font-size: 1.1rem;
     }
 
+    .user-details {
+      display: flex;
+      align-items: center;
+      gap: $spacing-lg;
+    }
+
     .avatar-circle {
       width: 64px;
       height: 64px;
       border-radius: 50%;
-      border:1px solid $accent-color;
+      border: 1px solid $accent-color;
       background-color: rgba(0, 0, 0, 0.4);
       cursor: pointer;
       overflow: hidden;

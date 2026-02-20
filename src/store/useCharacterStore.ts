@@ -23,11 +23,20 @@ export const useCharacterStore = create<CharacterState>((set, get) => ({
   fetchCharacters: async (userId: string) => {
     set({ loading: true, error: null });
     try {
-      const { data, error } = await supabase
-        .from("characters")
-        .select("*")
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false });
+      let query = supabase.from("characters").select("*");
+
+      // Shared Visibility Logic:
+      // If the user is magatsu82@gmail.com, they see everything.
+      // Otherwise, they only see their own.
+      const userEmail = (await supabase.auth.getUser()).data.user?.email;
+
+      if (userEmail !== "magatsu82@gmail.com") {
+        query = query.eq("user_id", userId);
+      }
+
+      const { data, error } = await query.order("created_at", {
+        ascending: false,
+      });
 
       if (error) throw error;
       set({ characters: data as VTMCharacter[], loading: false });

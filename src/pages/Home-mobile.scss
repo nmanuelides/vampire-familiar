@@ -36,12 +36,30 @@
   }
 
   .user-profile {
+    @media (max-width: 768px) {
+      flex-direction: row;
+      justify-content: center;
+      gap: $spacing-md;
+      text-align: left;
+    }
+
     @media (max-width: 480px) {
-      flex-direction: column;
-      gap: 4px;
+      gap: $spacing-md;
+
+      .user-details {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+      }
 
       .player-name {
-        font-size: 0.9rem;
+        font-size: 1rem;
+      }
+
+      .avatar-circle {
+        width: 64px;
+        height: 64px;
       }
     }
   }
@@ -49,8 +67,8 @@
   .logout-btn {
     @media (max-width: 600px) {
       font-size: 0.85rem;
-      padding: 0.4rem 0.8rem;
-      height: 36px;
+      padding: 0.2rem 0.3rem;
+      height: 32px;
     }
 
     @media (max-width: 480px) {

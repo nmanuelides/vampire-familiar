@@ -50,6 +50,8 @@ export default function CreateVampireCard() {
       generation,
       finalChronicle,
       user.id,
+      user.user_metadata?.full_name,
+      user.user_metadata?.avatar_url,
     );
     await addCharacter(newChar);
 

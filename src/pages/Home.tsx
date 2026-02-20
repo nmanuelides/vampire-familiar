@@ -41,12 +41,13 @@ export default function Home() {
                 </div>
               )}
             </div>
-            <span className="player-name">{userName}</span>
+            <div className="user-details">
+              <span className="player-name">{userName}</span>
+              <button className="logout-btn" onClick={signOut}>
+                Cerrar Sesión
+              </button>
+            </div>
           </div>
-
-          <button className="logout-btn" onClick={signOut}>
-            Cerrar Sesión
-          </button>
         </div>
       </header>
 
