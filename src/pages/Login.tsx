@@ -119,9 +119,9 @@ export default function Login() {
         </form>
 
         <p className="toggle-text text-center">
-          {isLogin ? "¿No tienes cuenta?" : "¿Ya tienes cuenta?"}{" "}
+          {isLogin ? "¿No tenés cuenta?" : "¿Ya tenés cuenta?"}{" "}
           <span onClick={() => setIsLogin(!isLogin)} className="toggle-link">
-            {isLogin ? "Regístrate aquí" : "Inicia sesión"}
+            {isLogin ? "Registrate acá" : "Inicia sesión"}
           </span>
         </p>
       </div>
