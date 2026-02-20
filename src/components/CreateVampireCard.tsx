@@ -15,6 +15,7 @@ export default function CreateVampireCard() {
   const [generation, setGeneration] = useState(13);
   const [chronicle, setChronicle] = useState("");
   const [isNewChronicle, setIsNewChronicle] = useState(false);
+  const [isNPC, setIsNPC] = useState(false);
 
   const existingChronicles = Array.from(
     new Set(characters.map((c) => c.chronicle)),
@@ -38,8 +39,13 @@ export default function CreateVampireCard() {
     }
     finalChronicle = finalChronicle || "Vampire Familiar";
 
+    const playerName = isNPC
+      ? "NPC"
+      : user.user_metadata?.full_name || user.email || "Unknown";
+
     const newChar = generateRandomVTMCharacter(
       name,
+      playerName,
       clan,
       generation,
       finalChronicle,
@@ -51,6 +57,7 @@ export default function CreateVampireCard() {
     setName("");
     setChronicle("");
     setIsNewChronicle(false);
+    setIsNPC(false);
   };
 
   return (
@@ -142,6 +149,17 @@ export default function CreateVampireCard() {
               onChange={(e) => setGeneration(parseInt(e.target.value))}
             />
           </div>
+        </div>
+
+        <div className="form-group npc-checkbox-group">
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={isNPC}
+              onChange={(e) => setIsNPC(e.target.checked)}
+            />
+            <span>NPC</span>
+          </label>
         </div>
 
         <button type="submit" disabled={loading} className="submit-btn">

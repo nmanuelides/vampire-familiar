@@ -1,13 +1,15 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useCharacterStore } from "../store/useCharacterStore";
 import CreateVampireCard from "../components/CreateVampireCard";
 import CharacterList from "../components/CharacterList";
+import AvatarUploadModal from "../components/AvatarUploadModal";
 import "./Home.scss";
 
 export default function Home() {
   const { user, signOut } = useAuthStore();
   const { fetchCharacters, loading } = useCharacterStore();
+  const [showAvatarModal, setShowAvatarModal] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -15,14 +17,42 @@ export default function Home() {
     }
   }, [user, fetchCharacters]);
 
+  const userName =
+    user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Vampiro";
+  const avatarUrl = user?.user_metadata?.avatar_url;
+
   return (
     <div className="home-container">
       <header className="home-header">
         <h1 className="title">Vampire Familiar</h1>
-        <button className="logout-btn" onClick={signOut}>
-          Cerrar Sesión
-        </button>
+
+        <div className="header-actions">
+          <div className="user-profile">
+            <div
+              className="avatar-circle"
+              onClick={() => setShowAvatarModal(true)}
+              title="Cambiar Avatar"
+            >
+              {avatarUrl ? (
+                <img src={avatarUrl} alt="Avatar" />
+              ) : (
+                <div className="avatar-placeholder">
+                  {userName.charAt(0).toUpperCase()}
+                </div>
+              )}
+            </div>
+            <span className="player-name">{userName}</span>
+          </div>
+
+          <button className="logout-btn" onClick={signOut}>
+            Cerrar Sesión
+          </button>
+        </div>
       </header>
+
+      {showAvatarModal && (
+        <AvatarUploadModal onClose={() => setShowAvatarModal(false)} />
+      )}
 
       <main className="home-main">
         <CreateVampireCard />

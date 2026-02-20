@@ -29,6 +29,7 @@ function distributeDots(
 
 export function generateRandomVTMCharacter(
   name: string,
+  player: string,
   clan: Clan,
   generation: number,
   chronicle: string,
@@ -144,7 +145,7 @@ export function generateRandomVTMCharacter(
   return {
     user_id: userId,
     name,
-    player: "NPC",
+    player,
     chronicle,
     nature: "Survivor", // We could randomize these later
     demeanor: "Bravo",

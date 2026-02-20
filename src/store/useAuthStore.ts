@@ -9,6 +9,7 @@ interface AuthState {
   initialized: boolean;
   initialize: () => void;
   signOut: () => Promise<void>;
+  updateUserMetadata: (metadata: any) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -35,5 +36,13 @@ export const useAuthStore = create<AuthState>((set) => ({
   signOut: async () => {
     await supabase.auth.signOut();
     set({ user: null, session: null });
+  },
+
+  updateUserMetadata: async (metadata: any) => {
+    const { data, error } = await supabase.auth.updateUser({
+      data: metadata,
+    });
+    if (error) throw error;
+    set({ user: data.user });
   },
 }));

@@ -16,6 +16,7 @@ export default function Login() {
   }, [user, navigate]);
 
   const [isLogin, setIsLogin] = useState(true);
+  const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -38,6 +39,11 @@ export default function Login() {
         const { error } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+            data: {
+              full_name: displayName,
+            },
+          },
         });
         if (error) throw error;
         // Optionally show "Check your email" or auto login depending on Supabase settings.
@@ -63,6 +69,18 @@ export default function Login() {
         {error && <div className="error-message">{error}</div>}
 
         <form onSubmit={handleSubmit} className="auth-form">
+          {!isLogin && (
+            <div className="form-group">
+              <label>Nombre</label>
+              <input
+                type="text"
+                required
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                placeholder="Introducción tu nombre"
+              />
+            </div>
+          )}
           <div className="form-group">
             <label>Email</label>
             <input
