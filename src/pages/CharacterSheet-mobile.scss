@@ -1,0 +1,13 @@
+@use "../styles/variables" as *;
+
+.top-info {
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stack-mobile {
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}

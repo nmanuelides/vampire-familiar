@@ -1,0 +1,23 @@
+@use "../styles/variables" as *;
+
+.home-container {
+  padding: $spacing-sm $spacing-md $spacing-xl $spacing-md; // Add horizontal padding for mobile
+}
+
+.home-header {
+  .title {
+    @media (max-width: 600px) {
+      font-size: 1.6rem;
+      white-space: normal; // Allow wrapping
+      word-wrap: break-word;
+      line-height: 1.2;
+    }
+  }
+
+  .logout-btn {
+    @media (max-width: 600px) {
+      font-size: 0.85rem;
+      padding: 0.4rem 0.8rem;
+    }
+  }
+}

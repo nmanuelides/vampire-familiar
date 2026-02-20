@@ -4,6 +4,7 @@ import { useCharacterStore } from "../store/useCharacterStore";
 import { generateRandomVTMCharacter } from "../utils/vtmGenerator";
 import { CLANS, VTM_TRANSLATIONS } from "../data/vtm";
 import type { Clan } from "../types/vtm";
+import "./CreateVampireCard.scss";
 
 export default function CreateVampireCard() {
   const { user } = useAuthStore();
@@ -54,11 +55,8 @@ export default function CreateVampireCard() {
 
   return (
     <div className="card create-card">
-      <form
-        onSubmit={handleCreate}
-        className="d-flex flex-col gap-lg items-center"
-      >
-        <h2 className="text-center w-full">Crear Nuevo Vampiro</h2>
+      <form onSubmit={handleCreate} className="vampire-form">
+        <h2 className="title-center">Crear Nuevo Vampiro</h2>
 
         <div className="form-group w-full">
           <label>Nombre del Vampiro</label>
@@ -93,23 +91,22 @@ export default function CreateVampireCard() {
               <option value="___NEW___">+ Crear nueva crónica...</option>
             </select>
           ) : (
-            <div className="d-flex gap-sm w-full">
+            <div className="chronicle-input-group">
               <input
                 type="text"
                 required
                 value={chronicle}
                 onChange={(e) => setChronicle(e.target.value)}
                 placeholder="Nombre de la nueva crónica..."
-                style={{ flex: 1 }}
               />
               {!forceNew && (
                 <button
                   type="button"
+                  className="cancel-btn"
                   onClick={() => {
                     setIsNewChronicle(false);
                     setChronicle("");
                   }}
-                  style={{ backgroundColor: "#555", padding: "0 1rem" }}
                   title="Seleccionar crónica existente"
                 >
                   Cancelar
@@ -119,8 +116,8 @@ export default function CreateVampireCard() {
           )}
         </div>
 
-        <div className="d-flex gap-md w-full">
-          <div className="form-group" style={{ flex: 1 }}>
+        <div className="form-row">
+          <div className="form-group">
             <label>Clan</label>
             <select
               value={clan}
@@ -134,7 +131,7 @@ export default function CreateVampireCard() {
             </select>
           </div>
 
-          <div className="form-group" style={{ flex: 1 }}>
+          <div className="form-group">
             <label>Generación (4 - 13)</label>
             <input
               type="number"
@@ -147,11 +144,7 @@ export default function CreateVampireCard() {
           </div>
         </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          style={{ width: "100%", marginTop: "1rem", fontSize: "1.2rem" }}
-        >
+        <button type="submit" disabled={loading} className="submit-btn">
           {loading ? "Generando Abrazado..." : "Crear Vampiro"}
         </button>
       </form>

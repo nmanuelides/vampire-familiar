@@ -38,7 +38,7 @@ export default function DotTracker({
   }
 
   return (
-    <div className="dot-tracker d-flex justify-between items-center">
+    <div className="dot-tracker">
       <div className="dot-label-container">
         <span className="dot-label">{label}</span>
         {tooltip && (
@@ -52,7 +52,7 @@ export default function DotTracker({
           </div>
         )}
       </div>
-      <div className="dots-container d-flex gap-xs">{dots}</div>
+      <div className="dots-container">{dots}</div>
     </div>
   );
 }

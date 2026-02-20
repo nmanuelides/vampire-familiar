@@ -37,6 +37,10 @@ body {
   min-height: 100vh;
 }
 
+.stack-mobile {
+  display: flex;
+}
+
 h1,
 h2,
 h3,
@@ -136,12 +140,12 @@ select {
 
 .card {
   background-color: rgba(
-    30,
-    30,
-    30,
-    0.85
+    20,
+    20,
+    20,
+    0.25
   ); // Semi-transparent version of $secondary-bg
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(16px);
   border: 1px solid rgba($border-color, 0.5);
   border-radius: $border-radius;
   padding: $spacing-xl;
@@ -155,39 +159,8 @@ select {
   padding: 0 $spacing-md;
 }
 
-.d-flex {
-  display: flex;
+.w-full {
+  width: 100% !important;
 }
 
-.flex-col {
-  flex-direction: column;
-}
-
-.items-center {
-  align-items: center;
-}
-
-.justify-center {
-  justify-content: center;
-}
-
-.justify-between {
-  justify-content: space-between;
-}
-
-.gap-xs {
-  gap: $spacing-xs;
-}
-.gap-sm {
-  gap: $spacing-sm;
-}
-.gap-md {
-  gap: $spacing-md;
-}
-.gap-lg {
-  gap: $spacing-lg;
-}
-
-.text-center {
-  text-align: center;
-}
+@import "global-mobile";

@@ -1,0 +1,19 @@
+@use "../styles/variables" as *;
+
+.create-card {
+  @media (max-width: 600px) {
+    padding: $spacing-md !important;
+  }
+}
+
+.form-row {
+  @media (max-width: 600px) {
+    flex-direction: column !important;
+  }
+}
+
+.chronicle-input-group {
+  @media (max-width: 600px) {
+    flex-direction: column !important;
+  }
+}

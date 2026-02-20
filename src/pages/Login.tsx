@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
 import { supabase } from "../lib/supabase";
+import { Eye, EyeOff } from "lucide-react";
 import "./Login.scss";
 
 export default function Login() {
@@ -17,6 +18,7 @@ export default function Login() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -51,7 +53,7 @@ export default function Login() {
   };
 
   return (
-    <div className="login-container d-flex items-center justify-center flex-col">
+    <div className="auth-layout">
       <h1 className="title text-center">Vampire Familiar</h1>
       <div className="card login-card">
         <h2 className="text-center">
@@ -60,7 +62,7 @@ export default function Login() {
 
         {error && <div className="error-message">{error}</div>}
 
-        <form onSubmit={handleSubmit} className="d-flex flex-col gap-md">
+        <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
             <label>Email</label>
             <input
@@ -74,13 +76,23 @@ export default function Login() {
 
           <div className="form-group">
             <label>Contraseña</label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-            />
+            <div className="password-input-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+              />
+              <button
+                type="button"
+                className="eye-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
           </div>
 
           <button type="submit" disabled={loading}>

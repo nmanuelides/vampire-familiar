@@ -1,0 +1,69 @@
+@use "../styles/variables" as *;
+
+.create-card {
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.vampire-form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  width: 100%;
+
+  .title-center {
+    text-align: center;
+    width: 100%;
+    margin-bottom: $spacing-md;
+  }
+
+  .form-group {
+    width: 100%;
+    margin-bottom: $spacing-md;
+
+    label {
+      display: block;
+      margin-bottom: $spacing-xs;
+    }
+  }
+
+  .form-row {
+    display: flex;
+    gap: $spacing-md;
+    width: 100%;
+
+    .form-group {
+      flex: 1;
+      margin-bottom: 0;
+    }
+  }
+
+  .chronicle-input-group {
+    display: flex;
+    gap: $spacing-sm;
+    width: 100%;
+
+    input {
+      flex: 1;
+    }
+
+    .cancel-btn {
+      background-color: #555;
+      padding: 0 1rem;
+      width: auto; // Override global button width if any
+
+      &:hover {
+        background-color: #666;
+      }
+    }
+  }
+
+  .submit-btn {
+    width: 100%;
+    margin-top: $spacing-md;
+    font-size: 1.2rem;
+  }
+}
+
+@import "CreateVampireCard-mobile";

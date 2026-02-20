@@ -96,7 +96,7 @@ export default function CharacterSheet() {
 
   return (
     <div className="character-sheet-container container">
-      <header className="sheet-header d-flex justify-between items-center">
+      <header className="sheet-navigation">
         <button className="back-btn" onClick={() => navigate("/")}>
           &larr; Volver
         </button>
@@ -142,7 +142,7 @@ export default function CharacterSheet() {
           {/* Attributes */}
           <div className="grid-section attributes">
             <h2 className="main-title text-center">— Atributos —</h2>
-            <div className="d-flex justify-between gap-md stack-mobile">
+            <div className="trait-grid">
               {renderSection("Físicos", character.attributes.physical, [
                 "attributes",
                 "physical",
@@ -161,7 +161,7 @@ export default function CharacterSheet() {
           {/* Abilities */}
           <div className="grid-section abilities">
             <h2 className="main-title text-center">— Habilidades —</h2>
-            <div className="d-flex justify-between gap-md stack-mobile">
+            <div className="trait-grid">
               {renderSection("Talentos", character.abilities.talents, [
                 "abilities",
                 "talents",
@@ -180,7 +180,7 @@ export default function CharacterSheet() {
           {/* Advantages */}
           <div className="grid-section advantages">
             <h2 className="main-title text-center">— Ventajas —</h2>
-            <div className="d-flex justify-between gap-md stack-mobile">
+            <div className="trait-grid">
               {renderSection("Trasfondos", character.advantages.backgrounds, [
                 "advantages",
                 "backgrounds",
@@ -197,8 +197,8 @@ export default function CharacterSheet() {
           </div>
 
           {/* Core Stats Overlay */}
-          <div className="grid-section core-stats d-flex justify-between stack-mobile gap-lg">
-            <div className="status-col flex-col items-center">
+          <div className="status-grid">
+            <div className="status-col flex-col flex-center">
               <h3 className="section-title">Humanidad</h3>
               <DotTracker
                 label=""
@@ -224,7 +224,7 @@ export default function CharacterSheet() {
               />
             </div>
 
-            <div className="status-col flex-col items-center">
+            <div className="status-col flex-col flex-center">
               <h3 className="section-title">Reserva de Sangre</h3>
               <div className="blood-pool-grid">
                 {Array.from({ length: character.blood_pool }).map((_, i) => (
@@ -245,10 +245,7 @@ export default function CharacterSheet() {
               <h3 className="section-title">Salud</h3>
               <div className="health-tracker">
                 {Object.entries(character.health).map(([level, isChecked]) => (
-                  <div
-                    key={level}
-                    className="health-level d-flex justify-between items-center w-full"
-                  >
+                  <div key={level} className="health-level">
                     <span className="health-label">
                       {VTM_TRANSLATIONS[level] || level}
                     </span>

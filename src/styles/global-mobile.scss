@@ -1,0 +1,13 @@
+@use "variables" as *;
+
+body {
+  @media (max-width: 768px) {
+    background-position: 65% center;
+  }
+}
+
+.stack-mobile {
+  @media (max-width: 600px) {
+    flex-direction: column !important;
+  }
+}

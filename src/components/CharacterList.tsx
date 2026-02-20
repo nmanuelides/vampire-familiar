@@ -28,15 +28,10 @@ export default function CharacterList() {
   );
 
   return (
-    <div className="character-list-container d-flex flex-col gap-xl w-full">
+    <div className="character-list-wrapper">
       {Object.entries(groupedCharacters).map(([chronicle, chars]) => (
         <div key={chronicle} className="chronicle-group w-full">
-          <h2
-            className="chronicle-title text-center"
-            style={{ marginBottom: "1rem", color: "var(--accent)" }}
-          >
-            Crónica: {chronicle}
-          </h2>
+          <h2 className="chronicle-title">Crónica: {chronicle}</h2>
           <div className="character-grid">
             {chars.map((char) => (
               <div
@@ -45,7 +40,7 @@ export default function CharacterList() {
                 onClick={() => navigate(`/character/${char.id}`)}
               >
                 <div className="character-info">
-                  <div className="name-clan-row d-flex justify-between items-center">
+                  <div className="card-header">
                     <h3 className="char-name">{char.name}</h3>
                     <img
                       src={`/src/assets/clans/${char.clan}.png`}
@@ -71,12 +66,12 @@ export default function CharacterList() {
                   </span>
                 </div>
                 <div className="char-stats">
-                  <span>❤ Huma: {char.humanity}</span>
+                  <span>❤ Humanidad: {char.humanity}</span>
                   <span>
-                    🩸 Sang: {char.blood_pool_current}/{char.blood_pool}
+                    🩸 Sangre: {char.blood_pool_current}/{char.blood_pool}
                   </span>
                   <span>
-                    ⚡ Volun: {char.willpower_current}/{char.willpower}
+                    ⚡ Voluntad: {char.willpower_current}/{char.willpower}
                   </span>
                 </div>
               </div>

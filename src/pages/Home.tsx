@@ -16,15 +16,15 @@ export default function Home() {
   }, [user, fetchCharacters]);
 
   return (
-    <div className="home-container container flex-col items-center">
-      <header className="home-header d-flex justify-between items-center w-full">
+    <div className="home-container">
+      <header className="home-header">
         <h1 className="title">Vampire Familiar</h1>
         <button className="logout-btn" onClick={signOut}>
           Cerrar Sesión
         </button>
       </header>
 
-      <main className="home-main w-full d-flex flex-col gap-xl">
+      <main className="home-main">
         <CreateVampireCard />
 
         <div className="characters-section">

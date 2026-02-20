@@ -1,9 +1,13 @@
 @use "../styles/variables" as *;
 
-.login-container {
+.auth-layout {
   min-height: 100vh;
   padding: $spacing-xl;
-  background-image: linear-gradient(to bottom, $bg-color, $secondary-bg);
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .title {
@@ -32,6 +36,43 @@
     font-weight: 600;
     color: lighten($border-color, 30%);
   }
+
+  .password-input-wrapper {
+    position: relative;
+    width: 100%;
+
+    input {
+      padding-right: 45px; // Space for the eye icon
+    }
+
+    .eye-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none !important;
+      border: none;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: lighten($border-color, 20%);
+      cursor: pointer;
+      transition: color $transition-speed ease;
+      box-shadow: none !important;
+
+      &:hover {
+        color: $accent-color;
+        background: none !important;
+      }
+    }
+  }
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
 }
 
 .error-message {

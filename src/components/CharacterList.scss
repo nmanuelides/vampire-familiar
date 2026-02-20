@@ -1,14 +1,27 @@
 @use "../styles/variables" as *;
 
+.character-list-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+  width: 100%;
+}
+
 .character-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: $spacing-md;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-lg;
 }
 
 .character-card {
-  background-color: $input-bg;
-  border: 1px solid $border-color;
+  background-color: rgba(
+    20,
+    20,
+    20,
+    0.25
+  ); // Semi-transparent version of $secondary-bg
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba($border-color, 0.5);
   border-radius: $border-radius;
   padding: $spacing-md;
   cursor: pointer;
@@ -30,7 +43,8 @@
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
-
+    background-color: rgba(200, 0, 0, 0.2);
+    transition: background-color 0.5s ease;
     &::before {
       width: 6px;
     }
@@ -39,10 +53,12 @@
   .character-info {
     margin-left: $spacing-sm; // to make room for the left accent line
     margin-bottom: $spacing-md;
-    border-bottom: 1px solid darken($border-color, 5%);
     padding-bottom: $spacing-sm;
 
-    .name-clan-row {
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-bottom: $spacing-xs;
 
       .char-name {
@@ -83,6 +99,12 @@
   }
 }
 
+.chronicle-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .no-characters {
   text-align: center;
   color: darken($text-color, 40%);
@@ -91,3 +113,5 @@
   border-radius: $border-radius;
   border: 1px dashed $border-color;
 }
+
+@import "CharacterList-mobile";
