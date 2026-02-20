@@ -145,7 +145,7 @@ select {
     20,
     0.25
   ); // Semi-transparent version of $secondary-bg
-  backdrop-filter: blur(16px);
+  backdrop-filter: blur(6px);
   border: 1px solid rgba($border-color, 0.5);
   border-radius: $border-radius;
   padding: $spacing-xl;

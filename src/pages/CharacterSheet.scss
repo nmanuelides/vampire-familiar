@@ -14,6 +14,9 @@
   .title {
     font-size: 2rem;
     margin: 0;
+    text-align: center;
+    flex: 1;
+    line-height: 1.1;
   }
 
   .back-btn,
@@ -126,6 +129,13 @@
     17,
     0.4
   ); // Semi-transparent to let logo show through
+  .main-title {
+    font-size: 1.8rem;
+    margin: $spacing-xl 0 $spacing-lg 0;
+    color: $accent-color;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
   border-bottom: 2px solid $accent-color;
   border-radius: $border-radius;
   backdrop-filter: blur(2px); // Subtle blur for premium feel
@@ -185,6 +195,8 @@
   .section-title {
     font-size: 1.4rem;
     margin-bottom: $spacing-lg;
+    text-align: center;
+    width: 100%;
   }
 }
 
@@ -265,8 +277,8 @@
     input[type="checkbox"] {
       width: 18px;
       height: 18px;
-      cursor: pointer;
-      accent-color: $error-color;
     }
   }
 }
+
+@import "CharacterSheet-mobile";
