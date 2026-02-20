@@ -1,0 +1,60 @@
+@use "../styles/variables" as *;
+
+.login-container {
+  min-height: 100vh;
+  padding: $spacing-xl;
+  background-image: linear-gradient(to bottom, $bg-color, $secondary-bg);
+}
+
+.title {
+  font-size: 3rem;
+  margin-bottom: $spacing-xl;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: 2px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+
+  h2 {
+    margin-bottom: $spacing-lg;
+    color: $text-color;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+
+  label {
+    font-weight: 600;
+    color: lighten($border-color, 30%);
+  }
+}
+
+.error-message {
+  color: $error-color;
+  background-color: rgba($error-color, 0.1);
+  border: 1px solid rgba($error-color, 0.3);
+  padding: $spacing-sm;
+  border-radius: $border-radius;
+  margin-bottom: $spacing-md;
+  text-align: center;
+}
+
+.toggle-text {
+  margin-top: $spacing-lg;
+  color: lighten($border-color, 40%);
+
+  .toggle-link {
+    color: $accent-color;
+    cursor: pointer;
+    font-weight: 600;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

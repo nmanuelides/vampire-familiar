@@ -1,0 +1,100 @@
+@use "../styles/variables" as *;
+
+.dot-tracker {
+  padding: $spacing-xs 0;
+  border-bottom: 1px dotted rgba($border-color, 0.5);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.dot-label-container {
+  flex: 1;
+  position: relative; // For positioning the tooltip
+
+  &:hover .tooltip-box {
+    opacity: 1;
+    visibility: visible;
+    z-index: 1000; // Above content
+  }
+}
+
+.dot-label {
+  font-size: 0.9rem;
+  color: lighten($text-color, 10%);
+  text-transform: capitalize;
+  cursor: help; // Indicate there's a tooltip
+}
+
+.tooltip-box {
+  position: absolute;
+  top: 100%; // Just below the label
+  left: 0;
+  width: 250px;
+  background-color: $secondary-bg;
+  border: 1px solid $accent-color; // Red border for VTM feel
+  padding: $spacing-sm;
+  border-radius: $border-radius;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease;
+  pointer-events: none; // Let mouse click through if needed
+
+  // Custom font size for tooltips
+  font-size: 0.8rem;
+  color: $text-color;
+
+  .tooltip-desc {
+    margin: 0 0 $spacing-xs 0;
+    font-weight: bold;
+    color: lighten($text-color, 20%);
+    border-bottom: 1px solid rgba($border-color, 0.5);
+    padding-bottom: $spacing-xs;
+  }
+
+  .tooltip-levels {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      margin-bottom: 2px;
+      line-height: 1.2;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+.dots-container {
+  .dot {
+    cursor: pointer;
+    font-size: 1.2rem;
+    line-height: 1;
+    color: $border-color;
+    transition:
+      color $transition-speed ease,
+      transform $transition-speed ease;
+    user-select: none;
+
+    &.filled {
+      color: $accent-color;
+    }
+
+    &:hover:not(.read-only) {
+      transform: scale(1.2);
+      color: lighten($accent-color, 20%);
+    }
+
+    &.read-only {
+      cursor: default;
+    }
+  }
+}

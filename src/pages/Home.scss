@@ -1,0 +1,51 @@
+@use "../styles/variables" as *;
+
+.home-container {
+  padding: $spacing-xl 0;
+}
+
+.home-header {
+  margin-bottom: $spacing-xl;
+  width: 100%;
+
+  .title {
+    margin: 0;
+    font-size: 2.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  .logout-btn {
+    background-color: transparent;
+    border: 1px solid $accent-color;
+    color: $accent-color;
+
+    &:hover {
+      background-color: $accent-color;
+      color: white;
+    }
+  }
+}
+
+.home-main {
+  width: 100%;
+}
+
+.characters-section {
+  h2 {
+    color: $text-color;
+    border-bottom: 1px solid $border-color;
+    padding-bottom: $spacing-sm;
+    margin-bottom: $spacing-lg;
+    font-family: $font-vampire;
+  }
+}
+
+.loading-text {
+  text-align: center;
+  color: lighten($border-color, 30%);
+  font-style: italic;
+}
+
+.w-full {
+  width: 100%;
+}

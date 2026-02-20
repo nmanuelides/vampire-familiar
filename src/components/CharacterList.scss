@@ -1,0 +1,75 @@
+@use "../styles/variables" as *;
+
+.character-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: $spacing-md;
+}
+
+.character-card {
+  background-color: $input-bg;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  padding: $spacing-md;
+  cursor: pointer;
+  transition: all $transition-speed ease;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background-color: $accent-color;
+    transition: width $transition-speed ease;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    border-color: lighten($border-color, 20%);
+
+    &::before {
+      width: 6px;
+    }
+  }
+
+  .character-info {
+    margin-left: $spacing-sm; // to make room for the left accent line
+    margin-bottom: $spacing-md;
+    border-bottom: 1px solid darken($border-color, 5%);
+    padding-bottom: $spacing-sm;
+
+    .char-name {
+      color: $accent-color;
+      margin: 0 0 $spacing-xs 0;
+      font-size: 1.5rem;
+    }
+
+    .char-clan {
+      color: darken($text-color, 20%);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+  }
+
+  .char-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: darken($text-color, 10%);
+    margin-left: $spacing-sm;
+  }
+}
+
+.no-characters {
+  text-align: center;
+  color: darken($text-color, 40%);
+  padding: $spacing-xl;
+  background-color: rgba(255, 255, 255, 0.02);
+  border-radius: $border-radius;
+  border: 1px dashed $border-color;
+}

@@ -1,0 +1,172 @@
+@use "../styles/variables" as *;
+
+.character-sheet-container {
+  padding: $spacing-xl 0;
+}
+
+.sheet-header {
+  margin-bottom: $spacing-lg;
+
+  .title {
+    font-size: 2rem;
+    margin: 0;
+  }
+
+  .back-btn,
+  .delete-btn {
+    background-color: transparent;
+    border: 1px solid $border-color;
+    color: $text-color;
+
+    &:hover {
+      background-color: lighten($secondary-bg, 10%);
+    }
+  }
+
+  .delete-btn {
+    border-color: $error-color;
+    color: $error-color;
+    &:hover {
+      background-color: $error-color;
+      color: white;
+    }
+  }
+}
+
+.sheet-body {
+  background-color: #1a1a1a; // slightly darker for the sheet
+  padding: 0; // overrides card padding
+  overflow: hidden;
+}
+
+.top-info {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-sm;
+  padding: $spacing-lg;
+  border-bottom: 2px solid $accent-color;
+  border-radius: $border-radius;
+  background-color: #111;
+
+  .info-group {
+    font-size: 0.95rem;
+    color: lighten($text-color, 10%);
+    border-bottom: 1px solid $border-color;
+    padding-bottom: $spacing-xs;
+
+    span {
+      font-weight: bold;
+      color: darken($text-color, 20%);
+      margin-right: $spacing-xs;
+    }
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sheet-grid {
+  padding: $spacing-xl;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+}
+
+.grid-section {
+  .main-title {
+    font-size: 1.5rem;
+    margin-bottom: $spacing-lg;
+    letter-spacing: 2px;
+  }
+
+  .sheet-section {
+    flex: 1;
+
+    .section-title {
+      font-size: 1.2rem;
+      border-bottom: 1px solid $border-color;
+      padding-bottom: $spacing-xs;
+      margin-bottom: $spacing-md;
+      color: lighten($accent-color, 10%);
+      font-family: $font-primary;
+    }
+
+    .traits-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+  }
+}
+
+.stack-mobile {
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.status-col {
+  flex: 1;
+  background-color: rgba(255, 255, 255, 0.02);
+  padding: $spacing-lg;
+  border-radius: $border-radius;
+  border: 1px solid $border-color;
+
+  .section-title {
+    font-size: 1.4rem;
+    margin-bottom: $spacing-lg;
+  }
+}
+
+.blood-pool-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+  max-width: 200px;
+
+  .blood-box {
+    width: 25px;
+    height: 25px;
+    border: 1px solid $accent-color;
+    border-radius: 50%;
+    background-color: transparent;
+    cursor: pointer;
+    transition: all $transition-speed ease;
+
+    &.filled {
+      background-color: $accent-color;
+    }
+
+    &:hover {
+      box-shadow: 0 0 5px $accent-color;
+      transform: scale(1.1);
+    }
+  }
+}
+
+.health-tracker {
+  width: 100%;
+  max-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+
+  .health-level {
+    border-bottom: 1px dashed $border-color;
+    padding-bottom: $spacing-xs;
+
+    .health-label {
+      text-transform: capitalize;
+      font-size: 0.9rem;
+    }
+
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: $error-color;
+    }
+  }
+}

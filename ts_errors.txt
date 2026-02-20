@@ -1,0 +1,12 @@
+src/components/CharacterList.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+src/components/CreateVampireCard.tsx(6,10): error TS1484: 'Clan' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/components/DotTracker.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+src/data/vtm.ts(1,10): error TS1484: 'Clan' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/pages/CharacterSheet.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/pages/CharacterSheet.tsx(5,10): error TS1484: 'VTMCharacter' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/pages/Home.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/store/useAuthStore.ts(3,10): error TS1484: 'User' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/store/useAuthStore.ts(3,16): error TS1484: 'Session' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/store/useCharacterStore.ts(3,10): error TS1484: 'VTMCharacter' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/utils/vtmGenerator.ts(1,10): error TS1484: 'VTMCharacter' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/utils/vtmGenerator.ts(1,24): error TS1484: 'Clan' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.

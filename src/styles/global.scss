@@ -1,0 +1,157 @@
+@use "variables" as *;
+
+@font-face {
+  font-family: "Vrev";
+  src: url("../assets/Vrev.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: $font-primary;
+  background-color: $bg-color;
+  color: $text-color;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: $font-vampire;
+  font-weight: 700;
+  color: $accent-color;
+  margin-top: 0;
+}
+
+a {
+  color: $accent-color;
+  text-decoration: none;
+  transition: color $transition-speed ease;
+
+  &:hover {
+    color: $accent-hover;
+  }
+}
+
+button {
+  background-color: $accent-color;
+  color: white;
+  border: none;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $border-radius;
+  font-family: $font-primary;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color $transition-speed ease;
+
+  &:hover {
+    background-color: $accent-hover;
+  }
+
+  &:disabled {
+    background-color: $border-color;
+    cursor: not-allowed;
+  }
+}
+
+input,
+select,
+textarea {
+  background-color: $input-bg;
+  color: $text-color;
+  border: 1px solid $border-color;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $border-radius;
+  font-family: $font-primary;
+  width: 100%;
+
+  &:focus {
+    outline: none;
+    border-color: $accent-color;
+  }
+}
+
+// Make datalist inputs look a bit more like select boxes
+input[list] {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f0f0f0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right $spacing-md center;
+  background-size: 1em;
+  padding-right: 2.5rem; // Leave space for the arrow
+
+  // Custom webkit arrow hiding (the native one is often ugly)
+  &::-webkit-calendar-picker-indicator {
+    opacity: 0;
+  }
+}
+
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f0f0f0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right $spacing-md center;
+  background-size: 1em;
+  padding-right: 2.5rem;
+}
+
+.card {
+  background-color: $secondary-bg;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  padding: $spacing-xl;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+// Utility classes for layout
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 $spacing-md;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.gap-sm {
+  gap: $spacing-sm;
+}
+.gap-md {
+  gap: $spacing-md;
+}
+.gap-lg {
+  gap: $spacing-lg;
+}
+
+.text-center {
+  text-align: center;
+}
