@@ -7,8 +7,8 @@ import type { VTMCharacter } from "../types/vtm";
 import {
   getMaxTraitRating,
   VTM_TRANSLATIONS,
-  ATTR_SORT_ORDER,
   ATTR_DESCRIPTIONS,
+  COMMON_BACKGROUNDS,
 } from "../data/vtm";
 import "./CharacterSheet.scss";
 
@@ -101,9 +101,11 @@ export default function CharacterSheet() {
     pathPrefix: string[],
     alignLeft = false,
     alignRight = false,
+    cost?: string,
   ) => (
     <div className="sheet-section">
       <h3 className="section-title text-center">{title}</h3>
+      {cost && <div className="section-cost text-center">{cost}</div>}
       <div className="traits-list">
         {Object.entries(data)
           .sort(([keyA], [keyB]) => {
@@ -213,7 +215,6 @@ export default function CharacterSheet() {
               }
               className="inline-input number-input"
             />
-            ª
           </div>
           <div className="info-group">
             <span>Sire:</span>
@@ -231,25 +232,27 @@ export default function CharacterSheet() {
           {/* Attributes */}
           <div className="grid-section attributes">
             <h2 className="main-title text-center">— Atributos —</h2>
+            <div className="section-cost text-center">
+              (costo: 5 por círculo)
+            </div>
             <div className="trait-grid">
-              {renderSection(
-                "Físicos",
-                character.attributes.physical,
-                ["attributes", "physical"],
-                true,
-              )}
+              {renderSection("Físicos", character.attributes.physical, [
+                "attributes",
+                "physical",
+              ])}
               {renderSection(
                 "Sociales",
                 character.attributes.social,
                 ["attributes", "social"],
                 false,
-                true,
+                false,
               )}
               {renderSection(
                 "Mentales",
                 character.attributes.mental,
                 ["attributes", "mental"],
                 true,
+                false,
               )}
             </div>
           </div>
@@ -257,25 +260,27 @@ export default function CharacterSheet() {
           {/* Abilities */}
           <div className="grid-section abilities">
             <h2 className="main-title text-center">— Habilidades —</h2>
+            <div className="section-cost text-center">
+              (costo: 2 por círculo)
+            </div>
             <div className="trait-grid">
-              {renderSection(
-                "Talentos",
-                character.abilities.talents,
-                ["abilities", "talents"],
-                true,
-              )}
+              {renderSection("Talentos", character.abilities.talents, [
+                "abilities",
+                "talents",
+              ])}
               {renderSection(
                 "Técnicas",
                 character.abilities.skills,
                 ["abilities", "skills"],
                 false,
-                true,
+                false,
               )}
               {renderSection(
                 "Conocimientos",
                 character.abilities.knowledges,
                 ["abilities", "knowledges"],
                 true,
+                false,
               )}
             </div>
           </div>
@@ -286,19 +291,33 @@ export default function CharacterSheet() {
             <div className="trait-grid">
               {renderSection(
                 "Trasfondos",
-                character.advantages.backgrounds,
+                {
+                  ...COMMON_BACKGROUNDS.reduce(
+                    (acc, bg) => ({ ...acc, [bg]: 0 }),
+                    {},
+                  ),
+                  ...(character.advantages.backgrounds || {}),
+                },
                 ["advantages", "backgrounds"],
                 true,
+                false,
+                "(costo: 1 por círculo)",
               )}
-              {renderSection("Disciplinas", character.advantages.disciplines, [
-                "advantages",
-                "disciplines",
-              ])}
+              {renderSection(
+                "Disciplinas",
+                character.advantages.disciplines,
+                ["advantages", "disciplines"],
+                false,
+                false,
+                "(costo: 7 por círculo)",
+              )}
               {renderSection(
                 "Virtudes",
                 character.advantages.virtues,
                 ["advantages", "virtues"],
                 true,
+                false,
+                "(costo: 2 por círculo)",
               )}
             </div>
           </div>
@@ -382,32 +401,42 @@ export default function CharacterSheet() {
           {/* Core Stats Overlay */}
           <div className="status-grid">
             <div className="status-col">
-              <h3 className="section-title">Humanidad</h3>
-              <DotTracker
-                label=""
-                value={character.humanity}
-                max={10}
-                onChange={(v) => handleUpdate(["humanity"], v)}
-                tooltip={ATTR_DESCRIPTIONS["humanity"]}
-              />
+              <h3 className="status-title">Humanidad</h3>
+              <div className="section-cost text-center">
+                (costo: 1 por círculo)
+              </div>
+              <div className="status-tracker-container">
+                <DotTracker
+                  label=""
+                  value={character.humanity}
+                  max={10}
+                  onChange={(v) => handleUpdate(["humanity"], v)}
+                  tooltip={ATTR_DESCRIPTIONS["humanity"]}
+                />
+              </div>
 
-              <h3 className="section-title" style={{ marginTop: "2rem" }}>
-                Fierza de Voluntad
+              <h3 className="status-title" style={{ marginTop: "2rem" }}>
+                Fuerza de Voluntad Permanente
               </h3>
-              <DotTracker
-                label="Permanente"
-                value={character.willpower}
-                max={10}
-                onChange={(v) => handleUpdate(["willpower"], v)}
-                tooltip={ATTR_DESCRIPTIONS["willpower"]}
-                alignLeft={true}
-              />
-              <DotTracker
-                label="Actual"
-                value={character.willpower_current}
-                max={10}
-                onChange={(v) => handleUpdate(["willpower_current"], v)}
-              />
+              <div className="section-cost text-center">
+                (costo: 1 por círculo)
+              </div>
+              <div className="status-tracker-container">
+                <DotTracker
+                  label="Permanente"
+                  value={character.willpower}
+                  max={10}
+                  onChange={(v) => handleUpdate(["willpower"], v)}
+                  tooltip={ATTR_DESCRIPTIONS["willpower"]}
+                  alignLeft={true}
+                />
+                <DotTracker
+                  label="Actual"
+                  value={character.willpower_current}
+                  max={10}
+                  onChange={(v) => handleUpdate(["willpower_current"], v)}
+                />
+              </div>
             </div>
 
             <div className="status-col">

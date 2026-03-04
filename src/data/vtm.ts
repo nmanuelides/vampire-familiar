@@ -94,6 +94,7 @@ export const VTM_TRANSLATIONS: Record<string, string> = {
   Resources: "Recursos",
   Retainers: "Criados",
   Status: "Posición",
+  Haven: "Refugio",
 
   // Virtues
   conscience: "Conciencia / Convicción",
@@ -601,86 +602,48 @@ export const ATTR_DESCRIPTIONS: Record<
 
   // Backgrounds
   Allies: {
-    desc: "Amigos mortales que te apoyan y ayudan. (No ghouls).",
-    levels: [
-      "1: Un aliado menor.",
-      "3: Aliados influyentes.",
-      "5: Autoridad enorme y servicial.",
-    ],
+    desc: "Confederados humanos, normalmente familiares o amigos.",
+    levels: [],
   },
   Contacts: {
     desc: "Personas de quienes sacar información y favores.",
-    levels: [
-      "1: Un contacto menor.",
-      "3: Bastantes contactos locales.",
-      "5: Prácticamente lo sabes todo.",
-    ],
+    levels: [],
   },
   Fame: {
-    desc: "Tu reconocimiento mundial entre los mortales.",
-    levels: [
-      "1: Conocido subcultura.",
-      "3: Famoso regional.",
-      "5: Superestrella mundial.",
-    ],
+    desc: "Lo conocido que es el personaje entre la sociedad de los mortales.",
+    levels: [],
   },
   Generation: {
-    desc: "Cercanía a Caín. Determina tu Reserva de Sangre límite.",
-    levels: [
-      "1: 12ª Gen (11 PS).",
-      "2: 11ª (12 PS).",
-      "3: 10ª (13 PS).",
-      "4: 9ª (14 PS).",
-      "5: 8ª (15 PS).",
-    ],
+    desc: "Lo alejado que está el personaje de Caín.",
+    levels: [],
   },
   Herd: {
     desc: "Mortales dispuestos a darte de beber de forma segura.",
-    levels: [
-      "1: 3 recipientes.",
-      "2: 7 recipientes.",
-      "3: 15 recipientes.",
-      "4: 30 recipientes.",
-      "5: 60 recipientes.",
-    ],
+    levels: [],
   },
   Influence: {
-    desc: "Tu capacidad de mover hilos de la política criminal o legal.",
-    levels: [
-      "1: Barrio.",
-      "3: Ciudad notable.",
-      "5: Control absoluto nacional.",
-    ],
+    desc: "El poder político del personaje en la sociedad mortal.",
+    levels: [],
   },
   Mentor: {
-    desc: "Un Vástago mayor que te protege o te enseña.",
-    levels: [
-      "1: Mentor Ancilla.",
-      "3: Mentor Antiguo.",
-      "5: Matusalén u homólogo.",
-    ],
+    desc: "El patrón vampírico que aconseja y apoya al personaje.",
+    levels: [],
   },
   Resources: {
-    desc: "Tu riqueza personal e ingresos recurrentes.",
-    levels: [
-      "1: Ahorros pequeños.",
-      "3: Rico. Sin trabajar.",
-      "5: Multimillonario internacional.",
-    ],
+    desc: "Riqueza y posesiones mensuales del personaje.",
+    levels: [],
   },
   Retainers: {
-    desc: "Ghouls o animales que te sirven y obedecen ciegamente.",
-    levels: [
-      "1: Un sirviente.",
-      "2: Dos sirvientes.",
-      "3: Tres sirvientes.",
-      "4: Cuatro.",
-      "5: Cinco servidores leales.",
-    ],
+    desc: "Seguidores, guardias y sirvientes.",
+    levels: [],
   },
   Status: {
-    desc: "Tu reputación entre los vampiros de tu Secta o Clan.",
-    levels: ["1: Reconocido.", "3: Respetado.", "5: Venerado (Príncipe)."],
+    desc: "La condición del personaje en la sociedad vampírica.",
+    levels: [],
+  },
+  Haven: {
+    desc: "Un lugar donde esconderse, con acceso franco y seguro.",
+    levels: [],
   },
 
   // Disciplines
@@ -892,6 +855,7 @@ export const COMMON_BACKGROUNDS = [
   "Resources",
   "Retainers",
   "Status",
+  "Haven",
 ];
 
 export const MAX_TRAIT_RATING = 5; // Basic limit for generation >= 8
