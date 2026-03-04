@@ -67,19 +67,6 @@ export default function CharacterSheet() {
       [topLevelKey]: updatedChar[topLevelKey],
     };
 
-    // Recalculate Humanity & Willpower if Virtues changed
-    if (path[0] === "advantages" && path[1] === "virtues") {
-      const v = updatedChar.advantages.virtues;
-      const newHumanity = v.conscience + v.selfControl;
-      const newWillpower = v.courage;
-
-      updatedChar.humanity = newHumanity;
-      updatedChar.willpower = newWillpower;
-
-      partialUpdate.humanity = newHumanity;
-      partialUpdate.willpower = newWillpower;
-    }
-
     updateCharacter(character.id, partialUpdate);
   };
 
