@@ -218,6 +218,36 @@
       }
     }
   }
+
+  .experience-group {
+    grid-column: span 3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: none;
+    margin-top: $spacing-md;
+    gap: $spacing-sm;
+
+    span {
+      font-size: 1.1rem;
+      font-family: $font-vampire;
+      color: $accent-color;
+      border-bottom: none;
+    }
+
+    .inline-input.number-input {
+      width: 60px;
+      font-size: 1.2rem;
+      border-bottom-color: rgba($accent-color, 0.5);
+      text-align: center;
+
+      &:hover,
+      &:focus {
+        border-bottom-color: $accent-color;
+        background: rgba($accent-color, 0.1);
+      }
+    }
+  }
 }
 
 .main-title {

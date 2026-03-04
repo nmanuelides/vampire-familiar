@@ -226,6 +226,18 @@ export default function CharacterSheet() {
               placeholder="Sire..."
             />
           </div>
+          <div className="info-group experience-group">
+            <span>Experiencia:</span>
+            <input
+              type="number"
+              min="0"
+              value={character.experience || 0}
+              onChange={(e) =>
+                handleUpdate(["experience"], parseInt(e.target.value) || 0)
+              }
+              className="inline-input number-input"
+            />
+          </div>
         </div>
 
         <div className="sheet-grid">

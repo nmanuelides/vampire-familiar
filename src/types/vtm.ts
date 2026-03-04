@@ -114,6 +114,7 @@ export interface VTMCharacter {
   };
 
   meritsAndFlaws?: MeritFlaw[];
+  experience: number;
 
   created_at?: string;
   creator_name?: string;
