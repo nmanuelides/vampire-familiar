@@ -62,12 +62,23 @@ export default function CharacterSheet() {
     current[path[path.length - 1]] = value;
 
     // Only send the top-level key that changed to Supabase.
-    // Sending the full object would fail because computed fields like
-    // `creator_name` and `creator_avatar_url` are not actual DB columns.
     const topLevelKey = path[0] as keyof VTMCharacter;
     const partialUpdate: Partial<VTMCharacter> = {
       [topLevelKey]: updatedChar[topLevelKey],
     };
+
+    // Recalculate Humanity & Willpower if Virtues changed
+    if (path[0] === "advantages" && path[1] === "virtues") {
+      const v = updatedChar.advantages.virtues;
+      const newHumanity = v.conscience + v.selfControl;
+      const newWillpower = v.courage;
+
+      updatedChar.humanity = newHumanity;
+      updatedChar.willpower = newWillpower;
+
+      partialUpdate.humanity = newHumanity;
+      partialUpdate.willpower = newWillpower;
+    }
 
     updateCharacter(character.id, partialUpdate);
   };
