@@ -7,6 +7,8 @@ interface DotTrackerProps {
   onChange: (newValue: number) => void;
   readOnly?: boolean;
   tooltip?: { desc: string; levels: string[] };
+  alignRight?: boolean;
+  alignLeft?: boolean;
 }
 
 export default function DotTracker({
@@ -16,6 +18,8 @@ export default function DotTracker({
   onChange,
   readOnly = false,
   tooltip,
+  alignRight = false,
+  alignLeft = false,
 }: DotTrackerProps) {
   const handleClick = (index: number) => {
     if (readOnly) return;
@@ -42,7 +46,9 @@ export default function DotTracker({
       <div className="dot-label-container">
         <span className="dot-label">{label}</span>
         {tooltip && (
-          <div className="tooltip-box">
+          <div
+            className={`tooltip-box ${alignRight ? "align-right" : ""} ${alignLeft ? "align-left" : ""}`}
+          >
             <p className="tooltip-desc">{tooltip.desc}</p>
             <ul className="tooltip-levels">
               {tooltip.levels.map((lvl, idx) => (

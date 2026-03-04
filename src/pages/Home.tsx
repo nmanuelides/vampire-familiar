@@ -59,7 +59,7 @@ export default function Home() {
         <CreateVampireCard />
 
         <div className="characters-section">
-          <h2>Tus Vampiros Creados</h2>
+          <h2 className="section-title">Tus Vampiros Creados</h2>
           {loading ? (
             <p className="loading-text">Cargando la progiene...</p>
           ) : (

@@ -72,19 +72,14 @@ export default function CharacterSheet() {
     title: string,
     data: Record<string, number>,
     pathPrefix: string[],
+    alignLeft = false,
+    alignRight = false,
   ) => (
     <div className="sheet-section">
       <h3 className="section-title text-center">{title}</h3>
       <div className="traits-list">
         {Object.entries(data)
           .sort(([keyA], [keyB]) => {
-            const rankA = ATTR_SORT_ORDER[keyA];
-            const rankB = ATTR_SORT_ORDER[keyB];
-
-            if (rankA !== undefined && rankB !== undefined) {
-              return rankA - rankB;
-            }
-
             const labelA = VTM_TRANSLATIONS[keyA] || keyA;
             const labelB = VTM_TRANSLATIONS[keyB] || keyB;
             return labelA.localeCompare(labelB);
@@ -97,6 +92,8 @@ export default function CharacterSheet() {
               max={maxDots}
               onChange={(v) => handleUpdate([...pathPrefix, key], v)}
               tooltip={ATTR_DESCRIPTIONS[key]}
+              alignLeft={alignLeft}
+              alignRight={alignRight}
             />
           ))}
       </div>
@@ -208,18 +205,25 @@ export default function CharacterSheet() {
           <div className="grid-section attributes">
             <h2 className="main-title text-center">— Atributos —</h2>
             <div className="trait-grid">
-              {renderSection("Físicos", character.attributes.physical, [
-                "attributes",
-                "physical",
-              ])}
-              {renderSection("Sociales", character.attributes.social, [
-                "attributes",
-                "social",
-              ])}
-              {renderSection("Mentales", character.attributes.mental, [
-                "attributes",
-                "mental",
-              ])}
+              {renderSection(
+                "Físicos",
+                character.attributes.physical,
+                ["attributes", "physical"],
+                true,
+              )}
+              {renderSection(
+                "Sociales",
+                character.attributes.social,
+                ["attributes", "social"],
+                false,
+                true,
+              )}
+              {renderSection(
+                "Mentales",
+                character.attributes.mental,
+                ["attributes", "mental"],
+                true,
+              )}
             </div>
           </div>
 
@@ -227,18 +231,25 @@ export default function CharacterSheet() {
           <div className="grid-section abilities">
             <h2 className="main-title text-center">— Habilidades —</h2>
             <div className="trait-grid">
-              {renderSection("Talentos", character.abilities.talents, [
-                "abilities",
-                "talents",
-              ])}
-              {renderSection("Técnicas", character.abilities.skills, [
-                "abilities",
-                "skills",
-              ])}
-              {renderSection("Conocimientos", character.abilities.knowledges, [
-                "abilities",
-                "knowledges",
-              ])}
+              {renderSection(
+                "Talentos",
+                character.abilities.talents,
+                ["abilities", "talents"],
+                true,
+              )}
+              {renderSection(
+                "Técnicas",
+                character.abilities.skills,
+                ["abilities", "skills"],
+                false,
+                true,
+              )}
+              {renderSection(
+                "Conocimientos",
+                character.abilities.knowledges,
+                ["abilities", "knowledges"],
+                true,
+              )}
             </div>
           </div>
 
@@ -246,18 +257,23 @@ export default function CharacterSheet() {
           <div className="grid-section advantages">
             <h2 className="main-title text-center">— Ventajas —</h2>
             <div className="trait-grid">
-              {renderSection("Trasfondos", character.advantages.backgrounds, [
-                "advantages",
-                "backgrounds",
-              ])}
+              {renderSection(
+                "Trasfondos",
+                character.advantages.backgrounds,
+                ["advantages", "backgrounds"],
+                true,
+              )}
               {renderSection("Disciplinas", character.advantages.disciplines, [
                 "advantages",
                 "disciplines",
               ])}
-              {renderSection("Virtudes", character.advantages.virtues, [
-                "advantages",
-                "virtues",
-              ])}
+              {renderSection(
+                "Virtudes",
+                character.advantages.virtues,
+                ["advantages", "virtues"],
+                false,
+                true,
+              )}
             </div>
           </div>
 
@@ -358,6 +374,7 @@ export default function CharacterSheet() {
                 max={10}
                 onChange={(v) => handleUpdate(["willpower"], v)}
                 tooltip={ATTR_DESCRIPTIONS["willpower"]}
+                alignLeft={true}
               />
               <DotTracker
                 label="Actual"

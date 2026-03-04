@@ -11,35 +11,37 @@
 
 .character-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
   gap: $spacing-lg;
+
+  @media (min-width: 769px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 .chronicle-title {
   text-align: center;
   margin-bottom: $spacing-lg;
   width: 100%;
+  color: $text-color; // Ensure it stays white/standard
 }
 
 .character-card {
-  background-color: rgba(
-    20,
-    20,
-    20,
-    0.25
-  ); // Semi-transparent version of $secondary-bg
+  background-color: rgba(20, 20, 20, 0.25);
   backdrop-filter: blur(16px);
   border: 1px solid rgba($border-color, 0.5);
   border-radius: $border-radius;
-  padding: $spacing-md;
   cursor: pointer;
   transition: all $transition-speed ease;
+  display: flex;
+  flex-direction: column;
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
-
-  // Use inset box-shadow for the red accent line to avoid layout shifts
   box-shadow: inset 4px 0 0 $accent-color;
+
+  @media (min-width: 769px) {
+    padding: 0; // Remove padding to let footer be edge-to-edge
+  }
 
   &::before {
     content: "";
@@ -83,21 +85,24 @@
       opacity: 1;
     }
 
-    .character-info .card-header .char-name-group .char-name {
-      color: $text-color;
+    .char-name {
+      color: $text-color !important;
+    }
+
+    .clan-icon {
+      opacity: 1;
+      transform: scale(1.1);
     }
   }
 
   &.is-shared {
     border-color: rgba($accent-color, 0.4);
-    // Combine the red accent with the shared inner glow
     box-shadow:
       inset 4px 0 0 $accent-color,
       inset 0 0 15px rgba($accent-color, 0.05);
 
     &:hover {
       border-color: $accent-color;
-      // Standard hover shadow + shared glow + widened accent
       box-shadow:
         0 6px 12px rgba(0, 0, 0, 0.4),
         0 0 15px rgba($accent-color, 0.2),
@@ -105,102 +110,131 @@
     }
   }
 
-  .character-info,
-  .char-stats {
+  .card-main,
+  .char-stats-footer {
     position: relative;
     z-index: 3;
-    margin-left: $spacing-sm;
   }
 
-  .character-info {
-    margin-bottom: $spacing-md;
-    padding-bottom: $spacing-sm;
+  .card-main {
+    margin-left: $spacing-sm;
 
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: $spacing-xs;
+    @media (min-width: 769px) {
+      padding: $spacing-md $spacing-md 0 $spacing-md;
+    }
 
-      .char-name-group {
+    .character-info {
+      margin-bottom: $spacing-md;
+
+      .card-header {
         display: flex;
-        flex-direction: column;
-        gap: 4px;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: $spacing-xs;
+        width: 100%;
 
         .char-name {
           color: $accent-color;
           margin: 0;
-          font-size: 1.5rem;
           transition: color $transition-speed ease;
+
+          @media (min-width: 769px) {
+            font-size: 1.5rem;
+          }
         }
+
+        .clan-icon {
+          height: 38px;
+          width: auto;
+          opacity: 0.7;
+          filter: brightness(0) invert(1);
+          transition:
+            transform $transition-speed ease,
+            opacity $transition-speed ease;
+        }
+      }
+
+      .char-details {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
 
         .creator-badge {
           display: flex;
           align-items: center;
           gap: 8px;
           background: rgba(0, 0, 0, 0.4);
-          padding: 4px 12px;
+          padding: 4px 12px 4px 4px;
           border-radius: 16px;
           border: 1px solid rgba($accent-color, 0.2);
           width: fit-content;
-          margin-top: 4px;
 
           .creator-avatar,
           .creator-avatar-placeholder {
             width: 24px;
             height: 24px;
             border-radius: 50%;
-            font-size: 12px;
+            font-size: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             background: $accent-color;
             color: white;
             object-fit: cover;
-            border: 1px solid rgba(255, 255, 255, 0.1);
           }
 
           .creator-name {
-            font-size: 0.85rem;
-            color: color.adjust($text-color, $alpha: -0.1);
+            font-size: 0.75rem;
+            color: rgba($text-color, 0.8);
             font-weight: 500;
-            max-width: 150px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
           }
         }
+
+        .char-clan {
+          color: color.adjust($text-color, $lightness: -20%);
+          font-weight: 600;
+          font-size: 0.85rem;
+        }
       }
-
-      .clan-icon {
-        height: 48px;
-        width: auto;
-        opacity: 0.7; // A bit subtle
-        filter: brightness(0) invert(1); // Make it white/silhouetted if the origin is black
-        transition:
-          transform $transition-speed ease,
-          opacity $transition-speed ease;
-      }
-    }
-
-    &:hover .clan-icon {
-      opacity: 1;
-      transform: scale(1.1);
-    }
-
-    .char-clan {
-      color: color.adjust($text-color, $lightness: -20%);
-      font-size: 0.9rem;
-      font-weight: 600;
     }
   }
 
-  .char-stats {
+  .char-stats-footer {
     display: flex;
     justify-content: space-between;
-    font-size: 0.85rem;
-    color: color.adjust($text-color, $lightness: -10%);
-    margin-left: $spacing-sm;
+    align-items: center;
+    margin-top: auto;
+    padding: $spacing-xs $spacing-sm;
+
+    @media (min-width: 769px) {
+      padding: $spacing-sm $spacing-md;
+    }
+    border-top: 1px solid rgba($accent-color, 0.3);
+    background: rgba(0, 0, 0, 0.35);
+    width: 100%;
+    box-sizing: border-box;
+
+    .stat-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: rgba($text-color, 0.9);
+    }
+
+    .stat-icon {
+      font-size: 0.9rem;
+    }
+
+    .stat-label {
+      opacity: 0.7;
+      font-size: 0.8rem;
+    }
+
+    .stat-value {
+      font-weight: 700;
+      color: $text-color;
+    }
   }
 }
 

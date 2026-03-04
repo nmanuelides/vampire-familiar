@@ -8,7 +8,7 @@
   padding: $spacing-xs 0;
   border-bottom: 1px dotted rgba($border-color, 0.5);
   margin-bottom: $spacing-xs;
-  position: relative;
+  position: relative; // Anchor for tooltips on wide rows? No, nested in label container is fine.
 
   &:last-child {
     border-bottom: none;
@@ -17,12 +17,17 @@
 
 .dot-label-container {
   flex: 1;
-  position: relative; // For positioning the tooltip
+  position: relative; // Primary anchor for tooltips
 
   &:hover .tooltip-box {
     opacity: 1;
     visibility: visible;
-    z-index: 1000; // Above content
+    transform: translateX(-50%) translateY(0) scale(1);
+
+    &.align-left,
+    &.align-right {
+      transform: translateX(0) translateY(0) scale(1);
+    }
   }
 }
 
@@ -31,28 +36,71 @@
   color: color.adjust($text-color, $lightness: 10%);
   text-transform: capitalize;
   padding-right: $spacing-sm;
-  cursor: help; // Indicate there's a tooltip
+  cursor: help;
+  user-select: none; // Prevent accidental selection
 }
 
 .tooltip-box {
   position: absolute;
-  top: 100%; // Just below the label
-  left: 0;
+  top: 100%;
+  left: 50%;
   width: 250px;
+  max-width: calc(100vw - 40px);
   background-color: $secondary-bg;
-  border: 1px solid $accent-color; // Red border for VTM feel
+  border: 1px solid $accent-color;
   padding: $spacing-sm;
   border-radius: $border-radius;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
 
   opacity: 0;
   visibility: hidden;
+  transform: translateX(-50%) translateY(10px) scale(0.95);
   transition:
     opacity 0.2s ease,
-    visibility 0.2s ease;
-  pointer-events: none; // Let mouse click through if needed
+    visibility 0.2s ease,
+    transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+  pointer-events: none;
 
-  // Custom font size for tooltips
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent $accent-color transparent;
+  }
+
+  // ALIGNMENT LOGIC
+  &.align-left {
+    left: 0;
+    transform: translateX(0) translateY(10px) scale(0.95);
+    &::after {
+      left: 15px;
+      margin-left: 0;
+    }
+  }
+
+  &.align-right {
+    left: auto;
+    right: 0;
+    transform: translateX(0) translateY(10px) scale(0.95);
+    &::after {
+      left: auto;
+      right: 15px;
+      margin-left: 0;
+    }
+  }
+
+  // Refinement for knowledge etc on mobile
+  @media (max-width: 480px) {
+    width: 220px; // Slightly smaller on very narrow screens
+  }
+}
+
+.tooltip-box {
   font-size: 0.8rem;
   color: $text-color;
 

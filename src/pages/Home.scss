@@ -22,9 +22,12 @@
 
   .title {
     margin: 0;
-    font-size: 3rem;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    white-space: nowrap;
+
+    @media (min-width: 769px) {
+      font-size: 3rem;
+      white-space: nowrap;
+    }
   }
 
   .header-actions {
@@ -108,13 +111,15 @@
 
 .characters-section {
   margin-top: 32px;
-  h2 {
-    color: $text-color;
-    border-bottom: 1px solid $border-color;
-    padding-bottom: $spacing-sm;
-    margin-bottom: $spacing-lg;
-    font-family: $font-vampire;
-  }
+}
+
+.section-title {
+  color: $accent-color;
+  border-bottom: 1px solid $border-color;
+  padding-bottom: $spacing-sm;
+  margin-bottom: $spacing-lg;
+  font-family: $font-vampire;
+  width: 100%;
 }
 
 .loading-text {

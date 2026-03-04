@@ -41,10 +41,39 @@ export default function CharacterList() {
                 className={`character-card ${char.user_id !== user?.id ? "is-shared" : ""}`}
                 onClick={() => navigate(`/character/${char.id}`)}
               >
-                <div className="character-info">
-                  <div className="card-header">
-                    <div className="char-name-group">
+                <div className="card-main">
+                  <div className="character-info">
+                    <div className="card-header">
                       <h3 className="char-name">{char.name}</h3>
+                      <img
+                        src={
+                          new URL(
+                            `../assets/clans/${char.clan}.png`,
+                            import.meta.url,
+                          ).href
+                        }
+                        alt={`${char.clan} logo`}
+                        className="clan-icon"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          if (target.dataset.triedFallback) {
+                            target.style.display = "none";
+                            return;
+                          }
+                          if (char.clan === "Tzimisce") {
+                            target.dataset.triedFallback = "true";
+                            target.src = new URL(
+                              "../assets/clans/Tzimice.png",
+                              import.meta.url,
+                            ).href;
+                          } else {
+                            target.style.display = "none";
+                          }
+                        }}
+                      />
+                    </div>
+
+                    <div className="char-details">
                       {char.user_id !== user?.id && char.creator_name && (
                         <div
                           className="creator-badge"
@@ -66,49 +95,44 @@ export default function CharacterList() {
                           </span>
                         </div>
                       )}
+                      <span className="char-clan">
+                        {VTM_TRANSLATIONS[char.clan] || char.clan} -{" "}
+                        {char.generation}ª Generación
+                      </span>
                     </div>
-                    <img
-                      src={
-                        new URL(
-                          `../assets/clans/${char.clan}.png`,
-                          import.meta.url,
-                        ).href
-                      }
-                      alt={`${char.clan} logo`}
-                      className="clan-icon"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        // Avoid infinite loops if both fail
-                        if (target.dataset.triedFallback) {
-                          target.style.display = "none";
-                          return;
-                        }
-
-                        if (char.clan === "Tzimisce") {
-                          target.dataset.triedFallback = "true";
-                          target.src = new URL(
-                            "../assets/clans/Tzimice.png",
-                            import.meta.url,
-                          ).href;
-                        } else {
-                          target.style.display = "none";
-                        }
-                      }}
-                    />
                   </div>
-                  <span className="char-clan">
-                    {VTM_TRANSLATIONS[char.clan] || char.clan} -{" "}
-                    {char.generation}ª Generación
-                  </span>
                 </div>
-                <div className="char-stats">
-                  <span>❤ Humanidad: {char.humanity}</span>
-                  <span>
-                    🩸 Sangre: {char.blood_pool_current}/{char.blood_pool}
-                  </span>
-                  <span>
-                    ⚡ Voluntad: {char.willpower_current}/{char.willpower}
-                  </span>
+                <div className="char-stats-footer">
+                  <div className="stat-group">
+                    <span className="stat-icon">🩸</span>
+                    <span className="stat-label">Sangre:</span>
+                    <span className="stat-value">
+                      {char.blood_pool_current}/{char.blood_pool}
+                    </span>
+                  </div>
+                  <div className="stat-group">
+                    <span className="stat-icon">✚</span>
+                    <span className="stat-label">Salud:</span>
+                    <span className="stat-value">
+                      {(() => {
+                        const healthLevels = [
+                          "incapacitated",
+                          "crippled",
+                          "mauled",
+                          "wounded",
+                          "injured",
+                          "hurt",
+                          "bruised",
+                        ];
+                        const current = healthLevels.find(
+                          (l) => char.health[l as keyof typeof char.health],
+                        );
+                        return current
+                          ? VTM_TRANSLATIONS[current]
+                          : "Saludable";
+                      })()}
+                    </span>
+                  </div>
                 </div>
               </div>
             ))}
