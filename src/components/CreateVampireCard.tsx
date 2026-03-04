@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
 import { useCharacterStore } from "../store/useCharacterStore";
 import { generateRandomVTMCharacter } from "../utils/vtmGenerator";
@@ -7,6 +8,7 @@ import type { Clan } from "../types/vtm";
 import "./CreateVampireCard.scss";
 
 export default function CreateVampireCard() {
+  const navigate = useNavigate();
   const { user } = useAuthStore();
   const { characters, addCharacter, loading } = useCharacterStore();
 
@@ -28,6 +30,11 @@ export default function CreateVampireCard() {
     e.preventDefault();
     if (!user) return;
 
+    if (!name.trim()) {
+      alert("Por favor, ingresa un nombre para el vampiro.");
+      return;
+    }
+
     if (generation < 4 || generation > 13) {
       alert("La generación debe estar entre 4 y 13.");
       return;
@@ -43,7 +50,7 @@ export default function CreateVampireCard() {
       ? "NPC"
       : user.user_metadata?.full_name || user.email || "Unknown";
 
-    const newChar = generateRandomVTMCharacter(
+    const newCharData = generateRandomVTMCharacter(
       name,
       playerName,
       clan,
@@ -54,13 +61,17 @@ export default function CreateVampireCard() {
       user.user_metadata?.avatar_url,
       isNPC,
     );
-    await addCharacter(newChar);
+    const createdChar = await addCharacter(newCharData);
 
-    // Reset form on success
-    setName("");
-    setChronicle("");
-    setIsNewChronicle(false);
-    setIsNPC(false);
+    if (createdChar?.id) {
+      // Reset form on success
+      setName("");
+      setChronicle("");
+      setIsNewChronicle(false);
+      setIsNPC(false);
+      // Navigate to the new character's sheet immediately
+      navigate(`/character/${createdChar.id}`);
+    }
   };
 
   return (

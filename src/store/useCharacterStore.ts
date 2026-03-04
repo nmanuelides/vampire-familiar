@@ -7,7 +7,7 @@ interface CharacterState {
   loading: boolean;
   error: string | null;
   fetchCharacters: (userId: string) => Promise<void>;
-  addCharacter: (character: VTMCharacter) => Promise<void>;
+  addCharacter: (character: VTMCharacter) => Promise<VTMCharacter | null>;
   updateCharacter: (
     id: string,
     character: Partial<VTMCharacter>,
@@ -45,7 +45,9 @@ export const useCharacterStore = create<CharacterState>((set, get) => ({
     }
   },
 
-  addCharacter: async (character: VTMCharacter) => {
+  addCharacter: async (
+    character: VTMCharacter,
+  ): Promise<VTMCharacter | null> => {
     set({ loading: true, error: null });
     try {
       const { data, error } = await supabase
@@ -55,12 +57,16 @@ export const useCharacterStore = create<CharacterState>((set, get) => ({
         .single();
 
       if (error) throw error;
+
+      const newChar = data as VTMCharacter;
       set({
-        characters: [data as VTMCharacter, ...get().characters],
+        characters: [newChar, ...get().characters],
         loading: false,
       });
+      return newChar;
     } catch (err: any) {
       set({ error: err.message, loading: false });
+      return null;
     }
   },
 
