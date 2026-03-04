@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useAuthStore } from "../store/useAuthStore";
 import { useCharacterStore } from "../store/useCharacterStore";
 import DotTracker from "../components/DotTracker";
 import type { VTMCharacter } from "../types/vtm";
@@ -14,19 +15,34 @@ import "./CharacterSheet.scss";
 export default function CharacterSheet() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { characters, updateCharacter, deleteCharacter } = useCharacterStore();
+  const { user } = useAuthStore();
+  const {
+    characters,
+    updateCharacter,
+    deleteCharacter,
+    fetchCharacters,
+    loading,
+  } = useCharacterStore();
   const [character, setCharacter] = useState<VTMCharacter | null>(null);
+
+  // Fetch characters if list is empty (e.g. on direct link or refresh)
+  useEffect(() => {
+    if (user && characters.length === 0 && !loading) {
+      fetchCharacters(user.id);
+    }
+  }, [user, characters.length, fetchCharacters, loading]);
 
   useEffect(() => {
     const found = characters.find((c) => c.id === id);
     if (found) {
       setCharacter(found);
-    } else {
+    } else if (!loading && characters.length > 0) {
+      // Only redirect if we're not loading and the character is truly not in the non-empty list
       navigate("/");
     }
-  }, [id, characters, navigate]);
+  }, [id, characters, navigate, loading]);
 
-  if (!character)
+  if (!character || (loading && characters.length === 0))
     return <div className="loading-text">Cargando hoja de personaje...</div>;
 
   const maxDots = getMaxTraitRating(character.generation);
