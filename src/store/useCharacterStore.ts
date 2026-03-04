@@ -74,17 +74,22 @@ export const useCharacterStore = create<CharacterState>((set, get) => ({
         ),
       });
 
+      console.log("[updateCharacter] Sending to Supabase:", { id, updates });
+
       const { error } = await supabase
         .from("characters")
         .update(updates)
         .eq("id", id);
 
       if (error) {
-        // Revert on error
+        console.error("[updateCharacter] Supabase error:", error);
         set({ characters: previousChars });
         throw error;
       }
+
+      console.log("[updateCharacter] Success (but verify RLS allows updates)!");
     } catch (err: any) {
+      console.error("[updateCharacter] Exception:", err);
       set({ error: err.message });
     }
   },

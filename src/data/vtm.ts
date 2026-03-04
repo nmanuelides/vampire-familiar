@@ -238,6 +238,631 @@ export const ATTR_DESCRIPTIONS: Record<
       "5: Sobresaliente (Reacción casi instintiva e impecable).",
     ],
   },
+
+  // Abilities - Talents
+  alertness: {
+    desc: "Tus sentidos básicos y percepción general del entorno.",
+    levels: [
+      "1: Novato.",
+      "2: Practicante.",
+      "3: Competente.",
+      "4: Experto.",
+      "5: Maestro.",
+    ],
+  },
+  athletics: {
+    desc: "Capacidad atlética general, correr, saltar, nadar.",
+    levels: [
+      "1: Activo.",
+      "2: Deportista.",
+      "3: Atleta profesional.",
+      "4: Nivel Olímpico.",
+      "5: Récord mundial.",
+    ],
+  },
+  brawl: {
+    desc: "Pelea sin armas, forcejeos y artes marciales.",
+    levels: [
+      "1: Sabes dar un golpe.",
+      "2: Matón.",
+      "3: Luchador experimentado.",
+      "4: Peleador experto.",
+      "5: Campeón mundial.",
+    ],
+  },
+  dodge: {
+    desc: "Tu capacidad para esquivar ataques o peligros.",
+    levels: [
+      "1: Sabes agacharte.",
+      "2: Rápido.",
+      "3: Ágil.",
+      "4: Difícil de tocar.",
+      "5: Intocable.",
+    ],
+  },
+  empathy: {
+    desc: "Comprender y relacionarte con los sentimientos de otros.",
+    levels: [
+      "1: Entiendes emociones.",
+      "2: Hombro para llorar.",
+      "3: Psicólogo.",
+      "4: Empatía profunda.",
+      "5: Lector de almas.",
+    ],
+  },
+  expression: {
+    desc: "Habilidad para expresar pensamientos de forma convincente.",
+    levels: [
+      "1: Locuaz.",
+      "2: Buen orador.",
+      "3: Escritor competente.",
+      "4: Autor de éxito.",
+      "5: Visionario.",
+    ],
+  },
+  intimidation: {
+    desc: "Infundir miedo mediante amenazas o tu mera presencia.",
+    levels: [
+      "1: Amenazante.",
+      "2: Matón.",
+      "3: Sargento instructor.",
+      "4: Da miedo verte.",
+      "5: Aterrador.",
+    ],
+  },
+  leadership: {
+    desc: "Capacidad para dirigir e inspirar a grupos de personas.",
+    levels: [
+      "1: Capitán de equipo.",
+      "2: Delegado.",
+      "3: Directivo.",
+      "4: Gobernador.",
+      "5: Dictador/Mesías.",
+    ],
+  },
+  streetwise: {
+    desc: "Conocer los bajos fondos y cómo desenvolverse en ellos.",
+    levels: [
+      "1: Sabes dónde comprar.",
+      "2: Tienes contactos.",
+      "3: Miembro de banda.",
+      "4: Jefe criminal.",
+      "5: Rey de los bajos fondos.",
+    ],
+  },
+  subterfuge: {
+    desc: "Ocultar tus verdaderos motivos, mentir y manipular.",
+    levels: [
+      "1: Mientes sin sonrojarte.",
+      "2: Mentiroso habitual.",
+      "3: Seductor.",
+      "4: Espía.",
+      "5: Engañas a los inmortales.",
+    ],
+  },
+
+  // Abilities - Skills
+  animalKen: {
+    desc: "Trato y domesticación de animales.",
+    levels: [
+      "1: Te gustan.",
+      "2: Paseador.",
+      "3: Adiestrador.",
+      "4: Encantador de bestias.",
+      "5: Dominas a lo salvaje.",
+    ],
+  },
+  crafts: {
+    desc: "Habilidad param crear o reparar obras de artesanía o mecánica.",
+    levels: [
+      "1: Chapuzas.",
+      "2: Arreglas averías.",
+      "3: Mecánico/Artista.",
+      "4: Profesional reconocido.",
+      "5: Maestro artesano.",
+    ],
+  },
+  drive: {
+    desc: "Manejo de vehículos terrestres en situaciones extremas.",
+    levels: [
+      "1: Sabes conducir.",
+      "2: Conductor hábil.",
+      "3: Taxista.",
+      "4: Piloto de carreras.",
+      "5: Haces trucos imposibles.",
+    ],
+  },
+  etiquette: {
+    desc: "Conocimiento de las normas sociales y diplomacia vampírica.",
+    levels: [
+      "1: Sabes qué cubierto usar.",
+      "2: Diplomático.",
+      "3: Miembro de la alta sociedad.",
+      "4: Político consumado.",
+      "5: Árbitro de la Corte.",
+    ],
+  },
+  firearms: {
+    desc: "Uso, mantenimiento y reparación de armas de fuego.",
+    levels: [
+      "1: Has disparado.",
+      "2: Cazador.",
+      "3: Policía.",
+      "4: Francotirador.",
+      "5: Maestro asesino.",
+    ],
+  },
+  melee: {
+    desc: "Combate con armas cuerpo a cuerpo (espadas, cuchillos).",
+    levels: [
+      "1: Sabes apuñalar.",
+      "2: Pandillero.",
+      "3: Esgrimista.",
+      "4: Guerrero letal.",
+      "5: Semidiós de la espada.",
+    ],
+  },
+  performance: {
+    desc: "Habilidades artísticas de actuación, música o baile.",
+    levels: [
+      "1: Canto de ducha.",
+      "2: Actor aficionado.",
+      "3: Profesional de club.",
+      "4: Músico famoso.",
+      "5: Ídolo de masas.",
+    ],
+  },
+  security: {
+    desc: "Forzar cerraduras, desactivar alarmas y eludir seguridad.",
+    levels: [
+      "1: Quitar el pestillo.",
+      "2: Ladrón de coches.",
+      "3: Lanza cajas fuertes.",
+      "4: Experto en sistemas.",
+      "5: Irrompible.",
+    ],
+  },
+  stealth: {
+    desc: "Moverse en silencio y evitar ser detectado.",
+    levels: [
+      "1: Caminas en silencio.",
+      "2: Te escondes bien.",
+      "3: Sombra.",
+      "4: Ninja.",
+      "5: Invisible.",
+    ],
+  },
+  survival: {
+    desc: "Sobrevivir en entornos hostiles, rastrear y cazar.",
+    levels: [
+      "1: Boy Scout.",
+      "2: Acampador.",
+      "3: Rastreador.",
+      "4: Superviviente nato.",
+      "5: Rey de la selva.",
+    ],
+  },
+
+  // Abilities - Knowledges
+  academics: {
+    desc: "Conocimiento general en humanidades (historia, literatura).",
+    levels: [
+      "1: Bachillerato.",
+      "2: Universitario.",
+      "3: Licenciado.",
+      "4: Doctorado.",
+      "5: Eminencia mundial.",
+    ],
+  },
+  computer: {
+    desc: "Programación, hackeo y sistemas informáticos.",
+    levels: [
+      "1: Usuario.",
+      "2: Informático.",
+      "3: Programador jefe.",
+      "4: Hacker de élite.",
+      "5: Creas IA.",
+    ],
+  },
+  finance: {
+    desc: "Manejo de dinero, inversiones y contabilidad.",
+    levels: [
+      "1: Llevas las cuentas.",
+      "2: Inversor local.",
+      "3: Corredor de bolsa.",
+      "4: Magnate.",
+      "5: Mueves economías nacionales.",
+    ],
+  },
+  investigation: {
+    desc: "Búsqueda de pistas, análisis forense y resolución.",
+    levels: [
+      "1: Observador.",
+      "2: Detective aficionado.",
+      "3: Policía forense.",
+      "4: Agente federal.",
+      "5: Sherlock Holmes.",
+    ],
+  },
+  law: {
+    desc: "Leyes mortales, procedimientos judiciales y burocracia.",
+    levels: [
+      "1: Estudiante de leyes.",
+      "2: Pasante.",
+      "3: Abogado.",
+      "4: Fiscal o Juez.",
+      "5: Redactas la Constitución.",
+    ],
+  },
+  linguistics: {
+    desc: "Comprensión de múltiples idiomas y lingüística.",
+    levels: [
+      "1: Un idioma extra.",
+      "2: Dos idiomas.",
+      "3: Cuatro idiomas.",
+      "4: Ocho idiomas.",
+      "5: Dieciséis idiomas u oscuros.",
+    ],
+  },
+  medicine: {
+    desc: "Conocimientos de anatomía y primeros auxilios.",
+    levels: [
+      "1: Primeros auxilios.",
+      "2: Paramédico.",
+      "3: Médico general.",
+      "4: Cirujano especialista.",
+      "5: Milagros médicos.",
+    ],
+  },
+  occult: {
+    desc: "Conocimiento sobre rituales, ocultismo y criaturas mágicas.",
+    levels: [
+      "1: Lector esotérico.",
+      "2: Teórico.",
+      "3: Investigador nato.",
+      "4: Adepto del misticismo.",
+      "5: Maestro de lo invisible.",
+    ],
+  },
+  politics: {
+    desc: "Conocimiento del tejemaneje del poder político.",
+    levels: [
+      "1: Activista.",
+      "2: Sindicalista.",
+      "3: Político regional.",
+      "4: Senador.",
+      "5: Presidente.",
+    ],
+  },
+  science: {
+    desc: "Química, física, biología y matemáticas.",
+    levels: [
+      "1: Sabes fórmulas.",
+      "2: Universitario.",
+      "3: Científico investigador.",
+      "4: Premio destacado.",
+      "5: Premio Nobel.",
+    ],
+  },
+
+  // Virtues
+  conscience: {
+    desc: "Discernir lo correcto de lo incorrecto y sentir remordimiento.",
+    levels: [
+      "1: Inhumano.",
+      "2: Normal.",
+      "3: Moral.",
+      "4: Ético.",
+      "5: Intachable.",
+    ],
+  },
+  selfControl: {
+    desc: "Resistir la Bestia, el Frenesí y tus oscuros instintos.",
+    levels: [
+      "1: Inestable.",
+      "2: Normal.",
+      "3: Disciplinado.",
+      "4: Férreo.",
+      "5: Imperturbable.",
+    ],
+  },
+  courage: {
+    desc: "Entereza frente al miedo, fuego, luz del sol y el Rötschreck.",
+    levels: [
+      "1: Cobarde.",
+      "2: Normal.",
+      "3: Valiente.",
+      "4: Intrépido.",
+      "5: Heroico.",
+    ],
+  },
+
+  // Core Stats
+  humanity: {
+    desc: "Tu vínculo con la moralidad mortal y distancia de la Bestia.",
+    levels: [
+      "1-3: Monstruo.",
+      "4-6: Vampiro típico.",
+      "7: Mortal normal.",
+      "8-9: Humano ejemplar.",
+      "10: Mártir / Santo.",
+    ],
+  },
+  willpower: {
+    desc: "Tu fuerza mental para superar obstáculos y forzar éxitos.",
+    levels: [
+      "1-3: Débil.",
+      "4-5: Normal.",
+      "6-7: Fuerte.",
+      "8-9: Voluntad de Hierro.",
+      "10: Inquebrantable.",
+    ],
+  },
+
+  // Backgrounds
+  Allies: {
+    desc: "Amigos mortales que te apoyan y ayudan. (No ghouls).",
+    levels: [
+      "1: Un aliado menor.",
+      "3: Aliados influyentes.",
+      "5: Autoridad enorme y servicial.",
+    ],
+  },
+  Contacts: {
+    desc: "Personas de quienes sacar información y favores.",
+    levels: [
+      "1: Un contacto menor.",
+      "3: Bastantes contactos locales.",
+      "5: Prácticamente lo sabes todo.",
+    ],
+  },
+  Fame: {
+    desc: "Tu reconocimiento mundial entre los mortales.",
+    levels: [
+      "1: Conocido subcultura.",
+      "3: Famoso regional.",
+      "5: Superestrella mundial.",
+    ],
+  },
+  Generation: {
+    desc: "Cercanía a Caín. Determina tu Reserva de Sangre límite.",
+    levels: [
+      "1: 12ª Gen (11 PS).",
+      "2: 11ª (12 PS).",
+      "3: 10ª (13 PS).",
+      "4: 9ª (14 PS).",
+      "5: 8ª (15 PS).",
+    ],
+  },
+  Herd: {
+    desc: "Mortales dispuestos a darte de beber de forma segura.",
+    levels: [
+      "1: 3 recipientes.",
+      "2: 7 recipientes.",
+      "3: 15 recipientes.",
+      "4: 30 recipientes.",
+      "5: 60 recipientes.",
+    ],
+  },
+  Influence: {
+    desc: "Tu capacidad de mover hilos de la política criminal o legal.",
+    levels: [
+      "1: Barrio.",
+      "3: Ciudad notable.",
+      "5: Control absoluto nacional.",
+    ],
+  },
+  Mentor: {
+    desc: "Un Vástago mayor que te protege o te enseña.",
+    levels: [
+      "1: Mentor Ancilla.",
+      "3: Mentor Antiguo.",
+      "5: Matusalén u homólogo.",
+    ],
+  },
+  Resources: {
+    desc: "Tu riqueza personal e ingresos recurrentes.",
+    levels: [
+      "1: Ahorros pequeños.",
+      "3: Rico. Sin trabajar.",
+      "5: Multimillonario internacional.",
+    ],
+  },
+  Retainers: {
+    desc: "Ghouls o animales que te sirven y obedecen ciegamente.",
+    levels: [
+      "1: Un sirviente.",
+      "2: Dos sirvientes.",
+      "3: Tres sirvientes.",
+      "4: Cuatro.",
+      "5: Cinco servidores leales.",
+    ],
+  },
+  Status: {
+    desc: "Tu reputación entre los vampiros de tu Secta o Clan.",
+    levels: ["1: Reconocido.", "3: Respetado.", "5: Venerado (Príncipe)."],
+  },
+
+  // Disciplines
+  Animalism: {
+    desc: "Comunicación y control sobre Bestias y la Bestia interior.",
+    levels: [
+      "1: Susurros Salvajes.",
+      "2: La Llamada.",
+      "3: Apaciguar a la Bestia.",
+      "4: Comunión de Espíritus.",
+      "5: Extraer a la Bestia.",
+    ],
+  },
+  Auspex: {
+    desc: "Sentidos sobrenaturales, lectura de auras y telepatía.",
+    levels: [
+      "1: Sentidos Agudizados.",
+      "2: Percepción del Aura.",
+      "3: El Toque del Espíritu.",
+      "4: Telepatía.",
+      "5: Proyección Astral.",
+    ],
+  },
+  Celerity: {
+    desc: "Velocidad sobrenatural y acciones adicionales por turno.",
+    levels: ["Otorga 1 acción adicional por punto gastando 1 Punto de Sangre."],
+  },
+  Chimerstry: {
+    desc: "Creación de ilusiones y engaños sensoriales casi reales.",
+    levels: [
+      "1: Fuego Fatuo.",
+      "2: Fata Morgana.",
+      "3: Aparición.",
+      "4: Permanencia.",
+      "5: Horrenda Realidad.",
+    ],
+  },
+  Dementation: {
+    desc: "Infundir locura y demencia en las mentes ajenas.",
+    levels: [
+      "1: Íncubo de Pasión.",
+      "2: Inquietar el Alma.",
+      "3: Ojos del Caos.",
+      "4: Voz de la Locura.",
+      "5: Demencia Total.",
+    ],
+  },
+  Dominate: {
+    desc: "Control mental directo, lavado de cerebro y borrar memoria.",
+    levels: [
+      "1: El Comando.",
+      "2: Hipnotismo.",
+      "3: La Mente Olvidadiza.",
+      "4: Condicionamiento.",
+      "5: Posesión.",
+    ],
+  },
+  Fortitude: {
+    desc: "Resistencia mística al daño extremo, el fuego y el sol.",
+    levels: [
+      "Añade 1 dado por punto para absorber daño (incluyendo letal y agravado).",
+    ],
+  },
+  Necromancy: {
+    desc: "El dominio esotérico de los muertos y espectros.",
+    levels: [
+      "1: Visión del Sepulcro.",
+      "2: Ojos del Muerto.",
+      "3: El Toque del Aura.",
+      "4: Llamar al Espíritu.",
+      "5: Tormento.",
+    ],
+  },
+  Obfuscate: {
+    desc: "Magia mental para esconderse, ser ignorado o cambiar de aspecto.",
+    levels: [
+      "1: La Capa de las Sombras.",
+      "2: Presencia Invisible.",
+      "3: Máscara de las Mil Caras.",
+      "4: Desvanecimiento.",
+      "5: Cubrir a la Multitud.",
+    ],
+  },
+  Obtenebration: {
+    desc: "Manipulación de las sombras, oscuridad y el Abismo.",
+    levels: [
+      "1: Juego de Sombras.",
+      "2: Mortaja de la Noche.",
+      "3: Brazos del Abismo.",
+      "4: Metamorfosis Oscura.",
+      "5: Forma Tenebrosa.",
+    ],
+  },
+  Potence: {
+    desc: "Fuerza sobrenatural masiva para dominar físicamente.",
+    levels: ["Añade 1 éxito automático en tiradas de Fuerza por nivel."],
+  },
+  Presence: {
+    desc: "Manipulación emocional intensa, devoción o terror reverencial.",
+    levels: [
+      "1: Fascinación.",
+      "2: La Mirada Aterradora.",
+      "3: Entuerto.",
+      "4: Invocación.",
+      "5: Majestad.",
+    ],
+  },
+  Protean: {
+    desc: "Cambio de forma fluído, garras letales y fundirse con la tierra.",
+    levels: [
+      "1: Ojos de la Bestia.",
+      "2: Garras de la Bestia.",
+      "3: Fusión con la Tierra.",
+      "4: La Forma de la Bestia.",
+      "5: Forma de Niebla.",
+    ],
+  },
+  Quietus: {
+    desc: "Magia de sangre asesina de los Assamitas, envenenar Vitae.",
+    levels: [
+      "1: Silencio de Muerte.",
+      "2: Debilidad.",
+      "3: Enfermedad.",
+      "4: Veneno de Sangre.",
+      "5: Gusto a Sangre.",
+    ],
+  },
+  Serpentis: {
+    desc: "Corrupción corporal serpentina de los Seguidores de Set.",
+    levels: [
+      "1: Ojos de la Serpiente.",
+      "2: La Lengua de la Serpiente.",
+      "3: Piel de la Serpiente.",
+      "4: Forma de la Serpiente.",
+      "5: El Corazón de la Serpiente.",
+    ],
+  },
+  Thaumaturgy: {
+    desc: "Magia de sangre muy versátil de los Tremere. Magia pura.",
+    levels: [
+      "Senda de la Sangre:",
+      "1: Sabor de la Sangre.",
+      "2: Furia de la Sangre.",
+      "3: Sangre de Potencia.",
+      "4: Robo de Vitae.",
+      "5: Caldero de Sangre.",
+    ],
+  },
+  Vicissitude: {
+    desc: "Moldeo antinatural de hueso y carne, como arcilla roja.",
+    levels: [
+      "1: Semblante Maleable.",
+      "2: Moldear Carne.",
+      "3: Moldear Hueso.",
+      "4: Forma Horrenda.",
+      "5: Despertar la Forma Zulo.",
+    ],
+  },
+
+  // Health
+  bruised: {
+    desc: "Rasguños ligeros. Sin penalización a ninguna acción.",
+    levels: [],
+  },
+  hurt: {
+    desc: "Dolor leve. Pierdes 1 dado de tu reserva máxima.",
+    levels: [],
+  },
+  injured: { desc: "Heridas moderadas. Pierdes 1 dado.", levels: [] },
+  wounded: { desc: "Heridas graves y dolorosas. Pierdes 2 dados.", levels: [] },
+  mauled: {
+    desc: "Huesos rotos, músculos desgarrados. Pierdes 2 dados.",
+    levels: [],
+  },
+  crippled: {
+    desc: "Al borde de caer. Pierdes 5 dados, apenas te arrastras.",
+    levels: [],
+  },
+  incapacitated: {
+    desc: "Inconsciente e inminente letargo. Ninguna acción posible.",
+    levels: [],
+  },
 };
 
 export const CLAN_DISCIPLINES: Record<Clan, string[]> = {

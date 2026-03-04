@@ -35,16 +35,25 @@ export default function CharacterSheet() {
   const handleUpdate = (path: string[], value: any) => {
     if (!character || !character.id) return;
 
-    // Create a deep copy using JSON parse/stringify for simplicity (no functions in our state)
-    const updatedChar = JSON.parse(JSON.stringify(character));
+    // Deep-clone the character to avoid direct mutation
+    const updatedChar: any = JSON.parse(JSON.stringify(character));
 
+    // Walk the path and set the new value
     let current = updatedChar;
     for (let i = 0; i < path.length - 1; i++) {
       current = current[path[i]];
     }
     current[path[path.length - 1]] = value;
 
-    updateCharacter(character.id, updatedChar);
+    // Only send the top-level key that changed to Supabase.
+    // Sending the full object would fail because computed fields like
+    // `creator_name` and `creator_avatar_url` are not actual DB columns.
+    const topLevelKey = path[0] as keyof VTMCharacter;
+    const partialUpdate: Partial<VTMCharacter> = {
+      [topLevelKey]: updatedChar[topLevelKey],
+    };
+
+    updateCharacter(character.id, partialUpdate);
   };
 
   const handleDelete = async () => {
@@ -135,23 +144,62 @@ export default function CharacterSheet() {
             <span>Crónica:</span> {character.chronicle}
           </div>
           <div className="info-group">
-            <span>Naturaleza:</span> {character.nature}
+            <span>Naturaleza:</span>
+            <input
+              type="text"
+              value={character.nature || ""}
+              onChange={(e) => handleUpdate(["nature"], e.target.value)}
+              className="inline-input"
+              placeholder="Naturaleza..."
+            />
           </div>
           <div className="info-group">
-            <span>Conducta:</span> {character.demeanor}
+            <span>Conducta:</span>
+            <input
+              type="text"
+              value={character.demeanor || ""}
+              onChange={(e) => handleUpdate(["demeanor"], e.target.value)}
+              className="inline-input"
+              placeholder="Conducta..."
+            />
           </div>
           <div className="info-group">
-            <span>Concepto:</span> {character.concept}
+            <span>Concepto:</span>
+            <input
+              type="text"
+              value={character.concept || ""}
+              onChange={(e) => handleUpdate(["concept"], e.target.value)}
+              className="inline-input"
+              placeholder="Concepto..."
+            />
           </div>
           <div className="info-group">
             <span>Clan:</span>{" "}
             {VTM_TRANSLATIONS[character.clan] || character.clan}
           </div>
           <div className="info-group">
-            <span>Generación:</span> {character.generation}ª
+            <span>Generación:</span>
+            <input
+              type="number"
+              min="3"
+              max="15"
+              value={character.generation || 13}
+              onChange={(e) =>
+                handleUpdate(["generation"], parseInt(e.target.value) || 13)
+              }
+              className="inline-input number-input"
+            />
+            ª
           </div>
           <div className="info-group">
-            <span>Sire:</span> {character.sire}
+            <span>Sire:</span>
+            <input
+              type="text"
+              value={character.sire || ""}
+              onChange={(e) => handleUpdate(["sire"], e.target.value)}
+              className="inline-input"
+              placeholder="Sire..."
+            />
           </div>
         </div>
 
@@ -298,6 +346,7 @@ export default function CharacterSheet() {
                 value={character.humanity}
                 max={10}
                 onChange={(v) => handleUpdate(["humanity"], v)}
+                tooltip={ATTR_DESCRIPTIONS["humanity"]}
               />
 
               <h3 className="section-title" style={{ marginTop: "2rem" }}>
@@ -308,6 +357,7 @@ export default function CharacterSheet() {
                 value={character.willpower}
                 max={10}
                 onChange={(v) => handleUpdate(["willpower"], v)}
+                tooltip={ATTR_DESCRIPTIONS["willpower"]}
               />
               <DotTracker
                 label="Actual"
@@ -337,20 +387,44 @@ export default function CharacterSheet() {
             <div className="status-col health-section">
               <h3 className="section-title">Salud</h3>
               <div className="health-tracker">
-                {Object.entries(character.health).map(([level, isChecked]) => (
-                  <div key={level} className="health-level">
-                    <span className="health-label">
-                      {VTM_TRANSLATIONS[level] || level}
-                    </span>
-                    <input
-                      type="checkbox"
-                      checked={isChecked}
-                      onChange={(e) =>
-                        handleUpdate(["health", level], e.target.checked)
-                      }
-                    />
-                  </div>
-                ))}
+                {(
+                  [
+                    "bruised",
+                    "hurt",
+                    "injured",
+                    "wounded",
+                    "mauled",
+                    "crippled",
+                    "incapacitated",
+                  ] as const
+                )
+                  .map(
+                    (level) =>
+                      [level, character.health[level]] as [string, boolean],
+                  )
+                  .map(([level, isChecked]) => (
+                    <div key={level} className="health-level">
+                      <div className="dot-label-container">
+                        <span className="health-label">
+                          {VTM_TRANSLATIONS[level] || level}
+                        </span>
+                        {ATTR_DESCRIPTIONS[level] && (
+                          <div className="tooltip-box">
+                            <p className="tooltip-desc">
+                              {ATTR_DESCRIPTIONS[level].desc}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={(e) =>
+                          handleUpdate(["health", level], e.target.checked)
+                        }
+                      />
+                    </div>
+                  ))}
               </div>
             </div>
           </div>

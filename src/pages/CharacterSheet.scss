@@ -177,6 +177,46 @@
       color: color.adjust($text-color, $lightness: -20%);
       margin-right: $spacing-xs;
     }
+
+    .inline-input {
+      background: transparent;
+      border: 1px solid transparent;
+      border-bottom: 1px solid rgba($border-color, 0.3);
+      color: $text-color;
+      font-family: inherit;
+      font-size: inherit;
+      padding: 2px 4px;
+      margin-left: -4px;
+      outline: none;
+      transition: all 0.2s ease;
+      width: 100%;
+      max-width: 150px;
+
+      &::placeholder {
+        color: rgba($text-color, 0.3);
+        font-style: italic;
+      }
+
+      &:hover,
+      &:focus {
+        border-bottom-color: $accent-color;
+        background: rgba(0, 0, 0, 0.2);
+      }
+
+      &.number-input {
+        width: 40px;
+        text-align: center;
+        margin-right: 4px;
+        appearance: textfield;
+        -moz-appearance: textfield;
+
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+      }
+    }
   }
 }
 
@@ -209,6 +249,11 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
+
+  .health-label {
+    cursor: help;
+    font-weight: 500;
+  }
 }
 
 .status-col {
