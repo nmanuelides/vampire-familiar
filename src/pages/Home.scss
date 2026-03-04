@@ -1,5 +1,6 @@
 @use "../styles/variables" as *;
 @use "sass:color";
+@use "Home-mobile";
 
 .home-container {
   padding: $spacing-xl 0;
@@ -123,5 +124,3 @@
 }
 
 // No longer using global .w-full utility
-
-@import "Home-mobile";

@@ -1,5 +1,6 @@
 @use "variables" as *;
 @use "sass:color";
+@use "global-mobile";
 
 @font-face {
   font-family: "Vrev";
@@ -163,5 +164,3 @@ select {
 .w-full {
   width: 100% !important;
 }
-
-@import "global-mobile";

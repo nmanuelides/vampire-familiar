@@ -1,5 +1,6 @@
 @use "../styles/variables" as *;
 @use "sass:color";
+@use "CharacterList-mobile";
 
 .character-list-wrapper {
   display: flex;
@@ -217,5 +218,3 @@
   border-radius: $border-radius;
   border: 1px dashed $border-color;
 }
-
-@import "CharacterList-mobile";

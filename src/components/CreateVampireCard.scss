@@ -1,4 +1,5 @@
 @use "../styles/variables" as *;
+@use "CreateVampireCard-mobile";
 
 .create-card {
   max-width: 900px;
@@ -85,5 +86,3 @@
     font-size: 1.2rem;
   }
 }
-
-@import "CreateVampireCard-mobile";
