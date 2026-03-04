@@ -52,6 +52,7 @@ export default function CreateVampireCard() {
       user.id,
       user.user_metadata?.full_name,
       user.user_metadata?.avatar_url,
+      isNPC,
     );
     await addCharacter(newChar);
 

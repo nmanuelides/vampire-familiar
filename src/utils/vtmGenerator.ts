@@ -36,6 +36,7 @@ export function generateRandomVTMCharacter(
   userId?: string,
   creatorName?: string,
   creatorAvatarUrl?: string,
+  isNpc: boolean = false,
 ): VTMCharacter {
   const maxTrait = getMaxTraitRating(generation);
   const maxBlood = getMaxBloodPool(generation);
@@ -47,17 +48,19 @@ export function generateRandomVTMCharacter(
     mental: { perception: 1, intelligence: 1, wits: 1 },
   };
 
-  // Assign 7/5/3 randomly to the three categories
-  const attrPoints = [7, 5, 3];
-  // shuffle attrPoints
-  for (let i = attrPoints.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [attrPoints[i], attrPoints[j]] = [attrPoints[j], attrPoints[i]];
-  }
+  if (isNpc) {
+    // Assign 7/5/3 randomly to the three categories
+    const attrPoints = [7, 5, 3];
+    // shuffle attrPoints
+    for (let i = attrPoints.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [attrPoints[i], attrPoints[j]] = [attrPoints[j], attrPoints[i]];
+    }
 
-  distributeDots(attributes.physical, attrPoints[0], maxTrait);
-  distributeDots(attributes.social, attrPoints[1], maxTrait);
-  distributeDots(attributes.mental, attrPoints[2], maxTrait);
+    distributeDots(attributes.physical, attrPoints[0], maxTrait);
+    distributeDots(attributes.social, attrPoints[1], maxTrait);
+    distributeDots(attributes.mental, attrPoints[2], maxTrait);
+  }
 
   // 2. Abilities (start at 0)
   const abilities = {
@@ -99,17 +102,22 @@ export function generateRandomVTMCharacter(
     },
   };
 
-  const abilityPoints = [13, 9, 5];
-  for (let i = abilityPoints.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [abilityPoints[i], abilityPoints[j]] = [abilityPoints[j], abilityPoints[i]];
-  }
+  if (isNpc) {
+    const abilityPoints = [13, 9, 5];
+    for (let i = abilityPoints.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [abilityPoints[i], abilityPoints[j]] = [
+        abilityPoints[j],
+        abilityPoints[i],
+      ];
+    }
 
-  // max 3 points in any ability during character creation
-  const abilityMaxGen = Math.min(3, maxTrait);
-  distributeDots(abilities.talents, abilityPoints[0], abilityMaxGen);
-  distributeDots(abilities.skills, abilityPoints[1], abilityMaxGen);
-  distributeDots(abilities.knowledges, abilityPoints[2], abilityMaxGen);
+    // max 3 points in any ability during character creation
+    const abilityMaxGen = Math.min(3, maxTrait);
+    distributeDots(abilities.talents, abilityPoints[0], abilityMaxGen);
+    distributeDots(abilities.skills, abilityPoints[1], abilityMaxGen);
+    distributeDots(abilities.knowledges, abilityPoints[2], abilityMaxGen);
+  }
 
   // 3. Disciplines (3 points in clan disciplines)
   const clanDisciplines = CLAN_DISCIPLINES[clan];
@@ -117,14 +125,18 @@ export function generateRandomVTMCharacter(
   clanDisciplines.forEach((d) => {
     disciplines[d] = 0;
   });
-  distributeDots(disciplines, 3, maxTrait);
+  if (isNpc) {
+    distributeDots(disciplines, 3, maxTrait);
+  }
 
   // 4. Backgrounds (5 points)
   const backgroundsObj: Record<string, number> = {};
   COMMON_BACKGROUNDS.forEach((b) => {
     backgroundsObj[b] = 0;
   });
-  distributeDots(backgroundsObj, 5, maxTrait);
+  if (isNpc) {
+    distributeDots(backgroundsObj, 5, maxTrait);
+  }
 
   // Filter out 0 value backgrounds
   const backgrounds: Record<string, number> = {};
@@ -138,7 +150,9 @@ export function generateRandomVTMCharacter(
     selfControl: 1,
     courage: 1,
   };
-  distributeDots(virtues, 7, maxTrait);
+  if (isNpc) {
+    distributeDots(virtues, 7, maxTrait);
+  }
 
   // 6. Humanity & Willpower
   const humanity = virtues.conscience + virtues.selfControl;
