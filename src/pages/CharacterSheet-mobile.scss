@@ -86,12 +86,22 @@
       grid-column: span 2;
       width: 100%;
 
+      .traits-list {
+        max-width: 60%; // Don't stretch too wide across the 2-col span
+      }
+
       .dot-tracker {
+        flex-direction: row;
+        justify-content: space-between;
         align-items: center;
-        text-align: center;
+        text-align: left;
+
+        .dot-label-container {
+          flex: 1;
+        }
 
         .dots-container {
-          justify-content: center;
+          justify-content: flex-end;
         }
       }
     }
