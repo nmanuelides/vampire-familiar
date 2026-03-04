@@ -110,6 +110,7 @@
     color: color.adjust($text-color, $lightness: 20%);
     border-bottom: 1px solid rgba($border-color, 0.5);
     padding-bottom: $spacing-xs;
+    user-select: none;
   }
 
   .tooltip-levels {

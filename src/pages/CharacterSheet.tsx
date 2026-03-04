@@ -271,7 +271,6 @@ export default function CharacterSheet() {
                 "Virtudes",
                 character.advantages.virtues,
                 ["advantages", "virtues"],
-                false,
                 true,
               )}
             </div>
@@ -426,7 +425,7 @@ export default function CharacterSheet() {
                           {VTM_TRANSLATIONS[level] || level}
                         </span>
                         {ATTR_DESCRIPTIONS[level] && (
-                          <div className="tooltip-box">
+                          <div className="tooltip-box align-left">
                             <p className="tooltip-desc">
                               {ATTR_DESCRIPTIONS[level].desc}
                             </p>
