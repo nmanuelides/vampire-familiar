@@ -1,4 +1,5 @@
 @use "../styles/variables" as *;
+@use "sass:color";
 
 .auth-layout {
   min-height: 100vh;
@@ -34,7 +35,7 @@
 
   label {
     font-weight: 600;
-    color: lighten($border-color, 30%);
+    color: color.adjust($border-color, $lightness: 30%);
   }
 
   .password-input-wrapper {
@@ -56,7 +57,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: lighten($border-color, 20%);
+      color: color.adjust($border-color, $lightness: 20%);
       cursor: pointer;
       transition: color $transition-speed ease;
       box-shadow: none !important;
@@ -87,7 +88,7 @@
 
 .toggle-text {
   margin-top: $spacing-lg;
-  color: lighten($border-color, 40%);
+  color: color.adjust($border-color, $lightness: 40%);
 
   .toggle-link {
     color: $accent-color;

@@ -96,8 +96,8 @@ export const VTM_TRANSLATIONS: Record<string, string> = {
   Status: "Posición",
 
   // Virtues
-  conscience: "Conciencia",
-  selfControl: "Autocontrol",
+  conscience: "Conciencia / Convicción",
+  selfControl: "Autocontrol / Instintos",
   courage: "Coraje",
 
   // Health
@@ -138,6 +138,10 @@ export const ATTR_SORT_ORDER: Record<string, number> = {
   perception: 1,
   intelligence: 2,
   wits: 3,
+  // Virtudes
+  conscience: 1,
+  selfControl: 2,
+  courage: 3,
 };
 
 export const ATTR_DESCRIPTIONS: Record<

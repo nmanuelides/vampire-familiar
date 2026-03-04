@@ -1,4 +1,5 @@
 @use "../styles/variables" as *;
+@use "sass:color";
 
 .character-sheet-container {
   padding: $spacing-xl 0;
@@ -17,6 +18,35 @@
     text-align: center;
     flex: 1;
     line-height: 1.1;
+
+    &.character-header-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-size: 1.8rem;
+      color: $accent-color;
+
+      .header-avatar,
+      .header-avatar-placeholder {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        border: 2px solid $accent-color;
+        object-fit: cover;
+        box-shadow: 0 0 8px rgba($accent-color, 0.4);
+      }
+
+      .header-avatar-placeholder {
+        background-color: rgba(0, 0, 0, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: $font-vampire;
+        font-size: 1.5rem;
+        color: $accent-color;
+      }
+    }
   }
 
   .back-btn,
@@ -26,7 +56,7 @@
     color: $text-color;
 
     &:hover {
-      background-color: lighten($secondary-bg, 10%);
+      background-color: color.adjust($secondary-bg, $lightness: 10%);
     }
   }
 
@@ -59,7 +89,9 @@
     background-size: contain;
     opacity: 0.2; // Slightly more visible for confirmation
     pointer-events: none;
-    filter: grayscale(1); // Keep it monochrome
+    filter: grayscale(1) invert(1) opacity(0.3); // Keep it monochrome
+    filter: invert(21%) sepia(100%) saturate(7414%) hue-rotate(359deg)
+      brightness(94%) contrast(117%) opacity(0.4);
   }
 
   // Clan-specific backgrounds
@@ -129,29 +161,32 @@
     17,
     0.4
   ); // Semi-transparent to let logo show through
-  .main-title {
-    font-size: 1.8rem;
-    margin: $spacing-xl 0 $spacing-lg 0;
-    color: $accent-color;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-  }
   border-bottom: 2px solid $accent-color;
   border-radius: $border-radius;
   backdrop-filter: blur(2px); // Subtle blur for premium feel
 
   .info-group {
     font-size: 0.95rem;
-    color: lighten($text-color, 10%);
+    color: color.adjust($text-color, $lightness: 10%);
     border-bottom: 1px solid $border-color;
     padding-bottom: $spacing-xs;
 
     span {
       font-weight: bold;
-      color: darken($text-color, 20%);
+      color: color.adjust($text-color, $lightness: -20%);
       margin-right: $spacing-xs;
     }
   }
+}
+
+.main-title {
+  font-size: 1.8rem;
+  margin: $spacing-xl 0 $spacing-lg 0;
+  color: $accent-color;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-align: center;
+  width: 100%;
 }
 
 .trait-grid {
@@ -168,15 +203,6 @@
   width: 100%;
 }
 
-.flex-col {
-  display: flex;
-  flex-direction: column;
-}
-
-.flex-center {
-  align-items: center;
-}
-
 .health-level {
   display: flex;
   justify-content: space-between;
@@ -186,6 +212,9 @@
 
 .status-col {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   background-color: rgba(0, 0, 0, 0.3); // Darker but semi-transparent
   padding: $spacing-lg;
   border-radius: $border-radius;
@@ -197,6 +226,90 @@
     margin-bottom: $spacing-lg;
     text-align: center;
     width: 100%;
+  }
+}
+
+.merits-flaws-container {
+  padding: $spacing-md $spacing-lg;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: $border-radius;
+  margin-bottom: $spacing-lg;
+
+  .mf-add-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: $spacing-md;
+
+    input[type="text"] {
+      flex: 1;
+      font-size: 0.9rem;
+      padding: 8px 12px;
+      background-color: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba($border-color, 0.5);
+      border-radius: 4px;
+      color: $text-color;
+
+      &:focus {
+        border-color: $accent-color;
+        outline: none;
+      }
+    }
+
+    .add-mf-btn {
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      background-color: $accent-color;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: color.adjust($accent-color, $lightness: -10%);
+      }
+    }
+  }
+
+  .merits-flaws-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    .mf-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 4px;
+      border-left: 2px solid $accent-color;
+
+      .mf-name {
+        font-size: 0.95rem;
+        color: color.adjust($text-color, $lightness: 10%);
+      }
+
+      .mf-remove {
+        background: transparent;
+        border: none;
+        color: rgba($text-color, 0.4);
+        font-size: 1.2rem;
+        cursor: pointer;
+        line-height: 1;
+        padding: 0 4px;
+        transition: color 0.2s;
+
+        &:hover {
+          color: $error-color;
+        }
+      }
+    }
   }
 }
 

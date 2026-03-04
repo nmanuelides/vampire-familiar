@@ -100,7 +100,24 @@ export default function CharacterSheet() {
         <button className="back-btn" onClick={() => navigate("/")}>
           &larr; Volver
         </button>
-        <h1 className="title">Vampiro: La Mascarada</h1>
+        <div className="title character-header-title">
+          {character.creator_avatar_url ? (
+            <img
+              src={character.creator_avatar_url}
+              alt={character.creator_name || character.player}
+              className="header-avatar"
+            />
+          ) : (
+            <div className="header-avatar-placeholder">
+              {(character.creator_name || character.player || "?")
+                .charAt(0)
+                .toUpperCase()}
+            </div>
+          )}
+          <span>
+            {character.name} - {character.player}
+          </span>
+        </div>
         <button className="delete-btn" onClick={handleDelete}>
           Destruir
         </button>
@@ -196,9 +213,85 @@ export default function CharacterSheet() {
             </div>
           </div>
 
+          {/* Merits and Flaws */}
+          <div className="grid-section merits-flaws">
+            <h2 className="main-title text-center">— Méritos y Defectos —</h2>
+            <div className="merits-flaws-container">
+              <div className="mf-add-row">
+                <input
+                  type="text"
+                  placeholder="Añadir mérito o defecto (ej: Sentidos Agudos 1)..."
+                  id="new-mf-name"
+                  onKeyPress={(e: any) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      const nameInput = document.getElementById(
+                        "new-mf-name",
+                      ) as HTMLInputElement;
+                      if (nameInput.value.trim()) {
+                        const newList = [
+                          ...(character.meritsAndFlaws || []),
+                          {
+                            name: nameInput.value.trim(),
+                          },
+                        ];
+                        handleUpdate(["meritsAndFlaws"], newList);
+                        nameInput.value = "";
+                      }
+                    }
+                  }}
+                />
+                <button
+                  className="add-mf-btn"
+                  title="Añadir Mérito/Defecto"
+                  onClick={() => {
+                    const nameInput = document.getElementById(
+                      "new-mf-name",
+                    ) as HTMLInputElement;
+                    if (nameInput.value.trim()) {
+                      const newList = [
+                        ...(character.meritsAndFlaws || []),
+                        {
+                          name: nameInput.value.trim(),
+                        },
+                      ];
+                      handleUpdate(["meritsAndFlaws"], newList);
+                      nameInput.value = "";
+                    }
+                  }}
+                >
+                  +
+                </button>
+              </div>
+
+              {character.meritsAndFlaws &&
+                character.meritsAndFlaws.length > 0 && (
+                  <div className="merits-flaws-list">
+                    {character.meritsAndFlaws.map((mf, index) => (
+                      <div key={index} className="mf-item">
+                        <span className="mf-name">{mf.name}</span>
+                        <button
+                          className="mf-remove"
+                          title="Eliminar"
+                          onClick={() => {
+                            const newList = (
+                              character.meritsAndFlaws || []
+                            ).filter((_, i) => i !== index);
+                            handleUpdate(["meritsAndFlaws"], newList);
+                          }}
+                        >
+                          &times;
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+            </div>
+          </div>
+
           {/* Core Stats Overlay */}
           <div className="status-grid">
-            <div className="status-col flex-col flex-center">
+            <div className="status-col">
               <h3 className="section-title">Humanidad</h3>
               <DotTracker
                 label=""
@@ -208,7 +301,7 @@ export default function CharacterSheet() {
               />
 
               <h3 className="section-title" style={{ marginTop: "2rem" }}>
-                Voluntad
+                Fierza de Voluntad
               </h3>
               <DotTracker
                 label="Permanente"
@@ -224,7 +317,7 @@ export default function CharacterSheet() {
               />
             </div>
 
-            <div className="status-col flex-col flex-center">
+            <div className="status-col">
               <h3 className="section-title">Reserva de Sangre</h3>
               <div className="blood-pool-grid">
                 {Array.from({ length: character.blood_pool }).map((_, i) => (
@@ -241,7 +334,7 @@ export default function CharacterSheet() {
               </div>
             </div>
 
-            <div className="status-col health-section flex-col items-center">
+            <div className="status-col health-section">
               <h3 className="section-title">Salud</h3>
               <div className="health-tracker">
                 {Object.entries(character.health).map(([level, isChecked]) => (

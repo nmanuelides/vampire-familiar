@@ -1,4 +1,5 @@
 @use "variables" as *;
+@use "sass:color";
 
 @font-face {
   font-family: "Vrev";
@@ -110,7 +111,7 @@ textarea {
     margin-bottom: $spacing-xs;
     font-size: 1.1rem;
     font-weight: 600;
-    color: lighten($text-color, 10%);
+    color: color.adjust($text-color, $lightness: 10%);
   }
 }
 

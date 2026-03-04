@@ -13,6 +13,10 @@ export type Clan =
   | "Tzimisce"
   | "Ventrue";
 
+export interface MeritFlaw {
+  name: string;
+}
+
 export interface VTMCharacter {
   id?: string;
   user_id?: string;
@@ -108,6 +112,8 @@ export interface VTMCharacter {
     crippled: boolean;
     incapacitated: boolean;
   };
+
+  meritsAndFlaws?: MeritFlaw[];
 
   created_at?: string;
   creator_name?: string;

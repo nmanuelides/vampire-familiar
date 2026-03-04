@@ -176,6 +176,7 @@ export function generateRandomVTMCharacter(
       crippled: false,
       incapacitated: false,
     },
+    meritsAndFlaws: [],
     created_at: new Date().toISOString(),
     creator_name: creatorName,
     creator_avatar_url: creatorAvatarUrl,
