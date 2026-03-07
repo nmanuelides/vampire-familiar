@@ -89,6 +89,7 @@ export default function CharacterSheet() {
     alignLeft = false,
     alignRight = false,
     cost?: string,
+    isDiscipline = false,
   ) => (
     <div className="sheet-section">
       <h3 className="section-title text-center">{title}</h3>
@@ -110,6 +111,7 @@ export default function CharacterSheet() {
               tooltip={ATTR_DESCRIPTIONS[key]}
               alignLeft={alignLeft}
               alignRight={alignRight}
+              isDiscipline={isDiscipline}
             />
           ))}
       </div>
@@ -309,6 +311,7 @@ export default function CharacterSheet() {
                 false,
                 false,
                 "(costo: 7 por círculo)",
+                true,
               )}
               {renderSection(
                 "Virtudes",

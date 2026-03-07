@@ -9,6 +9,7 @@ interface DotTrackerProps {
   tooltip?: { desc: string; levels: string[] };
   alignRight?: boolean;
   alignLeft?: boolean;
+  isDiscipline?: boolean;
 }
 
 export default function DotTracker({
@@ -20,6 +21,7 @@ export default function DotTracker({
   tooltip,
   alignRight = false,
   alignLeft = false,
+  isDiscipline = false,
 }: DotTrackerProps) {
   const handleClick = (index: number) => {
     if (readOnly) return;
@@ -51,9 +53,29 @@ export default function DotTracker({
           >
             <p className="tooltip-desc">{tooltip.desc}</p>
             <ul className="tooltip-levels">
-              {tooltip.levels.map((lvl, idx) => (
-                <li key={idx}>{lvl}</li>
-              ))}
+              {tooltip.levels
+                .filter((lvl) => {
+                  if (!isDiscipline) return true;
+                  // Only filter for disciplines if it's a level-specific line (e.g., "1: ...")
+                  const levelMatch = lvl.match(/^(\d+):/);
+                  if (levelMatch) {
+                    const levelVal = parseInt(levelMatch[1], 10);
+                    return levelVal <= value;
+                  }
+                  // Keep headers or general descriptive text
+                  return true;
+                })
+                .map((lvl, idx) => {
+                  // Determine if this level should be highlighted.
+                  const isCurrent = lvl.startsWith(`${value}:`);
+
+                  return (
+                    <li key={idx} className={isCurrent ? "active-level" : ""}>
+                      {isCurrent && <span className="active-marker">• </span>}
+                      {lvl}
+                    </li>
+                  );
+                })}
             </ul>
           </div>
         )}

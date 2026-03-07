@@ -121,6 +121,18 @@
     li {
       margin-bottom: 2px;
       line-height: 1.2;
+      transition: all 0.2s ease;
+
+      &.active-level {
+        color: $accent-color;
+        font-weight: bold;
+        transform: translateX(4px);
+      }
+
+      .active-marker {
+        color: $accent-color;
+        font-weight: bold;
+      }
 
       &:last-child {
         margin-bottom: 0;
