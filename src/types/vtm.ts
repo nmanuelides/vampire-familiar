@@ -119,4 +119,5 @@ export interface VTMCharacter {
   created_at?: string;
   creator_name?: string;
   creator_avatar_url?: string;
+  is_locked?: boolean;
 }
