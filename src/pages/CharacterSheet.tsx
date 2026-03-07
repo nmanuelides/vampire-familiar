@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
 import { useCharacterStore } from "../store/useCharacterStore";
@@ -22,15 +22,18 @@ export default function CharacterSheet() {
     updateCharacter,
     deleteCharacter,
     fetchCharacters,
+    subscribeToCharacterUpdates,
     loading,
   } = useCharacterStore();
 
-  const [character, setCharacter] = useState<VTMCharacter | null>(null);
+  const characterFromStore = characters.find((c) => c.id === id);
   const [localChar, setLocalChar] = useState<VTMCharacter | null>(null);
 
-  const isAdmin = user?.email === "magatsu82@gmail.com";
-  const isLocked = character?.is_locked ?? true;
-  const isOwner = character?.user_id === user?.id;
+  const isAdmin =
+    user?.email === "magatsu82@gmail.com" ||
+    user?.email === "magatsu83@gmail.com";
+  const isLocked = characterFromStore?.is_locked ?? true;
+  const isOwner = characterFromStore?.user_id === user?.id;
 
   // Fetch characters if list is empty (e.g. on direct link or refresh)
   useEffect(() => {
@@ -39,20 +42,32 @@ export default function CharacterSheet() {
     }
   }, [user, characters.length, fetchCharacters, loading]);
 
+  // Real-time subscription for the current character
   useEffect(() => {
-    const found = characters.find((c) => c.id === id);
-    if (found) {
-      setCharacter(found);
-      // Initialize localChar if not already editing or if lock status changes to UNLOCKED
-      if (!localChar || found.is_locked !== character?.is_locked) {
-        setLocalChar(JSON.parse(JSON.stringify(found)));
+    if (id) {
+      const unsubscribe = subscribeToCharacterUpdates(id);
+      return () => unsubscribe();
+    }
+  }, [id, subscribeToCharacterUpdates]);
+
+  const prevLockedRef = useRef(characterFromStore?.is_locked);
+
+  useEffect(() => {
+    if (characterFromStore) {
+      // Initialize or re-sync localChar if lock status changes to UNLOCKED
+      if (
+        !localChar ||
+        characterFromStore.is_locked !== prevLockedRef.current
+      ) {
+        setLocalChar(JSON.parse(JSON.stringify(characterFromStore)));
       }
+      prevLockedRef.current = characterFromStore.is_locked;
     } else if (!loading && characters.length > 0) {
       navigate("/");
     }
-  }, [id, characters, navigate, loading, character?.is_locked]);
+  }, [id, characterFromStore, navigate, loading]);
 
-  if (!character || !localChar || (loading && characters.length === 0))
+  if (!characterFromStore || !localChar || (loading && characters.length === 0))
     return <div className="loading-text">Cargando hoja de personaje...</div>;
 
   const maxDots = getMaxTraitRating(localChar.generation);
@@ -71,25 +86,28 @@ export default function CharacterSheet() {
   };
 
   const handleToggleLock = async () => {
-    if (!character?.id || !isAdmin) return;
+    if (!characterFromStore?.id || !isAdmin) return;
     const newLockStatus = !isLocked;
-    await updateCharacter(character.id, { is_locked: newLockStatus });
+    await updateCharacter(characterFromStore.id, { is_locked: newLockStatus });
   };
 
   const handleSave = async () => {
-    if (!character?.id || !localChar || isLocked) return;
+    if (!characterFromStore?.id || !localChar || isLocked) return;
     // Save all changes and re-lock
-    await updateCharacter(character.id, { ...localChar, is_locked: true });
+    await updateCharacter(characterFromStore.id, {
+      ...localChar,
+      is_locked: true,
+    });
   };
 
   const handleDelete = async () => {
-    if (!character?.id) return;
+    if (!characterFromStore?.id) return;
     if (
       window.confirm(
         "¿Estás seguro de que deseas eliminar este vampiro para siempre?",
       )
     ) {
-      await deleteCharacter(character.id);
+      await deleteCharacter(characterFromStore.id);
       navigate("/");
     }
   };
@@ -362,12 +380,12 @@ export default function CharacterSheet() {
                         ) as HTMLInputElement;
                         if (nameInput.value.trim()) {
                           const newList = [
-                            ...(localChar.meritsAndFlaws || []),
+                            ...(localChar.merits_and_flaws || []),
                             {
                               name: nameInput.value.trim(),
                             },
                           ];
-                          handleUpdate(["meritsAndFlaws"], newList);
+                          handleUpdate(["merits_and_flaws"], newList);
                           nameInput.value = "";
                         }
                       }
@@ -381,12 +399,12 @@ export default function CharacterSheet() {
                       ) as HTMLInputElement;
                       if (nameInput.value.trim()) {
                         const newList = [
-                          ...(localChar.meritsAndFlaws || []),
+                          ...(localChar.merits_and_flaws || []),
                           {
                             name: nameInput.value.trim(),
                           },
                         ];
-                        handleUpdate(["meritsAndFlaws"], newList);
+                        handleUpdate(["merits_and_flaws"], newList);
                         nameInput.value = "";
                       }
                     }}
@@ -396,7 +414,7 @@ export default function CharacterSheet() {
                 </div>
               )}
               <div className="merits-flaws-list">
-                {(localChar.meritsAndFlaws || []).map((mf, idx) => (
+                {(localChar.merits_and_flaws || []).map((mf, idx) => (
                   <div key={idx} className="mf-item">
                     <span className="mf-name">{mf.name}</span>
                     {!isLocked && (
@@ -404,9 +422,9 @@ export default function CharacterSheet() {
                         className="mf-remove"
                         onClick={() => {
                           const newList = (
-                            localChar.meritsAndFlaws || []
+                            localChar.merits_and_flaws || []
                           ).filter((_, i) => i !== idx);
-                          handleUpdate(["meritsAndFlaws"], newList);
+                          handleUpdate(["merits_and_flaws"], newList);
                         }}
                       >
                         ×
@@ -495,7 +513,7 @@ export default function CharacterSheet() {
                 )
                   .map(
                     (level) =>
-                      [level, character.health[level]] as [string, boolean],
+                      [level, localChar.health[level]] as [string, boolean],
                   )
                   .map(([level, isChecked]) => (
                     <div key={level} className="health-level">

@@ -13,6 +13,7 @@ interface CharacterState {
     character: Partial<VTMCharacter>,
   ) => Promise<void>;
   deleteCharacter: (id: string) => Promise<void>;
+  subscribeToCharacterUpdates: (id: string) => () => void;
 }
 
 export const useCharacterStore = create<CharacterState>((set, get) => ({
@@ -30,7 +31,10 @@ export const useCharacterStore = create<CharacterState>((set, get) => ({
       // Otherwise, they only see their own.
       const userEmail = (await supabase.auth.getUser()).data.user?.email;
 
-      if (userEmail !== "magatsu82@gmail.com") {
+      if (
+        userEmail !== "magatsu82@gmail.com" &&
+        userEmail !== "magatsu83@gmail.com"
+      ) {
         query = query.eq("user_id", userId);
       }
 
@@ -82,10 +86,11 @@ export const useCharacterStore = create<CharacterState>((set, get) => ({
 
       console.log("[updateCharacter] Sending to Supabase:", { id, updates });
 
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("characters")
         .update(updates)
-        .eq("id", id);
+        .eq("id", id)
+        .select();
 
       if (error) {
         console.error("[updateCharacter] Supabase error:", error);
@@ -93,7 +98,17 @@ export const useCharacterStore = create<CharacterState>((set, get) => ({
         throw error;
       }
 
-      console.log("[updateCharacter] Success (but verify RLS allows updates)!");
+      if (!data || data.length === 0) {
+        console.error(
+          "[updateCharacter] RLS Blocked the update! 0 rows affected.",
+        );
+        set({ characters: previousChars });
+        throw new Error(
+          "No tienes permisos para actualizar este personaje en la base de datos.",
+        );
+      }
+
+      console.log("[updateCharacter] Success! Rows affected:", data.length);
     } catch (err: any) {
       console.error("[updateCharacter] Exception:", err);
       set({ error: err.message });
@@ -115,5 +130,36 @@ export const useCharacterStore = create<CharacterState>((set, get) => ({
     } catch (err: any) {
       set({ error: err.message });
     }
+  },
+
+  subscribeToCharacterUpdates: (id: string) => {
+    const channel = supabase
+      .channel(`character-updates-${id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "characters",
+          filter: `id=eq.${id}`,
+        },
+        (payload) => {
+          console.log("[Realtime] Character update received:", payload.new);
+          const updates = payload.new as Partial<VTMCharacter>;
+          set((state) => ({
+            characters: state.characters.map((c) =>
+              c.id === id ? { ...c, ...updates } : c,
+            ),
+          }));
+        },
+      )
+      .subscribe((status) => {
+        console.log(`[Realtime] Subscription status for ${id}:`, status);
+      });
+
+    return () => {
+      console.log("[Realtime] Unsubscribing from character:", id);
+      supabase.removeChannel(channel);
+    };
   },
 }));

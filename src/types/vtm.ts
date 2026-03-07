@@ -113,7 +113,7 @@ export interface VTMCharacter {
     incapacitated: boolean;
   };
 
-  meritsAndFlaws?: MeritFlaw[];
+  merits_and_flaws?: MeritFlaw[];
   experience: number;
 
   created_at?: string;

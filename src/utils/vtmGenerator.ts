@@ -190,10 +190,11 @@ export function generateRandomVTMCharacter(
       crippled: false,
       incapacitated: false,
     },
-    meritsAndFlaws: [],
+    merits_and_flaws: [],
     experience: 0,
     created_at: new Date().toISOString(),
     creator_name: creatorName,
     creator_avatar_url: creatorAvatarUrl,
+    is_locked: true,
   };
 }
