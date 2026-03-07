@@ -15,19 +15,20 @@
   }
 }
 
-.dot-label-container {
+.dot-label-column {
   flex: 1;
-  position: relative; // Primary anchor for tooltips
+  display: flex;
+  align-items: center;
+}
+
+.tooltip-anchor {
+  position: relative;
+  display: inline-block; // Fits exactly to the text width
 
   &:hover .tooltip-box {
     opacity: 1;
     visibility: visible;
-    transform: translateX(-50%) translateY(0) scale(1);
-
-    &.align-left,
-    &.align-right {
-      transform: translateX(0) translateY(0) scale(1);
-    }
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -37,13 +38,14 @@
   text-transform: capitalize;
   padding-right: $spacing-sm;
   cursor: help;
-  user-select: none; // Prevent accidental selection
+  user-select: none;
+  display: block; // Ensures it defines the anchor width
 }
 
 .tooltip-box {
   position: absolute;
   top: 100%;
-  left: 50%;
+  left: 0; // Default: Start at beginning of label
   width: 250px;
   max-width: calc(100vw - 40px);
   background-color: $secondary-bg;
@@ -55,7 +57,7 @@
 
   opacity: 0;
   visibility: hidden;
-  transform: translateX(-50%) translateY(10px) scale(0.95);
+  transform: translateY(10px) scale(0.95);
   transition:
     opacity 0.2s ease,
     visibility 0.2s ease,
@@ -66,31 +68,51 @@
     content: "";
     position: absolute;
     bottom: 100%;
-    left: 50%;
-    margin-left: -5px;
+    left: 15px; // Default: Arrow near the start
     border-width: 5px;
     border-style: solid;
     border-color: transparent transparent $accent-color transparent;
   }
 
   // ALIGNMENT LOGIC
+  &.mobile-align-right {
+    @media (max-width: 768px) {
+      left: auto;
+      right: 0; // Start at end of label, expand left
+      &::after {
+        left: auto;
+        right: 15px;
+      }
+    }
+  }
+
+  &.desktop-align-right {
+    @media (min-width: 769px) {
+      left: auto;
+      right: 0; // Start at end of label, expand left
+      &::after {
+        left: auto;
+        right: 15px;
+      }
+    }
+  }
+
+  // Deprecated classes cleanup
   &.align-left {
     left: 0;
-    transform: translateX(0) translateY(10px) scale(0.95);
+    right: auto;
     &::after {
       left: 15px;
-      margin-left: 0;
+      right: auto;
     }
   }
 
   &.align-right {
     left: auto;
     right: 0;
-    transform: translateX(0) translateY(10px) scale(0.95);
     &::after {
       left: auto;
       right: 15px;
-      margin-left: 0;
     }
   }
 

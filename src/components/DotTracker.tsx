@@ -7,8 +7,8 @@ interface DotTrackerProps {
   onChange: (newValue: number) => void;
   readOnly?: boolean;
   tooltip?: { desc: string; levels: string[] };
-  alignRight?: boolean;
-  alignLeft?: boolean;
+  mobileAlignRight?: boolean;
+  desktopAlignRight?: boolean;
   isDiscipline?: boolean;
 }
 
@@ -19,8 +19,8 @@ export default function DotTracker({
   onChange,
   readOnly = false,
   tooltip,
-  alignRight = false,
-  alignLeft = false,
+  mobileAlignRight = false,
+  desktopAlignRight = false,
   isDiscipline = false,
 }: DotTrackerProps) {
   const handleClick = (index: number) => {
@@ -45,40 +45,44 @@ export default function DotTracker({
 
   return (
     <div className="dot-tracker">
-      <div className="dot-label-container">
-        <span className="dot-label">{label}</span>
-        {tooltip && (
-          <div
-            className={`tooltip-box ${alignRight ? "align-right" : ""} ${alignLeft ? "align-left" : ""}`}
-          >
-            <p className="tooltip-desc">{tooltip.desc}</p>
-            <ul className="tooltip-levels">
-              {tooltip.levels
-                .filter((lvl) => {
-                  if (!isDiscipline) return true;
-                  // Only filter for disciplines if it's a level-specific line (e.g., "1: ...")
-                  const levelMatch = lvl.match(/^(\d+):/);
-                  if (levelMatch) {
-                    const levelVal = parseInt(levelMatch[1], 10);
-                    return levelVal <= value;
-                  }
-                  // Keep headers or general descriptive text
-                  return true;
-                })
-                .map((lvl, idx) => {
-                  // Determine if this level should be highlighted.
-                  const isCurrent = lvl.startsWith(`${value}:`);
+      <div className="dot-label-column">
+        <div className="tooltip-anchor">
+          <span className="dot-label">{label}</span>
+          {tooltip && (
+            <div
+              className={`tooltip-box ${
+                mobileAlignRight ? "mobile-align-right" : ""
+              } ${desktopAlignRight ? "desktop-align-right" : ""}`}
+            >
+              <p className="tooltip-desc">{tooltip.desc}</p>
+              <ul className="tooltip-levels">
+                {tooltip.levels
+                  .filter((lvl) => {
+                    if (!isDiscipline) return true;
+                    // Only filter for disciplines if it's a level-specific line (e.g., "1: ...")
+                    const levelMatch = lvl.match(/^(\d+):/);
+                    if (levelMatch) {
+                      const levelVal = parseInt(levelMatch[1], 10);
+                      return levelVal <= value;
+                    }
+                    // Keep headers or general descriptive text
+                    return true;
+                  })
+                  .map((lvl, idx) => {
+                    // Determine if this level should be highlighted.
+                    const isCurrent = lvl.startsWith(`${value}:`);
 
-                  return (
-                    <li key={idx} className={isCurrent ? "active-level" : ""}>
-                      {isCurrent && <span className="active-marker">• </span>}
-                      {lvl}
-                    </li>
-                  );
-                })}
-            </ul>
-          </div>
-        )}
+                    return (
+                      <li key={idx} className={isCurrent ? "active-level" : ""}>
+                        {isCurrent && <span className="active-marker">• </span>}
+                        {lvl}
+                      </li>
+                    );
+                  })}
+              </ul>
+            </div>
+          )}
+        </div>
       </div>
       <div className="dots-container">{dots}</div>
     </div>

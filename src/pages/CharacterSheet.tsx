@@ -86,10 +86,10 @@ export default function CharacterSheet() {
     title: string,
     data: Record<string, number>,
     pathPrefix: string[],
-    alignLeft = false,
-    alignRight = false,
     cost?: string,
     isDiscipline = false,
+    mobileAlignRight = false,
+    desktopAlignRight = false,
   ) => (
     <div className="sheet-section">
       <h3 className="section-title text-center">{title}</h3>
@@ -109,8 +109,8 @@ export default function CharacterSheet() {
               max={maxDots}
               onChange={(v) => handleUpdate([...pathPrefix, key], v)}
               tooltip={ATTR_DESCRIPTIONS[key]}
-              alignLeft={alignLeft}
-              alignRight={alignRight}
+              mobileAlignRight={mobileAlignRight}
+              desktopAlignRight={desktopAlignRight}
               isDiscipline={isDiscipline}
             />
           ))}
@@ -245,15 +245,18 @@ export default function CharacterSheet() {
                 "Sociales",
                 character.attributes.social,
                 ["attributes", "social"],
+                undefined,
                 false,
-                false,
+                true, // mobileAlignRight
               )}
               {renderSection(
                 "Mentales",
                 character.attributes.mental,
                 ["attributes", "mental"],
-                true,
+                undefined,
                 false,
+                false,
+                true, // desktopAlignRight
               )}
             </div>
           </div>
@@ -273,15 +276,18 @@ export default function CharacterSheet() {
                 "Técnicas",
                 character.abilities.skills,
                 ["abilities", "skills"],
+                undefined,
                 false,
-                false,
+                true, // mobileAlignRight
               )}
               {renderSection(
                 "Conocimientos",
                 character.abilities.knowledges,
                 ["abilities", "knowledges"],
-                true,
+                undefined,
                 false,
+                false,
+                true, // desktopAlignRight
               )}
             </div>
           </div>
@@ -300,26 +306,24 @@ export default function CharacterSheet() {
                   ...(character.advantages.backgrounds || {}),
                 },
                 ["advantages", "backgrounds"],
-                true,
-                false,
                 "(costo: 1 por círculo)",
               )}
               {renderSection(
                 "Disciplinas",
                 character.advantages.disciplines,
                 ["advantages", "disciplines"],
-                false,
-                false,
                 "(costo: 7 por círculo)",
                 true,
+                true, // mobileAlignRight
               )}
               {renderSection(
                 "Virtudes",
                 character.advantages.virtues,
                 ["advantages", "virtues"],
-                true,
-                false,
                 "(costo: 2 por círculo)",
+                false,
+                false,
+                true, // desktopAlignRight
               )}
             </div>
           </div>
@@ -430,7 +434,6 @@ export default function CharacterSheet() {
                   max={10}
                   onChange={(v) => handleUpdate(["willpower"], v)}
                   tooltip={ATTR_DESCRIPTIONS["willpower"]}
-                  alignLeft={true}
                 />
                 <DotTracker
                   label="Actual"
@@ -478,12 +481,12 @@ export default function CharacterSheet() {
                   )
                   .map(([level, isChecked]) => (
                     <div key={level} className="health-level">
-                      <div className="dot-label-container">
+                      <div className="tooltip-anchor">
                         <span className="health-label">
                           {VTM_TRANSLATIONS[level] || level}
                         </span>
                         {ATTR_DESCRIPTIONS[level] && (
-                          <div className="tooltip-box align-left">
+                          <div className="tooltip-box desktop-align-right">
                             <p className="tooltip-desc">
                               {ATTR_DESCRIPTIONS[level].desc}
                             </p>
