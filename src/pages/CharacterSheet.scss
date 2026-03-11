@@ -226,25 +226,54 @@
     align-items: center;
     border-bottom: none;
     margin-top: $spacing-md;
-    gap: $spacing-sm;
+    gap: 32px; // Space between Exp and Freebies
 
-    span {
-      font-size: 1.1rem;
-      font-family: $font-vampire;
-      color: $accent-color;
-      border-bottom: none;
+    .exp-item {
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+
+      span {
+        font-size: 1.1rem;
+        font-family: $font-vampire;
+        color: $accent-color;
+        border-bottom: none;
+        margin-right: 0;
+      }
+
+      .inline-input.number-input {
+        width: 60px;
+        font-size: 1.2rem;
+        border-bottom-color: rgba($accent-color, 0.5);
+        text-align: center;
+
+        &:hover,
+        &:focus {
+          border-bottom-color: $accent-color;
+          background: rgba($accent-color, 0.1);
+        }
+      }
     }
 
-    .inline-input.number-input {
-      width: 60px;
-      font-size: 1.2rem;
-      border-bottom-color: rgba($accent-color, 0.5);
-      text-align: center;
+    .freebie-badge {
+      font-size: 0.95rem;
+      background-color: rgba($accent-color, 0.15);
+      color: $accent-color;
+      padding: 4px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba($accent-color, 0.3);
+      font-family: $font-primary;
+      letter-spacing: 0.5px;
+      box-shadow: 0 0 5px rgba($accent-color, 0.2);
+      display: flex;
+      align-items: center;
+      line-height: 1;
 
-      &:hover,
-      &:focus {
-        border-bottom-color: $accent-color;
-        background: rgba($accent-color, 0.1);
+      &.negative {
+        background-color: rgba($error-color, 0.15);
+        color: $error-color;
+        border-color: rgba($error-color, 0.3);
+        box-shadow: 0 0 5px rgba($error-color, 0.2);
       }
     }
   }

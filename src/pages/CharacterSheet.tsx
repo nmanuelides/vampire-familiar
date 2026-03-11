@@ -112,6 +112,92 @@ export default function CharacterSheet() {
     }
   };
 
+  const getPointsSpent = (
+    data: Record<string, number>,
+    type: "attribute" | "ability" | "virtue" | "other",
+  ) => {
+    return Object.entries(data).reduce((acc, [key, val]) => {
+      if (type === "attribute") {
+        if (localChar.clan === "Nosferatu" && key === "appearance") {
+          return acc + val;
+        }
+        return acc + Math.max(0, val - 1);
+      }
+      if (type === "virtue") {
+        return acc + Math.max(0, val - 1);
+      }
+      return acc + val;
+    }, 0);
+  };
+
+  const getBestPoolAllocation = (values: number[], pools: number[]) => {
+    const sortedValues = [...values].sort((a, b) => b - a);
+    const sortedPools = [...pools].sort((a, b) => b - a);
+    let totalExcess = 0;
+
+    for (let i = 0; i < sortedValues.length; i++) {
+      totalExcess += Math.max(0, sortedValues[i] - sortedPools[i]);
+    }
+    return totalExcess;
+  };
+
+  const calculateFreebieDetails = () => {
+    const attrPhys = getPointsSpent(localChar.attributes.physical, "attribute");
+    const attrSoc = getPointsSpent(localChar.attributes.social, "attribute");
+    const attrMent = getPointsSpent(localChar.attributes.mental, "attribute");
+    const attrExcess = getBestPoolAllocation(
+      [attrPhys, attrSoc, attrMent],
+      [7, 5, 3],
+    );
+
+    const abilTal = getPointsSpent(localChar.abilities.talents, "ability");
+    const abilSki = getPointsSpent(localChar.abilities.skills, "ability");
+    const abilKno = getPointsSpent(localChar.abilities.knowledges, "ability");
+    const abilExcess = getBestPoolAllocation(
+      [abilTal, abilSki, abilKno],
+      [15, 9, 5],
+    );
+
+    const backSpent = getPointsSpent(
+      localChar.advantages.backgrounds || {},
+      "other",
+    );
+    const backExcess = Math.max(0, backSpent - 5);
+
+    const discSpent = getPointsSpent(localChar.advantages.disciplines, "other");
+    const discExcess = Math.max(0, discSpent - 4);
+
+    const virtSpent = getPointsSpent(localChar.advantages.virtues, "virtue");
+    const virtExcess = Math.max(0, virtSpent - 7);
+
+    // Humanity and Willpower
+    const baseHumanity =
+      localChar.advantages.virtues.conscience +
+      localChar.advantages.virtues.selfControl;
+    const humanityExcess = Math.max(0, localChar.humanity - baseHumanity);
+
+    const baseWillpower = localChar.advantages.virtues.courage;
+    const willpowerExcess = Math.max(0, localChar.willpower - baseWillpower);
+
+    const totalCost =
+      attrExcess * 5 +
+      abilExcess * 2 +
+      backExcess * 1 +
+      discExcess * 7 +
+      virtExcess * 2 +
+      humanityExcess * 1 +
+      willpowerExcess * 1;
+
+    return {
+      attrPools: [attrPhys, attrSoc, attrMent].sort((a, b) => b - a),
+      abilPools: [abilTal, abilSki, abilKno].sort((a, b) => b - a),
+      freebiesRemaining: 15 - totalCost,
+      totalCost,
+    };
+  };
+
+  const freebieDetails = calculateFreebieDetails();
+
   const renderSection = (
     title: string,
     data: Record<string, number>,
@@ -120,9 +206,12 @@ export default function CharacterSheet() {
     isDiscipline = false,
     mobileAlignRight = false,
     desktopAlignRight = false,
+    spentPoints?: number,
   ) => (
     <div className="sheet-section">
-      <h3 className="section-title text-center">{title}</h3>
+      <h3 className="section-title text-center">
+        {title} {spentPoints !== undefined && `(${spentPoints})`}
+      </h3>
       {cost && <div className="section-cost text-center">{cost}</div>}
       <div className="traits-list">
         {Object.entries(data)
@@ -249,17 +338,24 @@ export default function CharacterSheet() {
             />
           </div>
           <div className="info-group experience-group">
-            <span>Experiencia:</span>
-            <input
-              type="number"
-              min="0"
-              value={localChar.experience || 0}
-              onChange={(e) =>
-                handleUpdate(["experience"], parseInt(e.target.value) || 0)
-              }
-              className="inline-input number-input"
-              readOnly={isLocked}
-            />
+            <div className="exp-item">
+              <span>Experiencia:</span>
+              <input
+                type="number"
+                min="0"
+                value={localChar.experience || 0}
+                onChange={(e) =>
+                  handleUpdate(["experience"], parseInt(e.target.value) || 0)
+                }
+                className="inline-input number-input"
+                readOnly={isLocked}
+              />
+            </div>
+            <div
+              className={`freebie-badge ${freebieDetails.freebiesRemaining < 0 ? "negative" : ""}`}
+            >
+              Puntos Gratuitos: {freebieDetails.freebiesRemaining}
+            </div>
           </div>
         </div>
 
@@ -268,13 +364,19 @@ export default function CharacterSheet() {
           <div className="grid-section attributes">
             <h2 className="main-title text-center">— Atributos —</h2>
             <div className="section-cost text-center">
-              (costo: 5 por círculo)
+              (pools: 7/5/3 | costo extra: 5)
             </div>
             <div className="trait-grid">
-              {renderSection("Físicos", localChar.attributes.physical, [
-                "attributes",
-                "physical",
-              ])}
+              {renderSection(
+                "Físicos",
+                localChar.attributes.physical,
+                ["attributes", "physical"],
+                undefined,
+                false,
+                false,
+                false,
+                getPointsSpent(localChar.attributes.physical, "attribute"),
+              )}
               {renderSection(
                 "Sociales",
                 localChar.attributes.social,
@@ -282,6 +384,8 @@ export default function CharacterSheet() {
                 undefined,
                 false,
                 true, // mobileAlignRight
+                false,
+                getPointsSpent(localChar.attributes.social, "attribute"),
               )}
               {renderSection(
                 "Mentales",
@@ -291,6 +395,7 @@ export default function CharacterSheet() {
                 false,
                 false,
                 true, // desktopAlignRight
+                getPointsSpent(localChar.attributes.mental, "attribute"),
               )}
             </div>
           </div>
@@ -299,13 +404,19 @@ export default function CharacterSheet() {
           <div className="grid-section abilities">
             <h2 className="main-title text-center">— Habilidades —</h2>
             <div className="section-cost text-center">
-              (costo: 2 por círculo)
+              (pools: 15/9/5 | costo extra: 2)
             </div>
             <div className="trait-grid">
-              {renderSection("Talentos", localChar.abilities.talents, [
-                "abilities",
-                "talents",
-              ])}
+              {renderSection(
+                "Talentos",
+                localChar.abilities.talents,
+                ["abilities", "talents"],
+                undefined,
+                false,
+                false,
+                false,
+                getPointsSpent(localChar.abilities.talents, "ability"),
+              )}
               {renderSection(
                 "Técnicas",
                 localChar.abilities.skills,
@@ -313,6 +424,8 @@ export default function CharacterSheet() {
                 undefined,
                 false,
                 true, // mobileAlignRight
+                false,
+                getPointsSpent(localChar.abilities.skills, "ability"),
               )}
               {renderSection(
                 "Conocimientos",
@@ -322,6 +435,7 @@ export default function CharacterSheet() {
                 false,
                 false,
                 true, // desktopAlignRight
+                getPointsSpent(localChar.abilities.knowledges, "ability"),
               )}
             </div>
           </div>
@@ -340,24 +454,31 @@ export default function CharacterSheet() {
                   ...(localChar.advantages.backgrounds || {}),
                 },
                 ["advantages", "backgrounds"],
-                "(costo: 1 por círculo)",
+                "(pool: 5 | costo extra: 1)",
+                false,
+                false,
+                false,
+                getPointsSpent(localChar.advantages.backgrounds || {}, "other"),
               )}
               {renderSection(
                 "Disciplinas",
                 localChar.advantages.disciplines,
                 ["advantages", "disciplines"],
-                "(costo: 7 por círculo)",
+                "(pool: 4 | costo extra: 7)",
                 true,
                 true, // mobileAlignRight
+                false,
+                getPointsSpent(localChar.advantages.disciplines, "other"),
               )}
               {renderSection(
                 "Virtudes",
                 localChar.advantages.virtues,
                 ["advantages", "virtues"],
-                "(costo: 2 por círculo)",
+                "(pool: 7 | costo extra: 2)",
                 false,
                 false,
                 true, // desktopAlignRight
+                getPointsSpent(localChar.advantages.virtues, "virtue"),
               )}
             </div>
           </div>
