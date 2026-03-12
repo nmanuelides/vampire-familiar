@@ -199,4 +199,22 @@
       cursor: default;
     }
   }
+
+  &.flashing {
+    animation: flashError 0.8s ease-in-out;
+  }
+}
+
+@keyframes flashError {
+  0% {
+    background-color: transparent;
+  }
+  20% {
+    background-color: rgba($error-color, 0.4);
+    box-shadow: 0 0 8px $error-color;
+    border-radius: 8px;
+  }
+  100% {
+    background-color: transparent;
+  }
 }

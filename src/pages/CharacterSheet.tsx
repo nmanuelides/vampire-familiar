@@ -121,7 +121,10 @@ export default function CharacterSheet() {
     compareRecords(baseChar.advantages.disciplines, currentChar.advantages.disciplines, "disc", 7, calcDiscExp);
 
     // 4. Backgrounds
-    compareRecords(baseChar.advantages.backgrounds || {}, currentChar.advantages.backgrounds || {}, "back", 1, () => 1);
+    // The user explicitly stated Backgrounds can NOT be purchased with experience.
+    // If a background exceeds base + freebies, its cost is artificially set to Infinity to block it.
+    const calcBackExp = () => Infinity; 
+    compareRecords(baseChar.advantages.backgrounds || {}, currentChar.advantages.backgrounds || {}, "back", 1, calcBackExp);
 
     // 5. Virtues (Minimum 1)
     const getVirtueBase = (val: number | undefined) => Math.max(val || 0, 1);
@@ -322,8 +325,14 @@ export default function CharacterSheet() {
     if (!isValid && !isImproving) {
       // Trigger error animation on the specific dot being changed
       const traitKey = path[path.length - 1];
-      setSpendingError(traitKey);
-      setTimeout(() => setSpendingError(null), 1000);
+      console.log("Validation Failed: ", traitKey, " Project EXP Details:", projectedCosts);
+      
+      // Force trigger by clearing and resetting if the same trait fails twice quickly
+      setSpendingError(null);
+      setTimeout(() => {
+        setSpendingError(traitKey);
+        setTimeout(() => setSpendingError(null), 800); // Match CSS animation duration (0.8s) exactly
+      }, 10);
       return; // DO NOT update localChar
     }
 
@@ -646,7 +655,7 @@ export default function CharacterSheet() {
                   ...(localChar.advantages.backgrounds || {}),
                 },
                 ["advantages", "backgrounds"],
-                "(pool: 5 | costo extra: 1)",
+                "(pool: 5 | no se suben con exp)",
                 false,
                 false,
                 false,

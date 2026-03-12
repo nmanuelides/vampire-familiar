@@ -46,9 +46,9 @@ export default function DotTracker({
   }
 
   return (
-    <div className="dot-tracker">
+    <div className={`dot-tracker ${flashing ? "flashing" : ""}`}>
       <div className="dot-label-column">
-        <div className={`tooltip-anchor ${flashing ? "flashing-error" : ""}`}>
+        <div className="tooltip-anchor">
           <span className="dot-label">{label}</span>
           {tooltip && (
             <div
