@@ -217,6 +217,14 @@
         }
       }
     }
+
+    .gen-display {
+      color: $text-color;
+      font-weight: normal;
+      font-style: italic;
+      opacity: 0.9;
+      margin-left: 4px;
+    }
   }
 
   .experience-group {

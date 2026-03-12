@@ -6,6 +6,7 @@ import DotTracker from "../components/DotTracker";
 import type { VTMCharacter } from "../types/vtm";
 import {
   getMaxTraitRating,
+  getMaxBloodPool,
   VTM_TRANSLATIONS,
   ATTR_DESCRIPTIONS,
   COMMON_BACKGROUNDS,
@@ -82,6 +83,22 @@ export default function CharacterSheet() {
       current = current[path[i]];
     }
     current[path[path.length - 1]] = value;
+
+    // Special case: Update generation and blood pool when Generation background changes
+    if (
+      path.join(".") === "advantages.backgrounds.Generation" ||
+      (path[0] === "advantages" && path[1] === "backgrounds" && path[2] === "Generation")
+    ) {
+      const genDots = value;
+      const newGen = 13 - genDots;
+      updatedChar.generation = newGen;
+      const newMaxBlood = getMaxBloodPool(newGen);
+      updatedChar.blood_pool = newMaxBlood;
+      if (updatedChar.blood_pool_current > newMaxBlood) {
+        updatedChar.blood_pool_current = newMaxBlood;
+      }
+    }
+
     setLocalChar(updatedChar);
   };
 
@@ -314,17 +331,10 @@ export default function CharacterSheet() {
           </div>
           <div className="info-group">
             <span>Generación:</span>
-            <input
-              type="number"
-              min="3"
-              max="15"
-              value={localChar.generation || 13}
-              onChange={(e) =>
-                handleUpdate(["generation"], parseInt(e.target.value) || 13)
-              }
-              className="inline-input number-input"
-              readOnly={isLocked}
-            />
+            <span className="gen-display">
+              {localChar.generation}.ª (
+              {VTM_TRANSLATIONS[`gen${localChar.generation}`] || "Desconocida"})
+            </span>
           </div>
           <div className="info-group">
             <span>Sire:</span>
@@ -603,7 +613,7 @@ export default function CharacterSheet() {
             <div className="status-col">
               <h3 className="section-title">Reserva de Sangre</h3>
               <div className="blood-pool-grid">
-                {Array.from({ length: localChar.blood_pool }).map((_, i) => (
+                {Array.from({ length: localChar.blood_pool || 10 }).map((_, i) => (
                   <div
                     key={i}
                     className={`blood-box ${i < localChar.blood_pool_current ? "filled" : ""}`}

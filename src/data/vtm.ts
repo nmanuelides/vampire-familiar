@@ -124,6 +124,21 @@ export const VTM_TRANSLATIONS: Record<string, string> = {
   Tremere: "Tremere",
   Tzimisce: "Tzimisce",
   Ventrue: "Ventrue",
+
+  // Generation Labels
+  gen3: "Tercera",
+  gen4: "Cuarta",
+  gen5: "Quinta",
+  gen6: "Sexta",
+  gen7: "Séptima",
+  gen8: "Octava",
+  gen9: "Novena",
+  gen10: "Décima",
+  gen11: "Undécima",
+  gen12: "Duodécima",
+  gen13: "Decimotercera",
+  gen14: "Decimocuarta",
+  gen15: "Decimoquinta",
 };
 
 export const ATTR_SORT_ORDER: Record<string, number> = {
@@ -939,9 +954,8 @@ export function getMaxTraitRating(generation: number) {
 }
 
 export function getMaxBloodPool(generation: number) {
+  if (generation >= 13) return 10;
   switch (generation) {
-    case 13:
-      return 10;
     case 12:
       return 11;
     case 11:
@@ -960,6 +974,8 @@ export function getMaxBloodPool(generation: number) {
       return 40;
     case 4:
       return 50;
+    case 3:
+      return 100; // Placeholder for Third
     default:
       return 10;
   }
