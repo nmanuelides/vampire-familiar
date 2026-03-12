@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import "./DotTracker.scss";
 
 interface DotTrackerProps {
@@ -30,13 +30,9 @@ export default function DotTracker({
 
   useEffect(() => {
     if (flashing) {
-      // Force an animation reset by removing and rapidly reapplying the class
-      setIsFlashing(false);
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setIsFlashing(true);
-        });
-      });
+      setIsFlashing(true);
+      const timer = setTimeout(() => setIsFlashing(false), 800);
+      return () => clearTimeout(timer);
     }
   }, [flashing]);
 
@@ -62,8 +58,12 @@ export default function DotTracker({
 
   return (
     <div 
-      className={`dot-tracker ${isFlashing ? "flashing" : ""}`}
-      onAnimationEnd={() => setIsFlashing(false)}
+      className="dot-tracker"
+      style={
+        isFlashing 
+          ? { backgroundColor: 'rgba(243, 32, 19, 0.4)', boxShadow: '0 0 8px #f32013', borderRadius: '8px', transform: 'translateX(4px)', transition: 'all 0.1s ease-in' }
+          : { transition: 'all 0.5s ease-out' }
+      }
     >
       <div className="dot-label-column">
         <div className="tooltip-anchor">
