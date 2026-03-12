@@ -26,13 +26,20 @@ export default function DotTracker({
   isDiscipline = false,
   flashing = "",
 }: DotTrackerProps) {
-  const [isFlashing, setIsFlashing] = useState(false);
+  const [flashPhase, setFlashPhase] = useState(0);
 
   useEffect(() => {
     if (flashing) {
-      setIsFlashing(true);
-      const timer = setTimeout(() => setIsFlashing(false), 800);
-      return () => clearTimeout(timer);
+      setFlashPhase(1); // First pulse ON
+      const t1 = setTimeout(() => setFlashPhase(2), 150); // OFF
+      const t2 = setTimeout(() => setFlashPhase(3), 300); // Second pulse ON
+      const t3 = setTimeout(() => setFlashPhase(0), 525); // OFF completely
+      
+      return () => {
+        clearTimeout(t1);
+        clearTimeout(t2);
+        clearTimeout(t3);
+      };
     }
   }, [flashing]);
 
@@ -60,9 +67,9 @@ export default function DotTracker({
     <div 
       className="dot-tracker"
       style={
-        isFlashing 
-          ? { backgroundColor: 'rgba(243, 32, 19, 0.4)', boxShadow: '0 0 8px #f32013', borderRadius: '8px', transform: 'translateX(4px)', transition: 'all 0.1s ease-in' }
-          : { transition: 'all 0.5s ease-out' }
+        flashPhase === 1 || flashPhase === 3
+          ? { backgroundColor: 'rgba(243, 32, 19, 0.4)', boxShadow: '0 0 8px #f32013', borderRadius: '8px', transition: 'all 0.1s ease-in' }
+          : { backgroundColor: 'transparent', boxShadow: 'none', transition: 'all 0.15s ease-out' }
       }
     >
       <div className="dot-label-column">
