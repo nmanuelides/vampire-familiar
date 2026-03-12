@@ -31,6 +31,7 @@ export default function CharacterSheet() {
 
   const characterFromStore = characters.find((c) => c.id === id);
   const [localChar, setLocalChar] = useState<VTMCharacter | null>(null);
+  const [spendingError, setSpendingError] = useState<string | null>(null);
 
   const isAdmin =
     user?.email === "magatsu82@gmail.com" ||
@@ -103,6 +104,32 @@ export default function CharacterSheet() {
       }
     }
 
+    // 2. Validate costs
+    const currentCosts = calculateDetailedCosts(localChar);
+    const projectedCosts = calculateDetailedCosts(updatedChar);
+    
+    // STRICT BLOCK: Never allow expRemaining to go negative
+    const isNowNegative = projectedCosts.expRemaining < 0;
+    
+    // Also block exceeding 15 freebies
+    const isExceedingFreebies = projectedCosts.freebiesSpent > 15;
+    
+    // We only allow the update if:
+    // 1. The result is valid (both exp and freebies are within limits)
+    // 2. OR we are in an invalid state but the change is IMPROVING it (decreasing freebies or increasing exp)
+    const isValid = !isNowNegative && !isExceedingFreebies;
+    
+    const isImproving = (projectedCosts.expRemaining > currentCosts.expRemaining) || 
+                        (projectedCosts.freebiesSpent < currentCosts.freebiesSpent);
+
+    if (!isValid && !isImproving) {
+      // Trigger error animation on the specific dot being changed
+      const traitKey = path[path.length - 1];
+      setSpendingError(traitKey);
+      setTimeout(() => setSpendingError(null), 1000);
+      return; // DO NOT update localChar
+    }
+
     setLocalChar(updatedChar);
   };
 
@@ -151,7 +178,8 @@ export default function CharacterSheet() {
     }, 0);
   };
 
-  const calculateDetailedCosts = () => {
+  const calculateDetailedCosts = (char = localChar) => {
+    if (!char) return { freebiesSpent: 0, expSpent: 0, expRemaining: 0 };
     interface IncrementalDot {
       label: string;
       level: number;
@@ -159,19 +187,18 @@ export default function CharacterSheet() {
       expCost: number;
       type: "attr" | "abil" | "back" | "disc" | "virtue" | "humanity" | "wp";
     }
-
-    // 1. Attributes
-    const getAttrDots = (
-      data: Record<string, number>,
-    ): IncrementalDot[] => {
+    // 1. Attributes - Stable Calculation
+    // Multiplier for Attributes is 3 (Standard: 4, User: 4-1=3)
+    const getAttrDots = (data: Record<string, number>): IncrementalDot[] => {
       const dots: IncrementalDot[] = [];
       Object.entries(data).forEach(([key, val]) => {
-        const base = (localChar.clan === "Nosferatu" && key === "appearance") ? 0 : 1;
+        const base = (char.clan === "Nosferatu" && key === "appearance") ? 0 : 1;
         for (let i = base + 1; i <= val; i++) {
           dots.push({
             label: key,
             level: i,
             freebieCost: 5,
+            // Rating * Multiplier. i-1 is the rating BEFORE this dot.
             expCost: (i - 1) * EXP_COSTS.ATTRIBUTE_MULT,
             type: "attr",
           });
@@ -180,27 +207,30 @@ export default function CharacterSheet() {
       return dots;
     };
 
-    const physDots = getAttrDots(localChar.attributes.physical);
-    const socDots = getAttrDots(localChar.attributes.social);
-    const mentDots = getAttrDots(localChar.attributes.mental);
+    const physDots = getAttrDots(char.attributes.physical);
+    const socDots = getAttrDots(char.attributes.social);
+    const mentDots = getAttrDots(char.attributes.mental);
 
-    // Attribute pools 7/5/3
+    // Calculate which category is Primary (7), Secondary (5), Tertiary (3)
+    // based on which has MOST dots to maximize pool usage.
     const attrCategories = [
-      { dots: physDots, name: "physical" },
-      { dots: socDots, name: "social" },
-      { dots: mentDots, name: "mental" },
-    ].sort((a, b) => b.dots.length - a.dots.length);
+      { dots: physDots, name: "Physical" },
+      { dots: socDots, name: "Social" },
+      { dots: mentDots, name: "Mental" },
+    ].sort((a,b) => b.dots.length - a.dots.length);
 
-    const attrPoolSizes = [7, 5, 3];
+    const pools = [7, 5, 3];
     const attrExcess: IncrementalDot[] = [];
     attrCategories.forEach((cat, idx) => {
-      const pool = attrPoolSizes[idx];
-      const sorted = [...cat.dots].sort((a, b) => b.expCost - a.expCost);
-      const remaining = sorted.slice(pool);
-      attrExcess.push(...remaining);
+      const poolSize = pools[idx];
+      // Create dots are always the LOWEST levels.
+      const sorted = [...cat.dots].sort((a,b) => a.level - b.level);
+      attrExcess.push(...sorted.slice(poolSize));
     });
 
-    // 2. Abilities
+
+    // 2. Abilities - STABLE POOLS (Talents: 15, Skills: 9, Knowledges: 5)
+    // Re-sorting (15/9/5) also causes jumps. Fixed order: Talents > Skills > Knowledges.
     const getAbilDots = (data: Record<string, number>): IncrementalDot[] => {
       const dots: IncrementalDot[] = [];
       Object.entries(data).forEach(([key, val]) => {
@@ -209,6 +239,7 @@ export default function CharacterSheet() {
             label: key,
             level: i,
             freebieCost: 2,
+            // (Level - 1) * Mult. (e.g. Level 3 costs 2 * 1 = 2)
             expCost: i === 1 ? EXP_COSTS.NEW_ABILITY : (i - 1) * EXP_COSTS.ABILITY_MULT,
             type: "abil",
           });
@@ -217,27 +248,30 @@ export default function CharacterSheet() {
       return dots;
     };
 
-    const talDots = getAbilDots(localChar.abilities.talents);
-    const skiDots = getAbilDots(localChar.abilities.skills);
-    const knoDots = getAbilDots(localChar.abilities.knowledges);
+    // 2. Abilities - Stable Calculation
+    // Multiplier for Abilities is 1 (Standard: 2, User: 2-1=1)
+    const talDots = getAbilDots(char.abilities.talents);
+    const skiDots = getAbilDots(char.abilities.skills);
+    const knoDots = getAbilDots(char.abilities.knowledges);
 
     const abilCategories = [
-      { dots: talDots },
-      { dots: skiDots },
-      { dots: knoDots },
-    ].sort((a, b) => b.dots.length - a.dots.length);
+      { dots: talDots, name: "Talents" },
+      { dots: skiDots, name: "Skills" },
+      { dots: knoDots, name: "Knowledges" },
+    ].sort((a,b) => b.dots.length - a.dots.length);
 
-    const abilPoolSizes = [15, 9, 5];
+    const abilPools = [15, 9, 5];
     const abilExcess: IncrementalDot[] = [];
     abilCategories.forEach((cat, idx) => {
-      const pool = abilPoolSizes[idx];
-      const sorted = [...cat.dots].sort((a, b) => b.expCost - a.expCost);
-      abilExcess.push(...sorted.slice(pool));
+      const poolSize = abilPools[idx];
+      const sorted = [...cat.dots].sort((a,b) => a.level - b.level);
+      abilExcess.push(...sorted.slice(poolSize));
     });
+
 
     // 3. Backgrounds (Trasfondos)
     const backDots: IncrementalDot[] = [];
-    Object.entries(localChar.advantages.backgrounds || {}).forEach(([key, val]) => {
+    Object.entries(char.advantages.backgrounds || {}).forEach(([key, val]) => {
       for (let i = 1; i <= val; i++) {
         backDots.push({
           label: key,
@@ -248,14 +282,15 @@ export default function CharacterSheet() {
         });
       }
     });
-    const sortedBack = [...backDots].sort((a, b) => b.expCost - a.expCost);
+    // For backgrounds, we sort by level to ensure the pool covers the first 5 dots.
+    const sortedBack = [...backDots].sort((a, b) => a.level - b.level);
     const backExcess = sortedBack.slice(5);
 
     // 4. Disciplines
     const discDots: IncrementalDot[] = [];
-    const clanDisciplines = CLAN_DISCIPLINES[localChar.clan] || [];
+    const clanDisciplines = CLAN_DISCIPLINES[char.clan] || [];
     
-    Object.entries(localChar.advantages.disciplines).forEach(([key, val]) => {
+    Object.entries(char.advantages.disciplines).forEach(([key, val]) => {
       const isClan = clanDisciplines.includes(key);
       for (let i = 1; i <= val; i++) {
         let exp;
@@ -273,29 +308,31 @@ export default function CharacterSheet() {
         });
       }
     });
-    const sortedDisc = [...discDots].sort((a, b) => b.expCost - a.expCost);
+    const sortedDisc = [...discDots].sort((a, b) => a.level - b.level);
     const discExcess = sortedDisc.slice(4);
 
     // 5. Virtues
     const virtDots: IncrementalDot[] = [];
-    Object.entries(localChar.advantages.virtues).forEach(([key, val]) => {
+    Object.entries(char.advantages.virtues).forEach(([key, val]) => {
+      // Virtues have a base of 1.
       for (let i = 2; i <= val; i++) {
         virtDots.push({
           label: key,
           level: i,
           freebieCost: 2,
+          // (Level - 1) * Mult.
           expCost: (i - 1) * EXP_COSTS.VIRTUE_MULT,
           type: "virtue",
         });
       }
     });
-    const sortedVirt = [...virtDots].sort((a, b) => b.expCost - a.expCost);
+    const sortedVirt = [...virtDots].sort((a, b) => a.level - b.level);
     const virtExcess = sortedVirt.slice(7);
 
     // 6. Humanity & Willpower
-    const baseHum = localChar.advantages.virtues.conscience + localChar.advantages.virtues.selfControl;
+    const baseHum = char.advantages.virtues.conscience + char.advantages.virtues.selfControl;
     const humanityExcess: IncrementalDot[] = [];
-    for (let i = baseHum + 1; i <= localChar.humanity; i++) {
+    for (let i = baseHum + 1; i <= char.humanity; i++) {
       humanityExcess.push({
         label: "Humanity",
         level: i,
@@ -305,19 +342,21 @@ export default function CharacterSheet() {
       });
     }
 
-    const baseWP = localChar.advantages.virtues.courage;
+    const baseWP = char.advantages.virtues.courage;
     const wpExcess: IncrementalDot[] = [];
-    for (let i = baseWP + 1; i <= localChar.willpower; i++) {
+    for (let i = baseWP + 1; i <= char.willpower; i++) {
       wpExcess.push({
         label: "Willpower",
         level: i,
         freebieCost: 1,
+        // For WP, the incremental cost is usually 1 (or current rating).
+        // If current rating, it's (i-1) * 1.
         expCost: (i - 1) * EXP_COSTS.WILLPOWER_MULT,
         type: "wp",
       });
     }
 
-    // Combine all excess dots
+    // Allocation of Freebies/EXP
     const allCandidates = [
       ...attrExcess,
       ...abilExcess,
@@ -328,29 +367,32 @@ export default function CharacterSheet() {
       ...wpExcess,
     ];
 
-    allCandidates.sort((a, b) => {
-      const valA = a.expCost / a.freebieCost;
-      const valB = b.expCost / b.freebieCost;
-      return valB - valA;
-    });
+    // Greedy sorting for Freebies (Best Value = Highest EXP cost)
+    allCandidates.sort((a, b) => b.expCost - a.expCost);
 
     let freebiesLeft = 15;
     let expSpent = 0;
     let freebiesSpent = 0;
 
-    allCandidates.forEach(dot => {
+    console.log("--- COST CALCULATION LOG ---");
+    allCandidates.forEach((dot, idx) => {
       if (freebiesLeft >= dot.freebieCost) {
+        console.log(`[FREEBIE] ${dot.label} (Level ${dot.level}): Cost 0 EXP (Used Freebie ${dot.freebieCost})`);
         freebiesLeft -= dot.freebieCost;
         freebiesSpent += dot.freebieCost;
       } else {
+        console.log(`[EXP] ${dot.label} (Level ${dot.level}): Cost ${dot.expCost} EXP`);
         expSpent += dot.expCost;
       }
     });
+    console.log(`TOTALS: Freebies Spent: ${freebiesSpent} | EXP Spent: ${expSpent}`);
+
+    console.log("FINAL TOTALS:", { freebiesSpent, expSpent, expRemaining: (char.experience || 0) - expSpent });
 
     return {
       freebiesSpent,
       expSpent,
-      expRemaining: (localChar.experience || 0) - expSpent,
+      expRemaining: (char.experience || 0) - expSpent,
     };
   };
 
@@ -390,6 +432,7 @@ export default function CharacterSheet() {
               desktopAlignRight={desktopAlignRight}
               isDiscipline={isDiscipline}
               readOnly={isLocked}
+              flashing={spendingError === key}
             />
           ))}
       </div>

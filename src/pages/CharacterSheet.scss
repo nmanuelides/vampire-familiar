@@ -300,6 +300,21 @@
       }
     }
   }
+
+  .flashing-error {
+    animation: flash-red 0.3s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes flash-red {
+  from {
+    color: inherit;
+    text-shadow: none;
+  }
+  to {
+    color: #ff4444;
+    text-shadow: 0 0 8px rgba(255, 68, 68, 0.6);
+  }
 }
 
 .main-title {

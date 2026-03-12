@@ -10,6 +10,7 @@ interface DotTrackerProps {
   mobileAlignRight?: boolean;
   desktopAlignRight?: boolean;
   isDiscipline?: boolean;
+  flashing?: boolean;
 }
 
 export default function DotTracker({
@@ -22,6 +23,7 @@ export default function DotTracker({
   mobileAlignRight = false,
   desktopAlignRight = false,
   isDiscipline = false,
+  flashing = false,
 }: DotTrackerProps) {
   const handleClick = (index: number) => {
     if (readOnly) return;
@@ -46,7 +48,7 @@ export default function DotTracker({
   return (
     <div className="dot-tracker">
       <div className="dot-label-column">
-        <div className="tooltip-anchor">
+        <div className={`tooltip-anchor ${flashing ? "flashing-error" : ""}`}>
           <span className="dot-label">{label}</span>
           {tooltip && (
             <div
