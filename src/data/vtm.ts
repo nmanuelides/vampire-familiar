@@ -124,21 +124,6 @@ export const VTM_TRANSLATIONS: Record<string, string> = {
   Tremere: "Tremere",
   Tzimisce: "Tzimisce",
   Ventrue: "Ventrue",
-
-  // Generation Labels
-  gen3: "Tercera",
-  gen4: "Cuarta",
-  gen5: "Quinta",
-  gen6: "Sexta",
-  gen7: "Séptima",
-  gen8: "Octava",
-  gen9: "Novena",
-  gen10: "Décima",
-  gen11: "Undécima",
-  gen12: "Duodécima",
-  gen13: "Decimotercera",
-  gen14: "Decimocuarta",
-  gen15: "Decimoquinta",
 };
 
 export const ATTR_SORT_ORDER: Record<string, number> = {

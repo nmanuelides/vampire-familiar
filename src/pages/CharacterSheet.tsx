@@ -331,10 +331,7 @@ export default function CharacterSheet() {
           </div>
           <div className="info-group">
             <span>Generación:</span>
-            <span className="gen-display">
-              {localChar.generation}.ª (
-              {VTM_TRANSLATIONS[`gen${localChar.generation}`] || "Desconocida"})
-            </span>
+            <span className="gen-display">{localChar.generation}.ª</span>
           </div>
           <div className="info-group">
             <span>Sire:</span>
