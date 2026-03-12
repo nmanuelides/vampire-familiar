@@ -960,7 +960,11 @@ export function getMaxBloodPool(generation: number) {
     case 4:
       return 50;
     case 3:
-      return 100; // Placeholder for Third
+    case 2:
+    case 1:
+      return 100; // Placeholder for Third/Second/First
+    default:
+      return 10;
   }
 }
 

@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import "./DotTracker.scss";
 
 interface DotTrackerProps {
@@ -10,7 +11,7 @@ interface DotTrackerProps {
   mobileAlignRight?: boolean;
   desktopAlignRight?: boolean;
   isDiscipline?: boolean;
-  flashing?: boolean;
+  flashing?: string;
 }
 
 export default function DotTracker({
@@ -23,8 +24,16 @@ export default function DotTracker({
   mobileAlignRight = false,
   desktopAlignRight = false,
   isDiscipline = false,
-  flashing = false,
+  flashing = "",
 }: DotTrackerProps) {
+  const [isFlashing, setIsFlashing] = useState(false);
+
+  useEffect(() => {
+    if (flashing) {
+      setIsFlashing(true);
+    }
+  }, [flashing]);
+
   const handleClick = (index: number) => {
     if (readOnly) return;
     if (value === index + 1) {
@@ -46,7 +55,10 @@ export default function DotTracker({
   }
 
   return (
-    <div className={`dot-tracker ${flashing ? "flashing" : ""}`}>
+    <div 
+      className={`dot-tracker ${isFlashing ? "flashing" : ""}`}
+      onAnimationEnd={() => setIsFlashing(false)}
+    >
       <div className="dot-label-column">
         <div className="tooltip-anchor">
           <span className="dot-label">{label}</span>

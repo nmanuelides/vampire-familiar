@@ -327,12 +327,8 @@ export default function CharacterSheet() {
       const traitKey = path[path.length - 1];
       console.log("Validation Failed: ", traitKey, " Project EXP Details:", projectedCosts);
       
-      // Force trigger by clearing and resetting if the same trait fails twice quickly
-      setSpendingError(null);
-      setTimeout(() => {
-        setSpendingError(traitKey);
-        setTimeout(() => setSpendingError(null), 800); // Match CSS animation duration (0.8s) exactly
-      }, 10);
+      // Use a unique string including a timestamp to ensure every click registers a state change
+      setSpendingError(`${traitKey}-${Date.now()}`);
       return; // DO NOT update localChar
     }
 
@@ -430,7 +426,7 @@ export default function CharacterSheet() {
               desktopAlignRight={desktopAlignRight}
               isDiscipline={isDiscipline}
               readOnly={isLocked}
-              flashing={spendingError === key}
+              flashing={spendingError?.startsWith(`${key}-`) ? spendingError : ""}
             />
           ))}
       </div>
