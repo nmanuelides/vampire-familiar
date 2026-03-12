@@ -292,6 +292,7 @@
 .trait-grid {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: $spacing-md;
   width: 100%;
 }
@@ -299,6 +300,7 @@
 .status-grid {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: $spacing-lg;
   width: 100%;
 }

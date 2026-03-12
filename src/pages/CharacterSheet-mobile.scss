@@ -1,11 +1,11 @@
 @use "../styles/variables" as *;
 
 .character-sheet-container {
-  @media (max-width: 768px) {
+  @media (max-width: 1100px) {
     padding: $spacing-sm $spacing-md $spacing-xl $spacing-md;
   }
   .sheet-body {
-    @media (max-width: 768px) {
+    @media (max-width: 1100px) {
       padding: $spacing-md;
     }
   }
@@ -62,7 +62,7 @@
   }
 }
 .top-info {
-  @media (max-width: 768px) {
+  @media (max-width: 1100px) {
     grid-template-columns: 1fr;
     padding: $spacing-md;
 
@@ -76,7 +76,7 @@
 }
 
 .trait-grid {
-  @media (max-width: 768px) {
+  @media (max-width: 1100px) {
     display: grid !important;
     grid-template-columns: 1fr 1fr;
     gap: $spacing-md;
@@ -110,7 +110,7 @@
 
 // Virtudes has long labels — override to column layout (label top, dots bottom)
 .advantages {
-  @media (max-width: 768px) {
+  @media (max-width: 1100px) {
     .trait-grid .sheet-section:last-child {
       .traits-list {
         max-width: 100%;
@@ -135,7 +135,7 @@
 }
 
 .status-grid {
-  @media (max-width: 768px) {
+  @media (max-width: 1100px) {
     display: flex !important;
     flex-direction: column !important;
     gap: $spacing-lg;
@@ -144,7 +144,7 @@
 }
 
 .grid-section {
-  @media (max-width: 768px) {
+  @media (max-width: 1100px) {
     width: 100%;
 
     .main-title {
@@ -157,7 +157,7 @@
 }
 
 .sheet-section {
-  @media (max-width: 768px) {
+  @media (max-width: 1100px) {
     width: 100%;
     margin-bottom: $spacing-md;
 
@@ -176,7 +176,7 @@
 }
 
 .status-col {
-  @media (max-width: 768px) {
+  @media (max-width: 1100px) {
     width: 100%;
     margin-bottom: $spacing-md;
   }
