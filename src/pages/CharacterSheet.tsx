@@ -30,14 +30,208 @@ export default function CharacterSheet() {
   } = useCharacterStore();
 
   const characterFromStore = characters.find((c) => c.id === id);
-  const [localChar, setLocalChar] = useState<VTMCharacter | null>(null);
-  const [spendingError, setSpendingError] = useState<string | null>(null);
 
   const isAdmin =
     user?.email === "magatsu82@gmail.com" ||
     user?.email === "magatsu83@gmail.com";
   const isLocked = characterFromStore?.is_locked ?? true;
   const isOwner = characterFromStore?.user_id === user?.id;
+
+  const [localChar, setLocalChar] = useState<VTMCharacter | null>(null);
+  const [spendingError, setSpendingError] = useState<string | null>(null);
+
+  // DELTA COST CALCULATION
+  // To avoid "cost shuffling", we strictly calculate the exact cost of the difference
+  // between the baseline character (characterFromStore) and the current localChar.
+  const calculateDeltaCosts = (
+    baseChar: VTMCharacter | null,
+    currentChar: VTMCharacter | null
+  ) => {
+    if (!baseChar || !currentChar) return { freebiesSpent: 0, expSpent: 0, expRemaining: 0, baseFreebiesTotal: 0 };
+
+    interface DiffDot {
+      type: string;
+      label: string;
+      level: number;
+      freebieCost: number;
+      expCost: number;
+    }
+
+    const addedDots: DiffDot[] = [];
+
+    // Helper to compare arbitrary number records
+    const compareRecords = (
+      base: Record<string, number>,
+      current: Record<string, number>,
+      type: string,
+      freebieCost: number,
+      calcExp: (level: number, label: string) => number
+    ) => {
+      Object.keys(current).forEach(key => {
+        const baseLevel = base[key] || 0;
+        const currentLevel = current[key] || 0;
+        for (let i = baseLevel + 1; i <= currentLevel; i++) {
+          addedDots.push({
+            type,
+            label: key,
+            level: i,
+            freebieCost,
+            expCost: calcExp(i, key)
+          });
+        }
+      });
+    };
+
+    // 1. Attributes
+    const getAttrBase = (key: string) => (currentChar.clan === "Nosferatu" && key === "appearance" ? 0 : 1);
+    const compareAttr = (base: Record<string, number>, current: Record<string, number>) => {
+      Object.keys(current).forEach(key => {
+        // Enforce basic minimums in base level so we don't charge for base dots
+        const baseLevel = Math.max(base[key] || 0, getAttrBase(key));
+        const currentLevel = current[key] || 0;
+        for (let i = baseLevel + 1; i <= currentLevel; i++) {
+          addedDots.push({
+            type: "attr",
+            label: key,
+            level: i,
+            freebieCost: 5,
+            expCost: (i - 1) * EXP_COSTS.ATTRIBUTE_MULT // Strictly (level-1) * 3
+          });
+        }
+      });
+    };
+    compareAttr(baseChar.attributes.physical, currentChar.attributes.physical);
+    compareAttr(baseChar.attributes.social, currentChar.attributes.social);
+    compareAttr(baseChar.attributes.mental, currentChar.attributes.mental);
+
+    // 2. Abilities
+    const calcAbilExp = (level: number) => level === 1 ? EXP_COSTS.NEW_ABILITY : (level - 1) * EXP_COSTS.ABILITY_MULT;
+    compareRecords(baseChar.abilities.talents, currentChar.abilities.talents, "abil", 2, calcAbilExp);
+    compareRecords(baseChar.abilities.skills, currentChar.abilities.skills, "abil", 2, calcAbilExp);
+    compareRecords(baseChar.abilities.knowledges, currentChar.abilities.knowledges, "abil", 2, calcAbilExp);
+
+    // 3. Disciplines
+    const clanDisciplines = CLAN_DISCIPLINES[currentChar.clan] || [];
+    const calcDiscExp = (level: number, label: string) => {
+      if (level === 1) return EXP_COSTS.NEW_DISCIPLINE;
+      return clanDisciplines.includes(label) 
+        ? (level - 1) * EXP_COSTS.CLAN_DISCIPLINE_MULT
+        : (level - 1) * EXP_COSTS.OTHER_DISCIPLINE_MULT;
+    };
+    compareRecords(baseChar.advantages.disciplines, currentChar.advantages.disciplines, "disc", 7, calcDiscExp);
+
+    // 4. Backgrounds
+    compareRecords(baseChar.advantages.backgrounds || {}, currentChar.advantages.backgrounds || {}, "back", 1, () => 1);
+
+    // 5. Virtues (Minimum 1)
+    const getVirtueBase = (val: number | undefined) => Math.max(val || 0, 1);
+    Object.keys(currentChar.advantages.virtues).forEach(key => {
+      const baseLvl = getVirtueBase((baseChar.advantages.virtues as any)[key]);
+      const curLvl = (currentChar.advantages.virtues as any)[key];
+      for (let i = baseLvl + 1; i <= curLvl; i++) {
+        addedDots.push({ type: "virtue", label: key, level: i, freebieCost: 2, expCost: (i - 1) * EXP_COSTS.VIRTUE_MULT });
+      }
+    });
+
+    // 6. Humanity & Willpower
+    for (let i = baseChar.humanity + 1; i <= currentChar.humanity; i++) {
+        addedDots.push({ type: "humanity", label: "humanity", level: i, freebieCost: 1, expCost: (i - 1) * EXP_COSTS.HUMANITY_MULT });
+    }
+    for (let i = baseChar.willpower + 1; i <= currentChar.willpower; i++) {
+        addedDots.push({ type: "wp", label: "willpower", level: i, freebieCost: 1, expCost: (i - 1) * EXP_COSTS.WILLPOWER_MULT });
+    }
+
+    // Sort added dots predictably so stable additions behave correctly
+    addedDots.sort((a, b) => a.level - b.level);
+
+    // We must calculate how many freebies the BASE character has already used.
+    // For simplicity, we assume if experience > 0 or if the character has a lot of dots, freebies are likely 0.
+    // But to be exact, we calculate the absolute freebie cost of the BASE character.
+    let baseGlobalFreebies = calculateBaseAbsoluteFreebies(baseChar);
+    let freebiesLeft = Math.max(0, 15 - baseGlobalFreebies);
+    
+    let sessionExpSpent = 0;
+    let sessionFreebiesSpent = 0;
+
+    addedDots.forEach(dot => {
+        if (freebiesLeft >= dot.freebieCost) {
+            freebiesLeft -= dot.freebieCost;
+            sessionFreebiesSpent += dot.freebieCost;
+        } else {
+            sessionExpSpent += dot.expCost;
+        }
+    });
+
+    return {
+        baseFreebiesTotal: baseGlobalFreebies,
+        freebiesSpent: sessionFreebiesSpent,
+        expSpent: sessionExpSpent,
+        expRemaining: (currentChar.experience || 0) - sessionExpSpent
+    };
+  };
+
+  // Helper to calculate total freebies used up by the base character state
+  const calculateBaseAbsoluteFreebies = (char: VTMCharacter) => {
+      let spent = 0;
+      
+      // Attr: Base is 1 (except Nosferatu Appearance is 0). Pools are 7/5/3 Extra Dots.
+      const getAttrDots = (data: Record<string, number>, isNosferatu: boolean) => {
+          let extraDots = 0;
+          Object.entries(data).forEach(([key, val]) => {
+              const base = isNosferatu && key === "appearance" ? 0 : 1;
+              extraDots += Math.max(0, val - base);
+          });
+          return extraDots;
+      };
+      const isNosf = char.clan === "Nosferatu";
+      const attrCategories = [
+          getAttrDots(char.attributes.physical, isNosf),
+          getAttrDots(char.attributes.social, isNosf),
+          getAttrDots(char.attributes.mental, isNosf)
+      ].sort((a,b)=>b-a);
+      
+      spent += Math.max(0, attrCategories[0] - 7) * 5;
+      spent += Math.max(0, attrCategories[1] - 5) * 5;
+      spent += Math.max(0, attrCategories[2] - 3) * 5;
+
+      // Abil: Base is 0. Pools 15/9/5.
+      const getAbilDots = (data: Record<string, number>) => Object.values(data).reduce((a,b)=>a+b,0);
+      const abilCategories = [
+          getAbilDots(char.abilities.talents),
+          getAbilDots(char.abilities.skills),
+          getAbilDots(char.abilities.knowledges)
+      ].sort((a,b)=>b-a);
+      
+      spent += Math.max(0, abilCategories[0] - 15) * 2;
+      spent += Math.max(0, abilCategories[1] - 9) * 2;
+      spent += Math.max(0, abilCategories[2] - 5) * 2;
+
+      // Disc: Base is 0. Pool 3.
+      spent += Math.max(0, Object.values(char.advantages.disciplines).reduce((a,b)=>a+b,0) - 3) * 7;
+      
+      // Back: Base is 0. Pool 5.
+      spent += Math.max(0, Object.values(char.advantages.backgrounds || {}).reduce((a,b)=>a+b,0) - 5) * 1;
+      
+      // Virtues: Base is 1. Pool 7.
+      let virtDots = 0;
+      Object.values(char.advantages.virtues).forEach(v => virtDots += Math.max(0, v - 1));
+      spent += Math.max(0, virtDots - 7) * 2;
+      
+      // Humanity/WP base
+      const baseHum = char.advantages.virtues.conscience + char.advantages.virtues.selfControl;
+      spent += Math.max(0, char.humanity - baseHum) * 1;
+      const baseWp = char.advantages.virtues.courage;
+      spent += Math.max(0, char.willpower - baseWp) * 1;
+
+      // We only care about the absolute 15 freebies. Everything functionally above 15 is EXP math.
+      // This strict cap guarantees we never show negative freebies in the UI.
+      return Math.min(15, spent);
+  };
+
+  useEffect(() => {
+    // The previous delta baseline setter is no longer necessary
+    // because baseline is natively tracked via `characterFromStore` vs `localChar`.
+  }, [isLocked, characterFromStore]);
 
   // Fetch characters if list is empty (e.g. on direct link or refresh)
   useEffect(() => {
@@ -90,7 +284,9 @@ export default function CharacterSheet() {
     // Special case: Update generation and blood pool when Generation background changes
     if (
       path.join(".") === "advantages.backgrounds.Generation" ||
-      (path[0] === "advantages" && path[1] === "backgrounds" && path[2] === "Generation")
+      (path[0] === "advantages" &&
+        path[1] === "backgrounds" &&
+        path[2] === "Generation")
     ) {
       const genDots = value;
       const newGen = 13 - genDots;
@@ -104,23 +300,24 @@ export default function CharacterSheet() {
       }
     }
 
-    // 2. Validate costs
-    const currentCosts = calculateDetailedCosts(localChar);
-    const projectedCosts = calculateDetailedCosts(updatedChar);
+    // 2. Validate costs (Using strict Delta from Store)
+    const projectedCosts = calculateDeltaCosts(characterFromStore, updatedChar);
     
-    // STRICT BLOCK: Never allow expRemaining to go negative
-    const isNowNegative = projectedCosts.expRemaining < 0;
-    
-    // Also block exceeding 15 freebies
-    const isExceedingFreebies = projectedCosts.freebiesSpent > 15;
-    
-    // We only allow the update if:
-    // 1. The result is valid (both exp and freebies are within limits)
-    // 2. OR we are in an invalid state but the change is IMPROVING it (decreasing freebies or increasing exp)
+    // STRICT BLOCK: Never allow session expRemaining to go negative
+    const projectedExpRemaining = (updatedChar.experience || 0) - projectedCosts.expSpent;
+    const isNowNegative = projectedExpRemaining < 0;
+
+    // Total freebies = base global + session delta
+    const totalFreebies = projectedCosts.baseFreebiesTotal + projectedCosts.freebiesSpent;
+    const isExceedingFreebies = totalFreebies > 15;
+
     const isValid = !isNowNegative && !isExceedingFreebies;
-    
-    const isImproving = (projectedCosts.expRemaining > currentCosts.expRemaining) || 
-                        (projectedCosts.freebiesSpent < currentCosts.freebiesSpent);
+
+    // Determine if we are improving (removing dots to recover EXP/Freebies)
+    const currentCosts = calculateDeltaCosts(characterFromStore, localChar);
+    const isImproving =
+      projectedExpRemaining > ((localChar.experience || 0) - currentCosts.expSpent) ||
+      totalFreebies < (currentCosts.baseFreebiesTotal + currentCosts.freebiesSpent);
 
     if (!isValid && !isImproving) {
       // Trigger error animation on the specific dot being changed
@@ -141,11 +338,20 @@ export default function CharacterSheet() {
 
   const handleSave = async () => {
     if (!characterFromStore?.id || !localChar || isLocked) return;
-    // Save all changes and re-lock
-    await updateCharacter(characterFromStore.id, {
+
+    // Calculate strictly the session delta EXP
+    const deltaCosts = calculateDeltaCosts(characterFromStore, localChar);
+    
+    // Deduct only what was newly spent in this session
+    const updatedChar = {
       ...localChar,
+      experience: Math.max(0, (localChar.experience || 0) - deltaCosts.expSpent),
       is_locked: true,
-    });
+    };
+
+    // Save all changes and re-lock
+    await updateCharacter(characterFromStore.id, updatedChar);
+    setLocalChar(updatedChar);
   };
 
   const handleDelete = async () => {
@@ -178,225 +384,8 @@ export default function CharacterSheet() {
     }, 0);
   };
 
-  const calculateDetailedCosts = (char = localChar) => {
-    if (!char) return { freebiesSpent: 0, expSpent: 0, expRemaining: 0 };
-    interface IncrementalDot {
-      label: string;
-      level: number;
-      freebieCost: number;
-      expCost: number;
-      type: "attr" | "abil" | "back" | "disc" | "virtue" | "humanity" | "wp";
-    }
-    // 1. Attributes - Stable Calculation
-    // Multiplier for Attributes is 3 (Standard: 4, User: 4-1=3)
-    const getAttrDots = (data: Record<string, number>): IncrementalDot[] => {
-      const dots: IncrementalDot[] = [];
-      Object.entries(data).forEach(([key, val]) => {
-        const base = (char.clan === "Nosferatu" && key === "appearance") ? 0 : 1;
-        for (let i = base + 1; i <= val; i++) {
-          dots.push({
-            label: key,
-            level: i,
-            freebieCost: 5,
-            // Rating * Multiplier. i-1 is the rating BEFORE this dot.
-            expCost: (i - 1) * EXP_COSTS.ATTRIBUTE_MULT,
-            type: "attr",
-          });
-        }
-      });
-      return dots;
-    };
-
-    const physDots = getAttrDots(char.attributes.physical);
-    const socDots = getAttrDots(char.attributes.social);
-    const mentDots = getAttrDots(char.attributes.mental);
-
-    // Calculate which category is Primary (7), Secondary (5), Tertiary (3)
-    // based on which has MOST dots to maximize pool usage.
-    const attrCategories = [
-      { dots: physDots, name: "Physical" },
-      { dots: socDots, name: "Social" },
-      { dots: mentDots, name: "Mental" },
-    ].sort((a,b) => b.dots.length - a.dots.length);
-
-    const pools = [7, 5, 3];
-    const attrExcess: IncrementalDot[] = [];
-    attrCategories.forEach((cat, idx) => {
-      const poolSize = pools[idx];
-      // Create dots are always the LOWEST levels.
-      const sorted = [...cat.dots].sort((a,b) => a.level - b.level);
-      attrExcess.push(...sorted.slice(poolSize));
-    });
-
-
-    // 2. Abilities - STABLE POOLS (Talents: 15, Skills: 9, Knowledges: 5)
-    // Re-sorting (15/9/5) also causes jumps. Fixed order: Talents > Skills > Knowledges.
-    const getAbilDots = (data: Record<string, number>): IncrementalDot[] => {
-      const dots: IncrementalDot[] = [];
-      Object.entries(data).forEach(([key, val]) => {
-        for (let i = 1; i <= val; i++) {
-          dots.push({
-            label: key,
-            level: i,
-            freebieCost: 2,
-            // (Level - 1) * Mult. (e.g. Level 3 costs 2 * 1 = 2)
-            expCost: i === 1 ? EXP_COSTS.NEW_ABILITY : (i - 1) * EXP_COSTS.ABILITY_MULT,
-            type: "abil",
-          });
-        }
-      });
-      return dots;
-    };
-
-    // 2. Abilities - Stable Calculation
-    // Multiplier for Abilities is 1 (Standard: 2, User: 2-1=1)
-    const talDots = getAbilDots(char.abilities.talents);
-    const skiDots = getAbilDots(char.abilities.skills);
-    const knoDots = getAbilDots(char.abilities.knowledges);
-
-    const abilCategories = [
-      { dots: talDots, name: "Talents" },
-      { dots: skiDots, name: "Skills" },
-      { dots: knoDots, name: "Knowledges" },
-    ].sort((a,b) => b.dots.length - a.dots.length);
-
-    const abilPools = [15, 9, 5];
-    const abilExcess: IncrementalDot[] = [];
-    abilCategories.forEach((cat, idx) => {
-      const poolSize = abilPools[idx];
-      const sorted = [...cat.dots].sort((a,b) => a.level - b.level);
-      abilExcess.push(...sorted.slice(poolSize));
-    });
-
-
-    // 3. Backgrounds (Trasfondos)
-    const backDots: IncrementalDot[] = [];
-    Object.entries(char.advantages.backgrounds || {}).forEach(([key, val]) => {
-      for (let i = 1; i <= val; i++) {
-        backDots.push({
-          label: key,
-          level: i,
-          freebieCost: 1,
-          expCost: 1, 
-          type: "back",
-        });
-      }
-    });
-    // For backgrounds, we sort by level to ensure the pool covers the first 5 dots.
-    const sortedBack = [...backDots].sort((a, b) => a.level - b.level);
-    const backExcess = sortedBack.slice(5);
-
-    // 4. Disciplines
-    const discDots: IncrementalDot[] = [];
-    const clanDisciplines = CLAN_DISCIPLINES[char.clan] || [];
-    
-    Object.entries(char.advantages.disciplines).forEach(([key, val]) => {
-      const isClan = clanDisciplines.includes(key);
-      for (let i = 1; i <= val; i++) {
-        let exp;
-        if (i === 1) exp = EXP_COSTS.NEW_DISCIPLINE;
-        else {
-          if (isClan) exp = (i - 1) * EXP_COSTS.CLAN_DISCIPLINE_MULT;
-          else exp = (i - 1) * EXP_COSTS.OTHER_DISCIPLINE_MULT;
-        }
-        discDots.push({
-          label: key,
-          level: i,
-          freebieCost: 7,
-          expCost: exp,
-          type: "disc",
-        });
-      }
-    });
-    const sortedDisc = [...discDots].sort((a, b) => a.level - b.level);
-    const discExcess = sortedDisc.slice(4);
-
-    // 5. Virtues
-    const virtDots: IncrementalDot[] = [];
-    Object.entries(char.advantages.virtues).forEach(([key, val]) => {
-      // Virtues have a base of 1.
-      for (let i = 2; i <= val; i++) {
-        virtDots.push({
-          label: key,
-          level: i,
-          freebieCost: 2,
-          // (Level - 1) * Mult.
-          expCost: (i - 1) * EXP_COSTS.VIRTUE_MULT,
-          type: "virtue",
-        });
-      }
-    });
-    const sortedVirt = [...virtDots].sort((a, b) => a.level - b.level);
-    const virtExcess = sortedVirt.slice(7);
-
-    // 6. Humanity & Willpower
-    const baseHum = char.advantages.virtues.conscience + char.advantages.virtues.selfControl;
-    const humanityExcess: IncrementalDot[] = [];
-    for (let i = baseHum + 1; i <= char.humanity; i++) {
-      humanityExcess.push({
-        label: "Humanity",
-        level: i,
-        freebieCost: 1,
-        expCost: (i - 1) * EXP_COSTS.HUMANITY_MULT,
-        type: "humanity",
-      });
-    }
-
-    const baseWP = char.advantages.virtues.courage;
-    const wpExcess: IncrementalDot[] = [];
-    for (let i = baseWP + 1; i <= char.willpower; i++) {
-      wpExcess.push({
-        label: "Willpower",
-        level: i,
-        freebieCost: 1,
-        // For WP, the incremental cost is usually 1 (or current rating).
-        // If current rating, it's (i-1) * 1.
-        expCost: (i - 1) * EXP_COSTS.WILLPOWER_MULT,
-        type: "wp",
-      });
-    }
-
-    // Allocation of Freebies/EXP
-    const allCandidates = [
-      ...attrExcess,
-      ...abilExcess,
-      ...backExcess,
-      ...discExcess,
-      ...virtExcess,
-      ...humanityExcess,
-      ...wpExcess,
-    ];
-
-    // Greedy sorting for Freebies (Best Value = Highest EXP cost)
-    allCandidates.sort((a, b) => b.expCost - a.expCost);
-
-    let freebiesLeft = 15;
-    let expSpent = 0;
-    let freebiesSpent = 0;
-
-    console.log("--- COST CALCULATION LOG ---");
-    allCandidates.forEach((dot, idx) => {
-      if (freebiesLeft >= dot.freebieCost) {
-        console.log(`[FREEBIE] ${dot.label} (Level ${dot.level}): Cost 0 EXP (Used Freebie ${dot.freebieCost})`);
-        freebiesLeft -= dot.freebieCost;
-        freebiesSpent += dot.freebieCost;
-      } else {
-        console.log(`[EXP] ${dot.label} (Level ${dot.level}): Cost ${dot.expCost} EXP`);
-        expSpent += dot.expCost;
-      }
-    });
-    console.log(`TOTALS: Freebies Spent: ${freebiesSpent} | EXP Spent: ${expSpent}`);
-
-    console.log("FINAL TOTALS:", { freebiesSpent, expSpent, expRemaining: (char.experience || 0) - expSpent });
-
-    return {
-      freebiesSpent,
-      expSpent,
-      expRemaining: (char.experience || 0) - expSpent,
-    };
-  };
-
-  const costDetails = calculateDetailedCosts();
+  const costDetails = calculateDeltaCosts(characterFromStore, localChar);
+  const totalFreebiesUsed = costDetails.baseFreebiesTotal + costDetails.freebiesSpent;
 
   const renderSection = (
     title: string,
@@ -542,13 +531,22 @@ export default function CharacterSheet() {
                 readOnly={isLocked}
               />
             </div>
-            <div className={`freebie-badge ${(15 - costDetails.freebiesSpent) < 0 || costDetails.expRemaining < 0 ? "negative" : ""}`}>
-              Puntos Gratuitos: {15 - costDetails.freebiesSpent}
-            </div>
-            {costDetails.expSpent > 0 && (
-              <div className={`freebie-badge exp-badge ${costDetails.expRemaining < 0 ? "negative" : ""}`}>
-                Exp Gastada: {costDetails.expSpent} | Restante: {costDetails.expRemaining}
-              </div>
+            {!isLocked && (
+              <>
+                <div
+                  className={`freebie-badge ${costDetails.expRemaining < 0 ? "negative" : ""}`}
+                >
+                  Puntos Gratuitos: {Math.max(0, 15 - totalFreebiesUsed)}
+                </div>
+                {costDetails.expSpent > 0 && (
+                  <div
+                    className={`freebie-badge exp-badge ${costDetails.expRemaining < 0 ? "negative" : ""}`}
+                  >
+                    Exp Gastada: {costDetails.expSpent} | Restante:{" "}
+                    {costDetails.expRemaining}
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
@@ -797,18 +795,20 @@ export default function CharacterSheet() {
             <div className="status-col">
               <h3 className="section-title">Reserva de Sangre</h3>
               <div className="blood-pool-grid">
-                {Array.from({ length: localChar.blood_pool || 10 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className={`blood-box ${i < localChar.blood_pool_current ? "filled" : ""}`}
-                    onClick={() => {
-                      if (isLocked) return;
-                      const newVal =
-                        i + 1 === localChar.blood_pool_current ? i : i + 1;
-                      handleUpdate(["blood_pool_current"], newVal);
-                    }}
-                  ></div>
-                ))}
+                {Array.from({ length: localChar.blood_pool || 10 }).map(
+                  (_, i) => (
+                    <div
+                      key={i}
+                      className={`blood-box ${i < localChar.blood_pool_current ? "filled" : ""}`}
+                      onClick={() => {
+                        if (isLocked) return;
+                        const newVal =
+                          i + 1 === localChar.blood_pool_current ? i : i + 1;
+                        handleUpdate(["blood_pool_current"], newVal);
+                      }}
+                    ></div>
+                  ),
+                )}
               </div>
             </div>
 
