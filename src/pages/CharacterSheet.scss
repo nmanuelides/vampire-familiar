@@ -231,11 +231,12 @@
   .experience-group {
     grid-column: span 3;
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
     border-bottom: none;
     margin-top: $spacing-md;
-    gap: 32px; // Space between Exp and Freebies
+    gap: 16px 32px; // Row-gap 16px, col-gap 32px
 
     .exp-item {
       display: flex;
@@ -283,6 +284,19 @@
         color: $error-color;
         border-color: rgba($error-color, 0.3);
         box-shadow: 0 0 5px rgba($error-color, 0.2);
+      }
+
+      &.exp-badge {
+        background-color: rgba(0, 150, 255, 0.15);
+        color: #add8e6;
+        border-color: rgba(0, 150, 255, 0.3);
+        box-shadow: 0 0 5px rgba(0, 150, 255, 0.2);
+
+        &.negative {
+          background-color: rgba($error-color, 0.15);
+          color: $error-color;
+          border-color: rgba($error-color, 0.3);
+        }
       }
     }
   }

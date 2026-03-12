@@ -961,7 +961,20 @@ export function getMaxBloodPool(generation: number) {
       return 50;
     case 3:
       return 100; // Placeholder for Third
-    default:
-      return 10;
   }
 }
+
+export const EXP_COSTS = {
+  NEW_ABILITY: 3,
+  NEW_DISCIPLINE: 10,
+  NEW_PATH: 7,
+  ATTRIBUTE_MULT: 3, // 4-1
+  ABILITY_MULT: 1, // 2-1
+  CLAN_DISCIPLINE_MULT: 4, // 5-1
+  OTHER_DISCIPLINE_MULT: 6, // 7-1
+  SECONDARY_PATH_MULT: 3, // 4-1
+  VIRTUE_MULT: 1, // 2-1
+  HUMANITY_MULT: 1, // 2-1
+  WILLPOWER_MULT: 1, // "valor actual" -> multiplier 1
+  CAITIFF_DISCIPLINE_MULT: 5, // 6-1
+};

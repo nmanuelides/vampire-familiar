@@ -10,6 +10,8 @@ import {
   VTM_TRANSLATIONS,
   ATTR_DESCRIPTIONS,
   COMMON_BACKGROUNDS,
+  CLAN_DISCIPLINES,
+  EXP_COSTS,
 } from "../data/vtm";
 import { Lock, LockOpen, Save } from "lucide-react";
 import "./CharacterSheet.scss";
@@ -93,9 +95,11 @@ export default function CharacterSheet() {
       const newGen = 13 - genDots;
       updatedChar.generation = newGen;
       const newMaxBlood = getMaxBloodPool(newGen);
-      updatedChar.blood_pool = newMaxBlood;
-      if (updatedChar.blood_pool_current > newMaxBlood) {
-        updatedChar.blood_pool_current = newMaxBlood;
+      if (newMaxBlood !== undefined) {
+        updatedChar.blood_pool = newMaxBlood;
+        if (updatedChar.blood_pool_current > newMaxBlood) {
+          updatedChar.blood_pool_current = newMaxBlood;
+        }
       }
     }
 
@@ -147,73 +151,210 @@ export default function CharacterSheet() {
     }, 0);
   };
 
-  const getBestPoolAllocation = (values: number[], pools: number[]) => {
-    const sortedValues = [...values].sort((a, b) => b - a);
-    const sortedPools = [...pools].sort((a, b) => b - a);
-    let totalExcess = 0;
-
-    for (let i = 0; i < sortedValues.length; i++) {
-      totalExcess += Math.max(0, sortedValues[i] - sortedPools[i]);
+  const calculateDetailedCosts = () => {
+    interface IncrementalDot {
+      label: string;
+      level: number;
+      freebieCost: number;
+      expCost: number;
+      type: "attr" | "abil" | "back" | "disc" | "virtue" | "humanity" | "wp";
     }
-    return totalExcess;
-  };
 
-  const calculateFreebieDetails = () => {
-    const attrPhys = getPointsSpent(localChar.attributes.physical, "attribute");
-    const attrSoc = getPointsSpent(localChar.attributes.social, "attribute");
-    const attrMent = getPointsSpent(localChar.attributes.mental, "attribute");
-    const attrExcess = getBestPoolAllocation(
-      [attrPhys, attrSoc, attrMent],
-      [7, 5, 3],
-    );
+    // 1. Attributes
+    const getAttrDots = (
+      data: Record<string, number>,
+    ): IncrementalDot[] => {
+      const dots: IncrementalDot[] = [];
+      Object.entries(data).forEach(([key, val]) => {
+        const base = (localChar.clan === "Nosferatu" && key === "appearance") ? 0 : 1;
+        for (let i = base + 1; i <= val; i++) {
+          dots.push({
+            label: key,
+            level: i,
+            freebieCost: 5,
+            expCost: (i - 1) * EXP_COSTS.ATTRIBUTE_MULT,
+            type: "attr",
+          });
+        }
+      });
+      return dots;
+    };
 
-    const abilTal = getPointsSpent(localChar.abilities.talents, "ability");
-    const abilSki = getPointsSpent(localChar.abilities.skills, "ability");
-    const abilKno = getPointsSpent(localChar.abilities.knowledges, "ability");
-    const abilExcess = getBestPoolAllocation(
-      [abilTal, abilSki, abilKno],
-      [15, 9, 5],
-    );
+    const physDots = getAttrDots(localChar.attributes.physical);
+    const socDots = getAttrDots(localChar.attributes.social);
+    const mentDots = getAttrDots(localChar.attributes.mental);
 
-    const backSpent = getPointsSpent(
-      localChar.advantages.backgrounds || {},
-      "other",
-    );
-    const backExcess = Math.max(0, backSpent - 5);
+    // Attribute pools 7/5/3
+    const attrCategories = [
+      { dots: physDots, name: "physical" },
+      { dots: socDots, name: "social" },
+      { dots: mentDots, name: "mental" },
+    ].sort((a, b) => b.dots.length - a.dots.length);
 
-    const discSpent = getPointsSpent(localChar.advantages.disciplines, "other");
-    const discExcess = Math.max(0, discSpent - 4);
+    const attrPoolSizes = [7, 5, 3];
+    const attrExcess: IncrementalDot[] = [];
+    attrCategories.forEach((cat, idx) => {
+      const pool = attrPoolSizes[idx];
+      const sorted = [...cat.dots].sort((a, b) => b.expCost - a.expCost);
+      const remaining = sorted.slice(pool);
+      attrExcess.push(...remaining);
+    });
 
-    const virtSpent = getPointsSpent(localChar.advantages.virtues, "virtue");
-    const virtExcess = Math.max(0, virtSpent - 7);
+    // 2. Abilities
+    const getAbilDots = (data: Record<string, number>): IncrementalDot[] => {
+      const dots: IncrementalDot[] = [];
+      Object.entries(data).forEach(([key, val]) => {
+        for (let i = 1; i <= val; i++) {
+          dots.push({
+            label: key,
+            level: i,
+            freebieCost: 2,
+            expCost: i === 1 ? EXP_COSTS.NEW_ABILITY : (i - 1) * EXP_COSTS.ABILITY_MULT,
+            type: "abil",
+          });
+        }
+      });
+      return dots;
+    };
 
-    // Humanity and Willpower
-    const baseHumanity =
-      localChar.advantages.virtues.conscience +
-      localChar.advantages.virtues.selfControl;
-    const humanityExcess = Math.max(0, localChar.humanity - baseHumanity);
+    const talDots = getAbilDots(localChar.abilities.talents);
+    const skiDots = getAbilDots(localChar.abilities.skills);
+    const knoDots = getAbilDots(localChar.abilities.knowledges);
 
-    const baseWillpower = localChar.advantages.virtues.courage;
-    const willpowerExcess = Math.max(0, localChar.willpower - baseWillpower);
+    const abilCategories = [
+      { dots: talDots },
+      { dots: skiDots },
+      { dots: knoDots },
+    ].sort((a, b) => b.dots.length - a.dots.length);
 
-    const totalCost =
-      attrExcess * 5 +
-      abilExcess * 2 +
-      backExcess * 1 +
-      discExcess * 7 +
-      virtExcess * 2 +
-      humanityExcess * 1 +
-      willpowerExcess * 1;
+    const abilPoolSizes = [15, 9, 5];
+    const abilExcess: IncrementalDot[] = [];
+    abilCategories.forEach((cat, idx) => {
+      const pool = abilPoolSizes[idx];
+      const sorted = [...cat.dots].sort((a, b) => b.expCost - a.expCost);
+      abilExcess.push(...sorted.slice(pool));
+    });
+
+    // 3. Backgrounds (Trasfondos)
+    const backDots: IncrementalDot[] = [];
+    Object.entries(localChar.advantages.backgrounds || {}).forEach(([key, val]) => {
+      for (let i = 1; i <= val; i++) {
+        backDots.push({
+          label: key,
+          level: i,
+          freebieCost: 1,
+          expCost: 1, 
+          type: "back",
+        });
+      }
+    });
+    const sortedBack = [...backDots].sort((a, b) => b.expCost - a.expCost);
+    const backExcess = sortedBack.slice(5);
+
+    // 4. Disciplines
+    const discDots: IncrementalDot[] = [];
+    const clanDisciplines = CLAN_DISCIPLINES[localChar.clan] || [];
+    
+    Object.entries(localChar.advantages.disciplines).forEach(([key, val]) => {
+      const isClan = clanDisciplines.includes(key);
+      for (let i = 1; i <= val; i++) {
+        let exp;
+        if (i === 1) exp = EXP_COSTS.NEW_DISCIPLINE;
+        else {
+          if (isClan) exp = (i - 1) * EXP_COSTS.CLAN_DISCIPLINE_MULT;
+          else exp = (i - 1) * EXP_COSTS.OTHER_DISCIPLINE_MULT;
+        }
+        discDots.push({
+          label: key,
+          level: i,
+          freebieCost: 7,
+          expCost: exp,
+          type: "disc",
+        });
+      }
+    });
+    const sortedDisc = [...discDots].sort((a, b) => b.expCost - a.expCost);
+    const discExcess = sortedDisc.slice(4);
+
+    // 5. Virtues
+    const virtDots: IncrementalDot[] = [];
+    Object.entries(localChar.advantages.virtues).forEach(([key, val]) => {
+      for (let i = 2; i <= val; i++) {
+        virtDots.push({
+          label: key,
+          level: i,
+          freebieCost: 2,
+          expCost: (i - 1) * EXP_COSTS.VIRTUE_MULT,
+          type: "virtue",
+        });
+      }
+    });
+    const sortedVirt = [...virtDots].sort((a, b) => b.expCost - a.expCost);
+    const virtExcess = sortedVirt.slice(7);
+
+    // 6. Humanity & Willpower
+    const baseHum = localChar.advantages.virtues.conscience + localChar.advantages.virtues.selfControl;
+    const humanityExcess: IncrementalDot[] = [];
+    for (let i = baseHum + 1; i <= localChar.humanity; i++) {
+      humanityExcess.push({
+        label: "Humanity",
+        level: i,
+        freebieCost: 1,
+        expCost: (i - 1) * EXP_COSTS.HUMANITY_MULT,
+        type: "humanity",
+      });
+    }
+
+    const baseWP = localChar.advantages.virtues.courage;
+    const wpExcess: IncrementalDot[] = [];
+    for (let i = baseWP + 1; i <= localChar.willpower; i++) {
+      wpExcess.push({
+        label: "Willpower",
+        level: i,
+        freebieCost: 1,
+        expCost: (i - 1) * EXP_COSTS.WILLPOWER_MULT,
+        type: "wp",
+      });
+    }
+
+    // Combine all excess dots
+    const allCandidates = [
+      ...attrExcess,
+      ...abilExcess,
+      ...backExcess,
+      ...discExcess,
+      ...virtExcess,
+      ...humanityExcess,
+      ...wpExcess,
+    ];
+
+    allCandidates.sort((a, b) => {
+      const valA = a.expCost / a.freebieCost;
+      const valB = b.expCost / b.freebieCost;
+      return valB - valA;
+    });
+
+    let freebiesLeft = 15;
+    let expSpent = 0;
+    let freebiesSpent = 0;
+
+    allCandidates.forEach(dot => {
+      if (freebiesLeft >= dot.freebieCost) {
+        freebiesLeft -= dot.freebieCost;
+        freebiesSpent += dot.freebieCost;
+      } else {
+        expSpent += dot.expCost;
+      }
+    });
 
     return {
-      attrPools: [attrPhys, attrSoc, attrMent].sort((a, b) => b - a),
-      abilPools: [abilTal, abilSki, abilKno].sort((a, b) => b - a),
-      freebiesRemaining: 15 - totalCost,
-      totalCost,
+      freebiesSpent,
+      expSpent,
+      expRemaining: (localChar.experience || 0) - expSpent,
     };
   };
 
-  const freebieDetails = calculateFreebieDetails();
+  const costDetails = calculateDetailedCosts();
 
   const renderSection = (
     title: string,
@@ -358,11 +499,14 @@ export default function CharacterSheet() {
                 readOnly={isLocked}
               />
             </div>
-            <div
-              className={`freebie-badge ${freebieDetails.freebiesRemaining < 0 ? "negative" : ""}`}
-            >
-              Puntos Gratuitos: {freebieDetails.freebiesRemaining}
+            <div className={`freebie-badge ${(15 - costDetails.freebiesSpent) < 0 || costDetails.expRemaining < 0 ? "negative" : ""}`}>
+              Puntos Gratuitos: {15 - costDetails.freebiesSpent}
             </div>
+            {costDetails.expSpent > 0 && (
+              <div className={`freebie-badge exp-badge ${costDetails.expRemaining < 0 ? "negative" : ""}`}>
+                Exp Gastada: {costDetails.expSpent} | Restante: {costDetails.expRemaining}
+              </div>
+            )}
           </div>
         </div>
 
