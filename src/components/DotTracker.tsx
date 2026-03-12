@@ -30,7 +30,13 @@ export default function DotTracker({
 
   useEffect(() => {
     if (flashing) {
-      setIsFlashing(true);
+      // Force an animation reset by removing and rapidly reapplying the class
+      setIsFlashing(false);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setIsFlashing(true);
+        });
+      });
     }
   }, [flashing]);
 

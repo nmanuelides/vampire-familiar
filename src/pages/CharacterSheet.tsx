@@ -55,6 +55,7 @@ export default function CharacterSheet() {
       level: number;
       freebieCost: number;
       expCost: number;
+      poolCategory: string; // E.g., "physical", "talents"
     }
 
     const addedDots: DiffDot[] = [];
@@ -65,7 +66,8 @@ export default function CharacterSheet() {
       current: Record<string, number>,
       type: string,
       freebieCost: number,
-      calcExp: (level: number, label: string) => number
+      calcExp: (level: number, label: string) => number,
+      poolCategory: string
     ) => {
       Object.keys(current).forEach(key => {
         const baseLevel = base[key] || 0;
@@ -76,7 +78,8 @@ export default function CharacterSheet() {
             label: key,
             level: i,
             freebieCost,
-            expCost: calcExp(i, key)
+            expCost: calcExp(i, key),
+            poolCategory
           });
         }
       });
@@ -84,9 +87,8 @@ export default function CharacterSheet() {
 
     // 1. Attributes
     const getAttrBase = (key: string) => (currentChar.clan === "Nosferatu" && key === "appearance" ? 0 : 1);
-    const compareAttr = (base: Record<string, number>, current: Record<string, number>) => {
+    const compareAttr = (base: Record<string, number>, current: Record<string, number>, poolCategory: string) => {
       Object.keys(current).forEach(key => {
-        // Enforce basic minimums in base level so we don't charge for base dots
         const baseLevel = Math.max(base[key] || 0, getAttrBase(key));
         const currentLevel = current[key] || 0;
         for (let i = baseLevel + 1; i <= currentLevel; i++) {
@@ -95,20 +97,21 @@ export default function CharacterSheet() {
             label: key,
             level: i,
             freebieCost: 5,
-            expCost: (i - 1) * EXP_COSTS.ATTRIBUTE_MULT // Strictly (level-1) * 3
+            expCost: (i - 1) * EXP_COSTS.ATTRIBUTE_MULT,
+            poolCategory
           });
         }
       });
     };
-    compareAttr(baseChar.attributes.physical, currentChar.attributes.physical);
-    compareAttr(baseChar.attributes.social, currentChar.attributes.social);
-    compareAttr(baseChar.attributes.mental, currentChar.attributes.mental);
+    compareAttr(baseChar.attributes.physical, currentChar.attributes.physical, "phys");
+    compareAttr(baseChar.attributes.social, currentChar.attributes.social, "soc");
+    compareAttr(baseChar.attributes.mental, currentChar.attributes.mental, "ment");
 
     // 2. Abilities
     const calcAbilExp = (level: number) => level === 1 ? EXP_COSTS.NEW_ABILITY : (level - 1) * EXP_COSTS.ABILITY_MULT;
-    compareRecords(baseChar.abilities.talents, currentChar.abilities.talents, "abil", 2, calcAbilExp);
-    compareRecords(baseChar.abilities.skills, currentChar.abilities.skills, "abil", 2, calcAbilExp);
-    compareRecords(baseChar.abilities.knowledges, currentChar.abilities.knowledges, "abil", 2, calcAbilExp);
+    compareRecords(baseChar.abilities.talents, currentChar.abilities.talents, "abil", 2, calcAbilExp, "tal");
+    compareRecords(baseChar.abilities.skills, currentChar.abilities.skills, "abil", 2, calcAbilExp, "ski");
+    compareRecords(baseChar.abilities.knowledges, currentChar.abilities.knowledges, "abil", 2, calcAbilExp, "kno");
 
     // 3. Disciplines
     const clanDisciplines = CLAN_DISCIPLINES[currentChar.clan] || [];
@@ -118,13 +121,11 @@ export default function CharacterSheet() {
         ? (level - 1) * EXP_COSTS.CLAN_DISCIPLINE_MULT
         : (level - 1) * EXP_COSTS.OTHER_DISCIPLINE_MULT;
     };
-    compareRecords(baseChar.advantages.disciplines, currentChar.advantages.disciplines, "disc", 7, calcDiscExp);
+    compareRecords(baseChar.advantages.disciplines, currentChar.advantages.disciplines, "disc", 7, calcDiscExp, "disc");
 
     // 4. Backgrounds
-    // The user explicitly stated Backgrounds can NOT be purchased with experience.
-    // If a background exceeds base + freebies, its cost is artificially set to Infinity to block it.
     const calcBackExp = () => Infinity; 
-    compareRecords(baseChar.advantages.backgrounds || {}, currentChar.advantages.backgrounds || {}, "back", 1, calcBackExp);
+    compareRecords(baseChar.advantages.backgrounds || {}, currentChar.advantages.backgrounds || {}, "back", 1, calcBackExp, "back");
 
     // 5. Virtues (Minimum 1)
     const getVirtueBase = (val: number | undefined) => Math.max(val || 0, 1);
@@ -132,31 +133,76 @@ export default function CharacterSheet() {
       const baseLvl = getVirtueBase((baseChar.advantages.virtues as any)[key]);
       const curLvl = (currentChar.advantages.virtues as any)[key];
       for (let i = baseLvl + 1; i <= curLvl; i++) {
-        addedDots.push({ type: "virtue", label: key, level: i, freebieCost: 2, expCost: (i - 1) * EXP_COSTS.VIRTUE_MULT });
+        addedDots.push({ type: "virtue", label: key, level: i, freebieCost: 2, expCost: (i - 1) * EXP_COSTS.VIRTUE_MULT, poolCategory: "virtue" });
       }
     });
 
     // 6. Humanity & Willpower
     for (let i = baseChar.humanity + 1; i <= currentChar.humanity; i++) {
-        addedDots.push({ type: "humanity", label: "humanity", level: i, freebieCost: 1, expCost: (i - 1) * EXP_COSTS.HUMANITY_MULT });
+        addedDots.push({ type: "humanity", label: "humanity", level: i, freebieCost: 1, expCost: (i - 1) * EXP_COSTS.HUMANITY_MULT, poolCategory: "humanity" });
     }
     for (let i = baseChar.willpower + 1; i <= currentChar.willpower; i++) {
-        addedDots.push({ type: "wp", label: "willpower", level: i, freebieCost: 1, expCost: (i - 1) * EXP_COSTS.WILLPOWER_MULT });
+        addedDots.push({ type: "wp", label: "willpower", level: i, freebieCost: 1, expCost: (i - 1) * EXP_COSTS.WILLPOWER_MULT, poolCategory: "wp" });
     }
 
     // Sort added dots predictably so stable additions behave correctly
     addedDots.sort((a, b) => a.level - b.level);
 
+    // Calculate how many pool dots were ALREADY used in the BASE character
+    const isNosf = currentChar.clan === "Nosferatu";
+    const getBaseAttr = (key: string) => (isNosf && key === "appearance" ? 0 : 1);
+    
+    // We calculate available pools based on the BASE character.
+    // However, Attributes and Abilities have dynamic 7/5/3 and 15/9/5 allocation.
+    // To strictly support creation, we sort the BASE usage to figure out which pool went where.
+    const baseAttrs = [
+      Object.entries(baseChar.attributes.physical).reduce((s, [k,v]) => s + Math.max(0, v - getBaseAttr(k)), 0),
+      Object.entries(baseChar.attributes.social).reduce((s, [k,v]) => s + Math.max(0, v - getBaseAttr(k)), 0),
+      Object.entries(baseChar.attributes.mental).reduce((s, [k,v]) => s + Math.max(0, v - getBaseAttr(k)), 0)
+    ];
+    // We map categories to their dynamic sizes by checking which one currently uses the most in BASE
+    // But since session additions might cross thresholds, we track global Remaining Pool space for each tier type
+    
+    // Simpler and more accurate: Base Pools act as global "Free Spaces" per tier
+    const getBaseSum = (data: Record<string, number>, baseValue = 0) => Object.values(data).reduce((s, v) => s + Math.max(0, v - baseValue), 0);
+    
+    let attrPoolRemaining = Math.max(0, 15 - (baseAttrs[0] + baseAttrs[1] + baseAttrs[2])); // 7+5+3 = 15 total attributes
+    
+    const baseAbilsTotal = getBaseSum(baseChar.abilities.talents) + getBaseSum(baseChar.abilities.skills) + getBaseSum(baseChar.abilities.knowledges);
+    let abilPoolRemaining = Math.max(0, 29 - baseAbilsTotal); // 15+9+5 = 29
+    
+    let discPoolRemaining = Math.max(0, 3 - getBaseSum(baseChar.advantages.disciplines));
+    let backPoolRemaining = Math.max(0, 5 - getBaseSum(baseChar.advantages.backgrounds || {}));
+    
+    let virtBaseSum = Object.values(baseChar.advantages.virtues).reduce((s, v) => s + Math.max(0, v - 1), 0);
+    let virtPoolRemaining = Math.max(0, 7 - virtBaseSum);
+
+    // First pass: Consume Pools
+    const finalDots: DiffDot[] = [];
+    addedDots.forEach(dot => {
+      let absorbed = false;
+      if (dot.type === "attr" && attrPoolRemaining > 0) {
+        attrPoolRemaining--; absorbed = true;
+      } else if (dot.type === "abil" && abilPoolRemaining > 0) {
+        abilPoolRemaining--; absorbed = true;
+      } else if (dot.type === "disc" && discPoolRemaining > 0) {
+        discPoolRemaining--; absorbed = true;
+      } else if (dot.type === "back" && backPoolRemaining > 0) {
+        backPoolRemaining--; absorbed = true;
+      } else if (dot.type === "virtue" && virtPoolRemaining > 0) {
+        virtPoolRemaining--; absorbed = true;
+      }
+      if (!absorbed) finalDots.push(dot);
+    });
+
     // We must calculate how many freebies the BASE character has already used.
-    // For simplicity, we assume if experience > 0 or if the character has a lot of dots, freebies are likely 0.
-    // But to be exact, we calculate the absolute freebie cost of the BASE character.
     let baseGlobalFreebies = calculateBaseAbsoluteFreebies(baseChar);
     let freebiesLeft = Math.max(0, 15 - baseGlobalFreebies);
     
     let sessionExpSpent = 0;
     let sessionFreebiesSpent = 0;
 
-    addedDots.forEach(dot => {
+    finalDots.forEach(dot => {
         if (freebiesLeft >= dot.freebieCost) {
             freebiesLeft -= dot.freebieCost;
             sessionFreebiesSpent += dot.freebieCost;
