@@ -192,6 +192,10 @@ export default function CharacterSheet() {
         backPoolRemaining--; absorbed = true;
       } else if (dot.type === "virtue" && virtPoolRemaining > 0) {
         virtPoolRemaining--; absorbed = true;
+      } else if (dot.type === "humanity" && dot.level <= (currentChar.advantages.virtues.conscience + currentChar.advantages.virtues.selfControl)) {
+        absorbed = true;
+      } else if (dot.type === "wp" && dot.level <= currentChar.advantages.virtues.courage) {
+        absorbed = true;
       }
       if (!absorbed) finalDots.push(dot);
     });
@@ -349,8 +353,16 @@ export default function CharacterSheet() {
         }
       }
     }
+    // 3. Update Humanity/Willpower when Virtues change (Initial creation pool logic)
+    if (path[0] === "advantages" && path[1] === "virtues") {
+      const v = updatedChar.advantages.virtues;
+      // Derived stats are updated automatically to match virtue sums/values
+      updatedChar.humanity = v.conscience + v.selfControl;
+      updatedChar.willpower = v.courage;
+      updatedChar.willpower_current = updatedChar.willpower;
+    }
 
-    // 2. Validate costs (Using strict Delta from Store)
+    // 4. Validate costs (Using strict Delta from Store)
     const projectedCosts = calculateDeltaCosts(characterFromStore, updatedChar);
     
     // STRICT BLOCK: Never allow session expRemaining to go negative
@@ -708,7 +720,7 @@ export default function CharacterSheet() {
                 "Disciplinas",
                 localChar.advantages.disciplines,
                 ["advantages", "disciplines"],
-                "(pool: 4 | costo extra: 7)",
+                "(pool: 3 | costo extra: 7)",
                 true,
                 true, // mobileAlignRight
                 false,
