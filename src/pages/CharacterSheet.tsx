@@ -731,14 +731,6 @@ export default function CharacterSheet() {
             />
           </div>
         </div>
-
-        <button 
-          className="info-toggle-btn"
-          onClick={() => setIsInfoExpanded(!isInfoExpanded)}
-          title={isInfoExpanded ? "Contraer información" : "Expandir información"}
-        >
-          {isInfoExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-        </button>
       </div>
 
       <div className="info-group experience-group">
@@ -772,6 +764,14 @@ export default function CharacterSheet() {
             )}
           </>
         )}
+        
+        <button 
+          className="info-toggle-btn"
+          onClick={() => setIsInfoExpanded(!isInfoExpanded)}
+          title={isInfoExpanded ? "Contraer información" : "Expandir información"}
+        >
+          {isInfoExpanded ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
+        </button>
       </div>
 
       <div className="sheet-grid">

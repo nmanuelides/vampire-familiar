@@ -227,10 +227,6 @@
       width: 100%;
     }
 
-    .info-toggle-btn {
-      display: none; // Hidden on desktop
-    }
-
     .info-group {
       font-size: 0.95rem;
       color: color.adjust($text-color, $lightness: 10%);
@@ -352,6 +348,10 @@
     gap: 16px 32px;
     box-shadow: none;
     margin-top: -1px; // Ensure no gap between bio and exp
+
+    .info-toggle-btn {
+      display: none; // Hidden on desktop
+    }
 
     .exp-item {
       display: flex;
