@@ -12,6 +12,7 @@ import {
   COMMON_BACKGROUNDS,
   CLAN_DISCIPLINES,
   EXP_COSTS,
+  ARCHETYPES,
 } from "../data/vtm";
 import { Lock, LockOpen, Save } from "lucide-react";
 import "./CharacterSheet.scss";
@@ -40,6 +41,18 @@ export default function CharacterSheet() {
 
   const [localChar, setLocalChar] = useState<VTMCharacter | null>(null);
   const [spendingError, setSpendingError] = useState<string | null>(null);
+  const [isNewNature, setIsNewNature] = useState(false);
+  const [isNewDemeanor, setIsNewDemeanor] = useState(false);
+
+  const allArchetypes = Array.from(
+    new Set([
+      ...ARCHETYPES,
+      ...characters.map((c) => c.nature),
+      ...characters.map((c) => c.demeanor),
+    ])
+  )
+    .filter(Boolean)
+    .sort() as string[];
 
   // DELTA COST CALCULATION
   // To avoid "cost shuffling", we strictly calculate the exact cost of the difference
@@ -86,7 +99,8 @@ export default function CharacterSheet() {
       });
     };
 
-    // 1. Attributes
+
+  // 1. Attributes
     const getAttrBase = (key: string) => (currentChar.clan === "Nosferatu" && key === "appearance" ? 0 : 1);
     const compareAttr = (base: Record<string, number>, current: Record<string, number>, poolCategory: string) => {
       Object.keys(current).forEach(key => {
@@ -531,25 +545,98 @@ export default function CharacterSheet() {
           </div>
           <div className="info-group">
             <span>Naturaleza:</span>
-            <input
-              type="text"
-              value={localChar.nature || ""}
-              onChange={(e) => handleUpdate(["nature"], e.target.value)}
-              className="inline-input"
-              placeholder="Naturaleza..."
-              readOnly={isLocked}
-            />
+            {!isNewNature && !isLocked ? (
+              <select
+                value={localChar.nature || ""}
+                className="inline-input"
+                onChange={(e) => {
+                  if (e.target.value === "___NEW___") {
+                    setIsNewNature(true);
+                  } else {
+                    handleUpdate(["nature"], e.target.value);
+                  }
+                }}
+              >
+                {!localChar.nature && <option value="">Seleccionar...</option>}
+                {allArchetypes.map((a) => (
+                  <option key={a} value={a}>
+                    {a}
+                  </option>
+                ))}
+                <option value="___NEW___">+ Nuevo...</option>
+              </select>
+            ) : (
+              <div className="input-with-cancel">
+                <input
+                  type="text"
+                  value={localChar.nature || ""}
+                  onChange={(e) => handleUpdate(["nature"], e.target.value)}
+                  className="inline-input"
+                  placeholder="Naturaleza..."
+                  readOnly={isLocked}
+                  autoFocus={isNewNature}
+                />
+                {isNewNature && !isLocked && (
+                  <button
+                    className="cancel-small"
+                    onClick={() => {
+                      setIsNewNature(false);
+                      // Optionally reset to previous? or just let them keep typing.
+                    }}
+                    title="Volver a lista"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+            )}
           </div>
           <div className="info-group">
             <span>Conducta:</span>
-            <input
-              type="text"
-              value={localChar.demeanor || ""}
-              onChange={(e) => handleUpdate(["demeanor"], e.target.value)}
-              className="inline-input"
-              placeholder="Conducta..."
-              readOnly={isLocked}
-            />
+            {!isNewDemeanor && !isLocked ? (
+              <select
+                value={localChar.demeanor || ""}
+                className="inline-input"
+                onChange={(e) => {
+                  if (e.target.value === "___NEW___") {
+                    setIsNewDemeanor(true);
+                  } else {
+                    handleUpdate(["demeanor"], e.target.value);
+                  }
+                }}
+              >
+                {!localChar.demeanor && <option value="">Seleccionar...</option>}
+                {allArchetypes.map((a) => (
+                  <option key={a} value={a}>
+                    {a}
+                  </option>
+                ))}
+                <option value="___NEW___">+ Nuevo...</option>
+              </select>
+            ) : (
+              <div className="input-with-cancel">
+                <input
+                  type="text"
+                  value={localChar.demeanor || ""}
+                  onChange={(e) => handleUpdate(["demeanor"], e.target.value)}
+                  className="inline-input"
+                  placeholder="Conducta..."
+                  readOnly={isLocked}
+                  autoFocus={isNewDemeanor}
+                />
+                {isNewDemeanor && !isLocked && (
+                  <button
+                    className="cancel-small"
+                    onClick={() => {
+                      setIsNewDemeanor(false);
+                    }}
+                    title="Volver a lista"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+            )}
           </div>
           <div className="info-group">
             <span>Concepto:</span>

@@ -259,19 +259,43 @@
           border-bottom-color: $accent-color;
           background: rgba(0, 0, 0, 0.2);
         }
+        }
+      }
 
-        &.number-input {
-          width: 40px;
-          text-align: center;
-          margin-right: 0px;
-          appearance: textfield;
-          -moz-appearance: textfield;
+      .input-with-cancel {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        width: 100%;
+        max-width: 150px;
 
-          &::-webkit-outer-spin-button,
-          &::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
+        .inline-input {
+          flex: 1;
+        }
+
+        .cancel-small {
+          background: transparent;
+          border: none;
+          color: rgba($text-color, 0.4);
+          font-size: 1.2rem;
+          cursor: pointer;
+          line-height: 1;
+          padding: 0 4px;
+          transition: color 0.2s;
+
+          &:hover {
+            color: $error-color;
           }
+        }
+      }
+
+      select.inline-input {
+        padding-right: 20px;
+        cursor: pointer;
+
+        option {
+          background-color: #222;
+          color: $text-color;
         }
       }
 
@@ -611,4 +635,3 @@
       }
     }
   } // Final closing for .sheet-body
-}

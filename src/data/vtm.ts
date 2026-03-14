@@ -16,6 +16,39 @@ export const CLANS: Clan[] = [
   "Ventrue",
 ];
 
+export const ARCHETYPES = [
+  "Ansioso de Emociones",
+  "Arquitecto",
+  "Autócrata",
+  "Bellaco",
+  "Bizarro",
+  "Bravucón",
+  "Bufón",
+  "Celebrante",
+  "Competidor",
+  "Confabulador",
+  "Conformista",
+  "Director",
+  "Fanático",
+  "Hosco",
+  "Juez",
+  "Mártir",
+  "Masoquista",
+  "Monstruo",
+  "Niño",
+  "Pedagogo",
+  "Penitente",
+  "Perfeccionista",
+  "Pervertido",
+  "Protector",
+  "Rebelde",
+  "Solitario",
+  "Superviviente",
+  "Tradicionalista",
+  "Visionario",
+  "Vividor",
+];
+
 export const VTM_TRANSLATIONS: Record<string, string> = {
   // Attributes
   strength: "Fuerza",
