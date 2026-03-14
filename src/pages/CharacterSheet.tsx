@@ -34,6 +34,7 @@ export default function CharacterSheet() {
   const isAdmin =
     user?.email === "magatsu82@gmail.com" ||
     user?.email === "magatsu83@gmail.com";
+  const canEditExperience = user?.email === "magatsu82@gmail.com";
   const isLocked = characterFromStore?.is_locked ?? true;
   const isOwner = characterFromStore?.user_id === user?.id;
 
@@ -579,7 +580,7 @@ export default function CharacterSheet() {
                   handleUpdate(["experience"], parseInt(e.target.value) || 0)
                 }
                 className="inline-input number-input"
-                readOnly={isLocked}
+                readOnly={isLocked || !canEditExperience}
               />
             </div>
             {!isLocked && (
