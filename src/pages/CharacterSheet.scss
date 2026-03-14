@@ -2,6 +2,64 @@
 @use "sass:color";
 @use "CharacterSheet-mobile";
 
+// Floating Action Button - Kept at Root for Reliability
+.fab-container {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+
+  @media (max-width: 768px) {
+    bottom: 20px;
+    right: 20px;
+  }
+
+  .fab-button {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: $accent-color;
+    color: white;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+    &:hover {
+      transform: scale(1.1) rotate(5deg);
+      background-color: color.adjust($accent-color, $lightness: 10%);
+      box-shadow: 0 6px 20px rgba($accent-color, 0.4);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    &.locked {
+      background-color: color.adjust($accent-color, $lightness: -10%);
+    }
+
+    &.save {
+      background-color: #2ecc71; // Success green for saving
+      &:hover {
+        background-color: #27ae60;
+        box-shadow: 0 6px 20px rgba(#27ae60, 0.4);
+      }
+    }
+  }
+}
+
 .character-sheet-container {
   padding: $spacing-xl $spacing-md;
 }
@@ -240,7 +298,7 @@
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    padding: $spacing-sm $spacing-lg $spacing-lg $spacing-lg;
+    padding: $spacing-md $spacing-lg $spacing-md $spacing-lg; // Reduced top padding for tighter integration
     background-color: rgba(17, 17, 17, 0.9);
     border-bottom: 2px solid $accent-color;
     border-radius: 0 0 $border-radius $border-radius;
@@ -262,7 +320,7 @@
       }
 
       .inline-input.number-input {
-        width: 60px;
+        width: 90px;
         font-size: 1.2rem;
         border-bottom-color: rgba($accent-color, 0.5);
         text-align: center;
@@ -552,62 +610,5 @@
         height: 18px;
       }
     }
-  }
-
-  // Floating Action Button
-  .fab-container {
-    position: fixed;
-    bottom: 40px;
-    right: 40px;
-    z-index: 1100;
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-md;
-
-    @media (max-width: 768px) {
-      bottom: 20px;
-      right: 20px;
-    }
-  }
-
-  .fab-button {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background-color: $accent-color;
-    color: white;
-    border: none;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-
-    &:hover {
-      transform: scale(1.1) rotate(5deg);
-      background-color: color.adjust($accent-color, $lightness: 10%);
-      box-shadow: 0 6px 20px rgba($accent-color, 0.4);
-    }
-
-    &:active {
-      transform: scale(0.95);
-    }
-
-    svg {
-      width: 28px;
-      height: 28px;
-    }
-
-    &.locked {
-      background-color: color.adjust($accent-color, $lightness: -10%);
-    }
-
-    &.save {
-      background-color: #2ecc71; // Success green for saving
-      &:hover {
-        background-color: #27ae60;
-      }
-    }
-  }
+  } // Final closing for .sheet-body
 }
