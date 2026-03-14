@@ -49,6 +49,39 @@ export const ARCHETYPES = [
   "Vividor",
 ];
 
+export const ARCHETYPE_DESCRIPTIONS: Record<string, string> = {
+  "Ansioso de Emociones": "lo que cuenta es el subidón.",
+  "Arquitecto": "construyes un mañana mejor.",
+  "Autócrata": "necesitas tener el control.",
+  "Bellaco": "Los que pueden ganan, los demás pierden. Tú puedes.",
+  "Bizarro": "¡tú eres el espectáculo!",
+  "Bravucón": "la fuerza es lo único que importa.",
+  "Bufón": "la risa atempera el dolor.",
+  "Celebrante": "existes para tu pasión.",
+  "Competidor": "tienes que ser el mejor.",
+  "Confabulador": "los demás existen para tu beneficio.",
+  "Conformista": "sigues y ayudas.",
+  "Director": "supervisas todo lo que debe hacerse.",
+  "Fanático": "solo importa la causa.",
+  "Hosco": "nada merece la pena.",
+  "Juez": "la verdad está ahí fuera.",
+  "Mártir": "sufres por un bien mayor.",
+  "Masoquista": "todas las noches pones a prueba tus límites.",
+  "Monstruo": "estás Condenado... ¡Actúa como tal!",
+  "Niño": "¿no hay nadie que cuide de ti?",
+  "Pedagogo": "salvas a los demás mediante el conocimiento.",
+  "Penitente": "la no-vida es una maldición que debes expiar.",
+  "Perfeccionista": "nada está nunca bien del todo.",
+  "Pervertido": "solo importan tus propios placeres.",
+  "Protector": "todo el mundo necesita consuelo.",
+  "Rebelde": "no sigues las reglas de nadie.",
+  "Solitario": "sigues tu propio camino.",
+  "Superviviente": "nada logrará acabar contigo.",
+  "Tradicionalista": "todo debe ser como siempre ha sido.",
+  "Visionario": "hay algo más allá de todo esto.",
+  "Vividor": "el sentido de la muerte es el placer.",
+};
+
 export const VTM_TRANSLATIONS: Record<string, string> = {
   // Attributes
   strength: "Fuerza",

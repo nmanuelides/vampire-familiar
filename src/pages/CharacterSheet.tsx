@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
 import { useCharacterStore } from "../store/useCharacterStore";
 import DotTracker from "../components/DotTracker";
+import CustomSelect from "../components/CustomSelect";
 import type { VTMCharacter } from "../types/vtm";
 import {
   getMaxTraitRating,
@@ -13,6 +14,7 @@ import {
   CLAN_DISCIPLINES,
   EXP_COSTS,
   ARCHETYPES,
+  ARCHETYPE_DESCRIPTIONS,
 } from "../data/vtm";
 import { Lock, LockOpen, Save } from "lucide-react";
 import "./CharacterSheet.scss";
@@ -544,27 +546,28 @@ export default function CharacterSheet() {
             <span>Crónica:</span> {localChar.chronicle}
           </div>
           <div className="info-group">
-            <span>Naturaleza:</span>
+            <div className="tooltip-anchor">
+              <span>Naturaleza:</span>
+              {localChar.nature && ARCHETYPE_DESCRIPTIONS[localChar.nature] && (
+                <div className="tooltip-box">
+                  <p className="tooltip-desc">{localChar.nature}</p>
+                  <p>{ARCHETYPE_DESCRIPTIONS[localChar.nature]}</p>
+                </div>
+              )}
+            </div>
             {!isNewNature && !isLocked ? (
-              <select
+              <CustomSelect
                 value={localChar.nature || ""}
-                className="inline-input"
-                onChange={(e) => {
-                  if (e.target.value === "___NEW___") {
+                options={allArchetypes}
+                descriptions={ARCHETYPE_DESCRIPTIONS}
+                onChange={(val) => {
+                  if (val === "___NEW___") {
                     setIsNewNature(true);
                   } else {
-                    handleUpdate(["nature"], e.target.value);
+                    handleUpdate(["nature"], val);
                   }
                 }}
-              >
-                {!localChar.nature && <option value="">Seleccionar...</option>}
-                {allArchetypes.map((a) => (
-                  <option key={a} value={a}>
-                    {a}
-                  </option>
-                ))}
-                <option value="___NEW___">+ Nuevo...</option>
-              </select>
+              />
             ) : (
               <div className="input-with-cancel">
                 <input
@@ -581,7 +584,6 @@ export default function CharacterSheet() {
                     className="cancel-small"
                     onClick={() => {
                       setIsNewNature(false);
-                      // Optionally reset to previous? or just let them keep typing.
                     }}
                     title="Volver a lista"
                   >
@@ -592,27 +594,28 @@ export default function CharacterSheet() {
             )}
           </div>
           <div className="info-group">
-            <span>Conducta:</span>
+            <div className="tooltip-anchor">
+              <span>Conducta:</span>
+              {localChar.demeanor && ARCHETYPE_DESCRIPTIONS[localChar.demeanor] && (
+                <div className="tooltip-box">
+                  <p className="tooltip-desc">{localChar.demeanor}</p>
+                  <p>{ARCHETYPE_DESCRIPTIONS[localChar.demeanor]}</p>
+                </div>
+              )}
+            </div>
             {!isNewDemeanor && !isLocked ? (
-              <select
+              <CustomSelect
                 value={localChar.demeanor || ""}
-                className="inline-input"
-                onChange={(e) => {
-                  if (e.target.value === "___NEW___") {
+                options={allArchetypes}
+                descriptions={ARCHETYPE_DESCRIPTIONS}
+                onChange={(val) => {
+                  if (val === "___NEW___") {
                     setIsNewDemeanor(true);
                   } else {
-                    handleUpdate(["demeanor"], e.target.value);
+                    handleUpdate(["demeanor"], val);
                   }
                 }}
-              >
-                {!localChar.demeanor && <option value="">Seleccionar...</option>}
-                {allArchetypes.map((a) => (
-                  <option key={a} value={a}>
-                    {a}
-                  </option>
-                ))}
-                <option value="___NEW___">+ Nuevo...</option>
-              </select>
+              />
             ) : (
               <div className="input-with-cancel">
                 <input

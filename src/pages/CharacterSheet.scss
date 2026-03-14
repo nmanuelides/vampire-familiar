@@ -222,12 +222,29 @@
     border-bottom: none;
     border-radius: $border-radius $border-radius 0 0;
     backdrop-filter: blur(10px); // Consistent blur
+    position: relative; // Ensure z-index works
+    z-index: 101; // Above sticky header (100)
 
     .info-group {
       font-size: 0.95rem;
       color: color.adjust($text-color, $lightness: 10%);
       border-bottom: 1px solid $border-color;
       padding-bottom: $spacing-xs;
+      position: relative; // For tooltip alignment
+      overflow: visible; // Show tooltips
+
+      .tooltip-anchor {
+        position: relative;
+        display: inline-flex;
+        cursor: help;
+        border-bottom: 1px dotted rgba($text-color, 0.3);
+
+        &:hover .tooltip-box {
+          opacity: 1;
+          visibility: visible;
+          transform: translateY(0) scale(1);
+        }
+      }
 
       span {
         font-weight: bold;
@@ -258,7 +275,6 @@
         &:focus {
           border-bottom-color: $accent-color;
           background: rgba(0, 0, 0, 0.2);
-        }
         }
       }
 
@@ -635,3 +651,4 @@
       }
     }
   } // Final closing for .sheet-body
+}

@@ -1,0 +1,127 @@
+@use "../styles/variables" as *;
+@use "sass:color";
+
+.custom-select-container {
+  position: relative;
+  width: 100%;
+  max-width: 151px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  z-index: 1000; // Ensure container has context
+
+  .custom-select-trigger {
+    background: transparent;
+    border-bottom: 1px solid rgba($border-color, 0.3);
+    padding: 2px 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 24px;
+    color: $text-color;
+    box-sizing: border-box;
+
+    &.open, &:hover {
+      border-bottom-color: $accent-color;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .placeholder {
+      color: rgba($text-color, 0.3);
+      font-style: italic;
+    }
+
+    .arrow {
+      font-size: 0.6rem;
+      opacity: 0.5;
+      margin-left: 4px;
+      transition: transform 0.2s;
+    }
+
+    &.open .arrow {
+      transform: rotate(180deg);
+    }
+  }
+
+  .custom-select-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 220px;
+    background-color: #111;
+    border: none;
+    border-radius: $border-radius;
+    box-shadow: 
+      0 0 0 1px $accent-color, // Seamless border using shadow
+      0 4px 20px rgba(0, 0, 0, 0.9);
+    z-index: 9999;
+    margin: 4px 1px 0 1px;
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    display: block;
+
+    /* Custom scrollbar */
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    &::-webkit-scrollbar-track {
+      background: #111;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: rgba($accent-color, 0.5);
+      border-radius: 3px;
+      &:hover {
+        background: $accent-color;
+      }
+    }
+
+    .custom-select-option {
+      cursor: pointer;
+      color: $text-color;
+      transition: background 0.1s;
+      position: relative;
+
+      &:hover {
+        background-color: $accent-color;
+        color: white;
+
+        .tooltip-anchor .option-label {
+          color: white;
+        }
+      }
+
+      &.selected {
+        background-color: rgba($accent-color, 0.2);
+        box-shadow: inset 3px 0 0 $accent-color;
+      }
+
+      &.new-option {
+        padding: 10px 12px;
+        border-top: 1px solid rgba($border-color, 0.2);
+        color: $accent-color;
+        font-weight: bold;
+        
+        &:hover {
+           background-color: $accent-color;
+           color: white;
+        }
+      }
+
+      .option-label {
+        width: 100%;
+        padding: 8px 12px;
+        display: block;
+        box-sizing: border-box;
+      }
+    }
+  }
+}
+
+.custom-select-locked {
+  color: $text-color;
+  font-style: italic;
+  opacity: 0.9;
+}
