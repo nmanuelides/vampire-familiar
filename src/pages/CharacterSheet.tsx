@@ -547,7 +547,8 @@ export default function CharacterSheet() {
 
       <div className="sheet-body card" data-clan={localChar.clan}>
         <div className={`top-info bg-dark ${!isInfoExpanded ? "collapsed" : ""}`}>
-          <div className="info-group">
+          <div className="bio-info-grid">
+            <div className="info-group">
             <span>Nombre:</span> {localChar.name}
           </div>
           <div className="info-group">
@@ -729,50 +730,51 @@ export default function CharacterSheet() {
               readOnly={isLocked}
             />
           </div>
-
-          <button 
-            className="info-toggle-btn"
-            onClick={() => setIsInfoExpanded(!isInfoExpanded)}
-            title={isInfoExpanded ? "Contraer información" : "Expandir información"}
-          >
-            {isInfoExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-          </button>
         </div>
 
-        <div className="info-group experience-group">
-          <div className="exp-item">
-            <span>Experiencia:</span>
-            <input
-              type="number"
-              min="0"
-              value={localChar.experience || 0}
-              onChange={(e) =>
-                handleUpdate(["experience"], parseInt(e.target.value) || 0)
-              }
-              className="inline-input number-input"
-              readOnly={isLocked || !canEditExperience}
-            />
-          </div>
-          {!isLocked && (
-            <>
+        <button 
+          className="info-toggle-btn"
+          onClick={() => setIsInfoExpanded(!isInfoExpanded)}
+          title={isInfoExpanded ? "Contraer información" : "Expandir información"}
+        >
+          {isInfoExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+        </button>
+      </div>
+
+      <div className="info-group experience-group">
+        <div className="exp-item">
+          <span>Experiencia:</span>
+          <input
+            type="number"
+            min="0"
+            value={localChar.experience || 0}
+            onChange={(e) =>
+              handleUpdate(["experience"], parseInt(e.target.value) || 0)
+            }
+            className="inline-input number-input"
+            readOnly={isLocked || !canEditExperience}
+          />
+        </div>
+        {!isLocked && (
+          <>
+            <div
+              className={`freebie-badge ${costDetails.expRemaining < 0 ? "negative" : ""}`}
+            >
+              Puntos Gratuitos: {Math.max(0, 15 - totalFreebiesUsed)}
+            </div>
+            {costDetails.expSpent > 0 && (
               <div
-                className={`freebie-badge ${costDetails.expRemaining < 0 ? "negative" : ""}`}
+                className={`freebie-badge exp-badge ${costDetails.expRemaining < 0 ? "negative" : ""}`}
               >
-                Puntos Gratuitos: {Math.max(0, 15 - totalFreebiesUsed)}
+                Exp Gastada: {costDetails.expSpent} | Restante:{" "}
+                {costDetails.expRemaining}
               </div>
-              {costDetails.expSpent > 0 && (
-                <div
-                  className={`freebie-badge exp-badge ${costDetails.expRemaining < 0 ? "negative" : ""}`}
-                >
-                  Exp Gastada: {costDetails.expSpent} | Restante:{" "}
-                  {costDetails.expRemaining}
-                </div>
-              )}
-            </>
-          )}
-        </div>
+            )}
+          </>
+        )}
+      </div>
 
-        <div className="sheet-grid">
+      <div className="sheet-grid">
           {/* Attributes */}
           <div className="grid-section attributes">
             <h2 className="main-title text-center">— Atributos —</h2>

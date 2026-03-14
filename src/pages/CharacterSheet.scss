@@ -209,33 +209,35 @@
   }
 
   .top-info {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(17, 17, 17, 0.95);
+    border-radius: $border-radius $border-radius 0 0;
+    backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 101;
+    padding: 0;
+    margin-bottom: 0;
+
+    .bio-info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: $spacing-sm;
+      padding: $spacing-lg $spacing-lg 0 $spacing-lg;
+      width: 100%;
+    }
 
     .info-toggle-btn {
       display: none; // Hidden on desktop
     }
-    gap: $spacing-sm;
-    padding: $spacing-lg $spacing-lg 0 $spacing-lg;
-    background-color: rgba(
-      17,
-      17,
-      17,
-      0.9
-    ); // Higher opacity to match sticky part
-    border-bottom: none;
-    border-radius: $border-radius $border-radius 0 0;
-    backdrop-filter: blur(10px); // Consistent blur
-    position: relative; // Ensure z-index works
-    z-index: 101; // Above sticky header (100)
 
     .info-group {
       font-size: 0.95rem;
       color: color.adjust($text-color, $lightness: 10%);
       border-bottom: 1px solid $border-color;
       padding-bottom: $spacing-xs;
-      position: relative; // For tooltip alignment
-      overflow: visible; // Show tooltips
+      position: relative;
+      overflow: visible;
 
       .tooltip-anchor {
         position: relative;
@@ -342,13 +344,14 @@
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    padding: $spacing-md $spacing-lg $spacing-md $spacing-lg; // Reduced top padding for tighter integration
-    background-color: rgba(17, 17, 17, 0.9);
+    padding: $spacing-md $spacing-lg $spacing-md $spacing-lg;
+    background-color: rgba(17, 17, 17, 0.95);
     border-bottom: 2px solid $accent-color;
     border-radius: 0 0 $border-radius $border-radius;
     backdrop-filter: blur(10px);
-    gap: 16px 32px; // Row-gap 16px, col-gap 32px
-    box-shadow: none; // Removed forced shadow to integrate better
+    gap: 16px 32px;
+    box-shadow: none;
+    margin-top: -1px; // Ensure no gap between bio and exp
 
     .exp-item {
       display: flex;

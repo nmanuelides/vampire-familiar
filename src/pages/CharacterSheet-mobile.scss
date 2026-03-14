@@ -63,66 +63,62 @@
 }
 .top-info {
   @media (max-width: 1100px) {
-    grid-template-columns: repeat(2, 1fr) !important;
-    padding: $spacing-sm $spacing-sm $spacing-md $spacing-sm; // Extra bottom spacing for button
+    display: flex;
+    flex-direction: column;
+    padding: 0;
     position: relative;
     transition: all 0.3s ease;
+    overflow: visible !important;
+    background-color: rgba(17, 17, 17, 0.95);
+    border-radius: $border-radius $border-radius 0 0;
+    backdrop-filter: blur(10px);
+    z-index: 101; // Stays above sticky experience when scrolling down
+    border-bottom: none;
+
+    .bio-info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr) !important;
+      padding: $spacing-md $spacing-sm $spacing-md $spacing-sm; 
+      gap: $spacing-sm;
+      width: 100%;
+      transition: opacity 0.3s ease, margin 0.3s ease;
+    }
 
     .info-toggle-btn {
       display: flex;
       position: absolute;
-      bottom: -18px; // Overlap bottom edge
+      bottom: -18px; // Centered on the boundary with experience-group
       left: 50%;
       transform: translateX(-50%);
       background: $accent-color !important;
-      border: 3px solid #111 !important; // Thick border to make it pop
+      border: 3px solid #111 !important;
       border-radius: 50%;
-      width: 40px;
-      height: 40px;
+      width: 44px;
+      height: 44px;
       align-items: center;
       justify-content: center;
-      color: white !important; // White chevron
+      color: white !important;
       cursor: pointer;
-      z-index: 1000;
-      box-shadow: 0 0 15px rgba($accent-color, 0.6);
-      transition: all 0.2s ease;
+      z-index: 1100;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), 0 0 15px rgba($accent-color, 0.4);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
       &:hover {
         transform: translateX(-50%) scale(1.1);
-        box-shadow: 0 0 20px rgba($accent-color, 0.8);
-      }
-      
-      &:active {
-        transform: translateX(-50%) scale(0.9);
       }
 
       svg {
-        stroke-width: 3px; // Make chevron thicker
+        stroke-width: 3px;
       }
     }
 
     &.collapsed {
-      padding: 0 0 $spacing-xs 0;
-      border: none;
-      background: transparent;
-      box-shadow: none;
-      
-      & > *:not(.experience-group):not(.info-toggle-btn) {
+      .bio-info-grid {
         display: none !important;
       }
-
-      .experience-group {
-        width: 100%;
-        margin: 0;
-        padding: $spacing-xs;
-        border: none;
-        background: rgba(0, 0, 0, 0.3);
-        border-radius: $border-radius;
-        margin-bottom: $spacing-md;
-      }
-
+      
       .info-toggle-btn {
-        bottom: -10px; // Adjust position for collapsed state
+        bottom: -18px; // Stay at bottom even if height is small
       }
     }
 
@@ -135,8 +131,28 @@
   }
 
   @media (max-width: 600px) {
-    padding: $spacing-xs;
-    grid-gap: $spacing-xs;
+    .bio-info-grid {
+      padding: $spacing-sm $spacing-xs $spacing-sm $spacing-xs;
+      gap: $spacing-xs;
+    }
+  }
+}
+
+.experience-group {
+  @media (max-width: 1100px) {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    width: 100%;
+    margin: 0;
+    padding: $spacing-sm $spacing-sm $spacing-md $spacing-sm;
+    background-color: rgba(17, 17, 17, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 2px solid $accent-color;
+    border-top: none;
+    border-radius: 0 0 $border-radius $border-radius;
+    gap: 12px 24px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   }
 }
 
