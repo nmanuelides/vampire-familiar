@@ -717,7 +717,7 @@ export default function CharacterSheet() {
           </div>
           <div className="info-group">
             <span>Generación:</span>
-            <span className="gen-display">{localChar.generation}.ª</span>
+            <span className="gen-display">{localChar.generation}ª</span>
           </div>
           <div className="info-group">
             <span>Sire:</span>
