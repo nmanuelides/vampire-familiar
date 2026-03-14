@@ -150,464 +150,464 @@
       url("../assets/clans/Tzimisce.png"), url("../assets/clans/Tzimice.png"); // Fallback check? No, CSS doesn't work like that for existence.
   }
 
-.top-info {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: $spacing-sm;
-  padding: $spacing-lg;
-  background-color: rgba(
-    17,
-    17,
-    17,
-    0.4
-  ); // Semi-transparent to let logo show through
-  border-bottom: none;
-  border-radius: $border-radius $border-radius 0 0;
-  backdrop-filter: blur(2px); // Subtle blur for premium feel
+  .top-info {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $spacing-sm;
+    padding: $spacing-lg $spacing-lg 0 $spacing-lg;
+    background-color: rgba(
+      17,
+      17,
+      17,
+      0.9
+    ); // Higher opacity to match sticky part
+    border-bottom: none;
+    border-radius: $border-radius $border-radius 0 0;
+    backdrop-filter: blur(10px); // Consistent blur
 
-  .info-group {
-    font-size: 0.95rem;
-    color: color.adjust($text-color, $lightness: 10%);
-    border-bottom: 1px solid $border-color;
-    padding-bottom: $spacing-xs;
+    .info-group {
+      font-size: 0.95rem;
+      color: color.adjust($text-color, $lightness: 10%);
+      border-bottom: 1px solid $border-color;
+      padding-bottom: $spacing-xs;
 
-    span {
-      font-weight: bold;
-      color: color.adjust($text-color, $lightness: -20%);
-      margin-right: $spacing-xs;
+      span {
+        font-weight: bold;
+        color: color.adjust($text-color, $lightness: -20%);
+        margin-right: $spacing-xs;
+      }
+
+      .inline-input {
+        background: transparent;
+        border: 1px solid transparent;
+        border-bottom: 1px solid rgba($border-color, 0.3);
+        color: $text-color;
+        font-family: inherit;
+        font-size: inherit;
+        padding: 2px 4px;
+        margin-left: -4px;
+        outline: none;
+        transition: all 0.2s ease;
+        width: 100%;
+        max-width: 150px;
+
+        &::placeholder {
+          color: rgba($text-color, 0.3);
+          font-style: italic;
+        }
+
+        &:hover,
+        &:focus {
+          border-bottom-color: $accent-color;
+          background: rgba(0, 0, 0, 0.2);
+        }
+
+        &.number-input {
+          width: 40px;
+          text-align: center;
+          margin-right: 0px;
+          appearance: textfield;
+          -moz-appearance: textfield;
+
+          &::-webkit-outer-spin-button,
+          &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+          }
+        }
+      }
+
+      .gen-display {
+        color: $text-color;
+        font-weight: normal;
+        font-style: italic;
+        font-size: 1.2rem;
+        opacity: 0.9;
+        margin-left: 4px;
+      }
     }
 
-    .inline-input {
-      background: transparent;
-      border: 1px solid transparent;
-      border-bottom: 1px solid rgba($border-color, 0.3);
-      color: $text-color;
-      font-family: inherit;
-      font-size: inherit;
-      padding: 2px 4px;
-      margin-left: -4px;
-      outline: none;
-      transition: all 0.2s ease;
-      width: 100%;
-      max-width: 150px;
+    .flashing-error {
+      animation: flash-red 0.3s ease-in-out infinite alternate;
+    }
+  }
 
-      &::placeholder {
-        color: rgba($text-color, 0.3);
-        font-style: italic;
+  .experience-group {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding: $spacing-sm $spacing-lg $spacing-lg $spacing-lg;
+    background-color: rgba(17, 17, 17, 0.9);
+    border-bottom: 2px solid $accent-color;
+    border-radius: 0 0 $border-radius $border-radius;
+    backdrop-filter: blur(10px);
+    gap: 16px 32px; // Row-gap 16px, col-gap 32px
+    box-shadow: none; // Removed forced shadow to integrate better
+
+    .exp-item {
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+
+      span {
+        font-size: 1.1rem;
+        font-family: $font-vampire;
+        color: $accent-color;
+        border-bottom: none;
+        margin-right: 0;
       }
 
-      &:hover,
-      &:focus {
-        border-bottom-color: $accent-color;
-        background: rgba(0, 0, 0, 0.2);
-      }
-
-      &.number-input {
-        width: 40px;
+      .inline-input.number-input {
+        width: 60px;
+        font-size: 1.2rem;
+        border-bottom-color: rgba($accent-color, 0.5);
         text-align: center;
-        margin-right: 0px;
-        appearance: textfield;
-        -moz-appearance: textfield;
 
-        &::-webkit-outer-spin-button,
-        &::-webkit-inner-spin-button {
-          -webkit-appearance: none;
-          margin: 0;
+        &:hover,
+        &:focus {
+          border-bottom-color: $accent-color;
+          background: transparent;
         }
       }
     }
 
-    .gen-display {
-      color: $text-color;
-      font-weight: normal;
-      font-style: italic;
-      font-size: 1.2rem;
-      opacity: 0.9;
-      margin-left: 4px;
-    }
-  }
-
-  .flashing-error {
-    animation: flash-red 0.3s ease-in-out infinite alternate;
-  }
-}
-
-.experience-group {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  padding: $spacing-md $spacing-lg;
-  background-color: rgba(17, 17, 17, 0.9);
-  border-bottom: 2px solid $accent-color;
-  border-radius: 0 0 $border-radius $border-radius;
-  backdrop-filter: blur(10px);
-  gap: 16px 32px; // Row-gap 16px, col-gap 32px
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-
-  .exp-item {
-    display: flex;
-    align-items: center;
-    gap: $spacing-sm;
-
-    span {
-      font-size: 1.1rem;
-      font-family: $font-vampire;
+    .freebie-badge {
+      font-size: 0.95rem;
+      background-color: rgba($accent-color, 0.15);
       color: $accent-color;
-      border-bottom: none;
-      margin-right: 0;
-    }
-
-    .inline-input.number-input {
-      width: 60px;
-      font-size: 1.2rem;
-      border-bottom-color: rgba($accent-color, 0.5);
-      text-align: center;
-
-      &:hover,
-      &:focus {
-        border-bottom-color: $accent-color;
-        background: rgba($accent-color, 0.1);
-      }
-    }
-  }
-
-  .freebie-badge {
-    font-size: 0.95rem;
-    background-color: rgba($accent-color, 0.15);
-    color: $accent-color;
-    padding: 4px 14px;
-    border-radius: 20px;
-    border: 1px solid rgba($accent-color, 0.3);
-    font-family: $font-primary;
-    letter-spacing: 0.5px;
-    box-shadow: 0 0 5px rgba($accent-color, 0.2);
-    display: flex;
-    align-items: center;
-    line-height: 1;
-
-    &.negative {
-      background-color: rgba($error-color, 0.15);
-      color: $error-color;
-      border-color: rgba($error-color, 0.3);
-      box-shadow: 0 0 5px rgba($error-color, 0.2);
-    }
-
-    &.exp-badge {
-      background-color: rgba(0, 150, 255, 0.15);
-      color: #add8e6;
-      border-color: rgba(0, 150, 255, 0.3);
-      box-shadow: 0 0 5px rgba(0, 150, 255, 0.2);
+      padding: 4px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba($accent-color, 0.3);
+      font-family: $font-primary;
+      letter-spacing: 0.5px;
+      box-shadow: 0 0 5px rgba($accent-color, 0.2);
+      display: flex;
+      align-items: center;
+      line-height: 1;
 
       &.negative {
         background-color: rgba($error-color, 0.15);
         color: $error-color;
         border-color: rgba($error-color, 0.3);
-      }
-    }
-  }
-}
-
-@keyframes flash-red {
-  from {
-    color: inherit;
-    text-shadow: none;
-  }
-  to {
-    color: #ff4444;
-    text-shadow: 0 0 8px rgba(255, 68, 68, 0.6);
-  }
-}
-
-.main-title {
-  font-size: 1.8rem;
-  margin: $spacing-xl 0 $spacing-lg 0;
-  color: $text-color; // Set back to white/standard
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  text-align: center;
-  width: 100%;
-}
-
-.trait-grid {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: $spacing-md;
-  width: 100%;
-}
-
-.status-grid {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: $spacing-lg;
-  width: 100%;
-}
-
-.health-level {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-
-  input[type="checkbox"] {
-    accent-color: $accent-color;
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-  }
-
-  .health-label {
-    cursor: help;
-    font-weight: 500;
-    user-select: none;
-  }
-}
-
-.status-col {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.3); // Darker but semi-transparent
-  padding: $spacing-lg;
-  border-radius: $border-radius;
-  border: 1px solid rgba($border-color, 0.5);
-  backdrop-filter: blur(1px);
-
-  .section-title {
-    font-size: 1.4rem;
-    margin-bottom: $spacing-lg;
-    text-align: center;
-    width: 100%;
-    user-select: none;
-  }
-}
-
-.merits-flaws-container {
-  padding: $spacing-md $spacing-lg;
-  background-color: rgba(0, 0, 0, 0.2);
-  border-radius: $border-radius;
-  border: 1px solid rgba($border-color, 0.5);
-  margin-bottom: $spacing-lg;
-
-  .mf-add-row {
-    display: flex;
-    gap: 8px;
-    margin-bottom: $spacing-md;
-
-    input[type="text"] {
-      flex: 1;
-      font-size: 0.9rem;
-      padding: 8px 12px;
-      background-color: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba($border-color, 0.5);
-      border-radius: 4px;
-      color: $text-color;
-
-      &:focus {
-        border-color: $accent-color;
-        outline: none;
-      }
-    }
-
-    .add-mf-btn {
-      width: 38px;
-      height: 38px;
-      padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      background-color: $accent-color;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.2s;
-
-      &:hover {
-        background-color: color.adjust($accent-color, $lightness: -10%);
-      }
-    }
-  }
-
-  .merits-flaws-list {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-
-    .mf-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 6px 12px;
-      background: rgba(255, 255, 255, 0.03);
-      border-radius: 4px;
-      border-left: 2px solid $accent-color;
-
-      .mf-name {
-        font-size: 0.95rem;
-        color: color.adjust($text-color, $lightness: 10%);
+        box-shadow: 0 0 5px rgba($error-color, 0.2);
       }
 
-      .mf-remove {
-        background: transparent;
-        border: none;
-        color: rgba($text-color, 0.4);
-        font-size: 1.2rem;
-        cursor: pointer;
-        line-height: 1;
-        padding: 0 4px;
-        transition: color 0.2s;
+      &.exp-badge {
+        background-color: rgba(0, 150, 255, 0.15);
+        color: #add8e6;
+        border-color: rgba(0, 150, 255, 0.3);
+        box-shadow: 0 0 5px rgba(0, 150, 255, 0.2);
 
-        &:hover {
+        &.negative {
+          background-color: rgba($error-color, 0.15);
           color: $error-color;
+          border-color: rgba($error-color, 0.3);
         }
       }
     }
   }
-}
 
-.blood-pool-grid {
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  gap: 6px;
-  justify-items: center;
-  max-width: 300px; // Increased to fit 10 dots comfortably
-  margin: $spacing-md auto;
+  @keyframes flash-red {
+    from {
+      color: inherit;
+      text-shadow: none;
+    }
+    to {
+      color: #ff4444;
+      text-shadow: 0 0 8px rgba(255, 68, 68, 0.6);
+    }
+  }
 
-  .blood-box {
-    width: 22px;
-    height: 22px;
-    border: 1px solid $accent-color;
-    border-radius: 50%;
-    background-color: transparent;
-    cursor: pointer;
-    transition: all $transition-speed ease;
-    position: relative;
+  .main-title {
+    font-size: 1.8rem;
+    margin: $spacing-xl 0 $spacing-lg 0;
+    color: $text-color; // Set back to white/standard
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .trait-grid {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: $spacing-md;
+    width: 100%;
+  }
 
-    &::after {
-      content: "";
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: $accent-color;
-      transform: translateY(100%);
-      opacity: 0;
-      // Vaciado (vuelve al estado original): Todo sincronizado a 0.6s
-      transition:
-        transform 0.4s ease-in,
-        opacity 0.4s ease-in;
+  .status-grid {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: $spacing-lg;
+    width: 100%;
+  }
+
+  .health-level {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+    input[type="checkbox"] {
+      accent-color: $accent-color;
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
     }
 
-    &.filled {
-      box-shadow: 0 0 8px rgba($accent-color, 0.4);
+    .health-label {
+      cursor: help;
+      font-weight: 500;
+      user-select: none;
+    }
+  }
 
-      &::after {
-        transform: translateY(0);
-        opacity: 1;
-        // Llenado: Todo sincronizado a 0.4s
-        transition:
-          transform 0.4s ease-out,
-          opacity 0.4s ease-out;
+  .status-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.3); // Darker but semi-transparent
+    padding: $spacing-lg;
+    border-radius: $border-radius;
+    border: 1px solid rgba($border-color, 0.5);
+    backdrop-filter: blur(1px);
+
+    .section-title {
+      font-size: 1.4rem;
+      margin-bottom: $spacing-lg;
+      text-align: center;
+      width: 100%;
+      user-select: none;
+    }
+  }
+
+  .merits-flaws-container {
+    padding: $spacing-md $spacing-lg;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: $border-radius;
+    border: 1px solid rgba($border-color, 0.5);
+    margin-bottom: $spacing-lg;
+
+    .mf-add-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: $spacing-md;
+
+      input[type="text"] {
+        flex: 1;
+        font-size: 0.9rem;
+        padding: 8px 12px;
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba($border-color, 0.5);
+        border-radius: 4px;
+        color: $text-color;
+
+        &:focus {
+          border-color: $accent-color;
+          outline: none;
+        }
+      }
+
+      .add-mf-btn {
+        width: 38px;
+        height: 38px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        background-color: $accent-color;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+
+        &:hover {
+          background-color: color.adjust($accent-color, $lightness: -10%);
+        }
       }
     }
 
+    .merits-flaws-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+
+      .mf-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 12px;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 4px;
+        border-left: 2px solid $accent-color;
+
+        .mf-name {
+          font-size: 0.95rem;
+          color: color.adjust($text-color, $lightness: 10%);
+        }
+
+        .mf-remove {
+          background: transparent;
+          border: none;
+          color: rgba($text-color, 0.4);
+          font-size: 1.2rem;
+          cursor: pointer;
+          line-height: 1;
+          padding: 0 4px;
+          transition: color 0.2s;
+
+          &:hover {
+            color: $error-color;
+          }
+        }
+      }
+    }
+  }
+
+  .blood-pool-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 6px;
+    justify-items: center;
+    max-width: 300px; // Increased to fit 10 dots comfortably
+    margin: $spacing-md auto;
+
+    .blood-box {
+      width: 22px;
+      height: 22px;
+      border: 1px solid $accent-color;
+      border-radius: 50%;
+      background-color: transparent;
+      cursor: pointer;
+      transition: all $transition-speed ease;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+
+      &::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: $accent-color;
+        transform: translateY(100%);
+        opacity: 0;
+        // Vaciado (vuelve al estado original): Todo sincronizado a 0.6s
+        transition:
+          transform 0.4s ease-in,
+          opacity 0.4s ease-in;
+      }
+
+      &.filled {
+        box-shadow: 0 0 8px rgba($accent-color, 0.4);
+
+        &::after {
+          transform: translateY(0);
+          opacity: 1;
+          // Llenado: Todo sincronizado a 0.4s
+          transition:
+            transform 0.4s ease-out,
+            opacity 0.4s ease-out;
+        }
+      }
+
+      &:hover {
+        box-shadow: 0 0 8px $accent-color;
+        transform: scale(1.1);
+      }
+    }
+  }
+
+  .health-tracker {
+    width: 100%;
+    max-width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+
+    .health-level {
+      border-bottom: 1px dashed $border-color;
+      padding-bottom: $spacing-xs;
+
+      .health-label {
+        text-transform: capitalize;
+        font-size: 0.9rem;
+      }
+
+      input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
+
+  // Floating Action Button
+  .fab-container {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    z-index: 1100;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+
+    @media (max-width: 768px) {
+      bottom: 20px;
+      right: 20px;
+    }
+  }
+
+  .fab-button {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: $accent-color;
+    color: white;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
     &:hover {
-      box-shadow: 0 0 8px $accent-color;
-      transform: scale(1.1);
-    }
-  }
-}
-
-.health-tracker {
-  width: 100%;
-  max-width: 200px;
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-sm;
-
-  .health-level {
-    border-bottom: 1px dashed $border-color;
-    padding-bottom: $spacing-xs;
-
-    .health-label {
-      text-transform: capitalize;
-      font-size: 0.9rem;
+      transform: scale(1.1) rotate(5deg);
+      background-color: color.adjust($accent-color, $lightness: 10%);
+      box-shadow: 0 6px 20px rgba($accent-color, 0.4);
     }
 
-    input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
+    &:active {
+      transform: scale(0.95);
+    }
+
+    svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    &.locked {
+      background-color: color.adjust($accent-color, $lightness: -10%);
+    }
+
+    &.save {
+      background-color: #2ecc71; // Success green for saving
+      &:hover {
+        background-color: #27ae60;
+      }
     }
   }
-}
-
-// Floating Action Button
-.fab-container {
-  position: fixed;
-  bottom: 40px;
-  right: 40px;
-  z-index: 1100;
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-md;
-
-  @media (max-width: 768px) {
-    bottom: 20px;
-    right: 20px;
-  }
-}
-
-.fab-button {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background-color: $accent-color;
-  color: white;
-  border: none;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-
-  &:hover {
-    transform: scale(1.1) rotate(5deg);
-    background-color: color.adjust($accent-color, $lightness: 10%);
-    box-shadow: 0 6px 20px rgba($accent-color, 0.4);
-  }
-
-  &:active {
-    transform: scale(0.95);
-  }
-
-  svg {
-    width: 28px;
-    height: 28px;
-  }
-
-  &.locked {
-    background-color: color.adjust($accent-color, $lightness: -10%);
-  }
-
-  &.save {
-    background-color: #2ecc71; // Success green for saving
-    &:hover {
-      background-color: #27ae60;
-    }
-  }
-}
 }
