@@ -581,38 +581,39 @@ export default function CharacterSheet() {
               readOnly={isLocked}
             />
           </div>
-          <div className="info-group experience-group">
-            <div className="exp-item">
-              <span>Experiencia:</span>
-              <input
-                type="number"
-                min="0"
-                value={localChar.experience || 0}
-                onChange={(e) =>
-                  handleUpdate(["experience"], parseInt(e.target.value) || 0)
-                }
-                className="inline-input number-input"
-                readOnly={isLocked || !canEditExperience}
-              />
-            </div>
-            {!isLocked && (
-              <>
-                <div
-                  className={`freebie-badge ${costDetails.expRemaining < 0 ? "negative" : ""}`}
-                >
-                  Puntos Gratuitos: {Math.max(0, 15 - totalFreebiesUsed)}
-                </div>
-                {costDetails.expSpent > 0 && (
-                  <div
-                    className={`freebie-badge exp-badge ${costDetails.expRemaining < 0 ? "negative" : ""}`}
-                  >
-                    Exp Gastada: {costDetails.expSpent} | Restante:{" "}
-                    {costDetails.expRemaining}
-                  </div>
-                )}
-              </>
-            )}
+        </div>
+
+        <div className="info-group experience-group">
+          <div className="exp-item">
+            <span>Experiencia:</span>
+            <input
+              type="number"
+              min="0"
+              value={localChar.experience || 0}
+              onChange={(e) =>
+                handleUpdate(["experience"], parseInt(e.target.value) || 0)
+              }
+              className="inline-input number-input"
+              readOnly={isLocked || !canEditExperience}
+            />
           </div>
+          {!isLocked && (
+            <>
+              <div
+                className={`freebie-badge ${costDetails.expRemaining < 0 ? "negative" : ""}`}
+              >
+                Puntos Gratuitos: {Math.max(0, 15 - totalFreebiesUsed)}
+              </div>
+              {costDetails.expSpent > 0 && (
+                <div
+                  className={`freebie-badge exp-badge ${costDetails.expRemaining < 0 ? "negative" : ""}`}
+                >
+                  Exp Gastada: {costDetails.expSpent} | Restante:{" "}
+                  {costDetails.expRemaining}
+                </div>
+              )}
+            </>
+          )}
         </div>
 
         <div className="sheet-grid">

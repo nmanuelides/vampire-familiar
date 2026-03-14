@@ -74,7 +74,7 @@
 .sheet-body {
   background-color: rgba(20, 20, 20, 0.4) !important;
   padding: 0; // overrides card padding
-  overflow: hidden;
+  overflow: visible; // Allows sticky to work
   position: relative;
 
   &::before {
@@ -149,7 +149,6 @@
     background-image:
       url("../assets/clans/Tzimisce.png"), url("../assets/clans/Tzimice.png"); // Fallback check? No, CSS doesn't work like that for existence.
   }
-}
 
 .top-info {
   display: grid;
@@ -162,8 +161,8 @@
     17,
     0.4
   ); // Semi-transparent to let logo show through
-  border-bottom: 2px solid $accent-color;
-  border-radius: $border-radius;
+  border-bottom: none;
+  border-radius: $border-radius $border-radius 0 0;
   backdrop-filter: blur(2px); // Subtle blur for premium feel
 
   .info-group {
@@ -228,81 +227,87 @@
     }
   }
 
-  .experience-group {
-    grid-column: span 3;
+  .flashing-error {
+    animation: flash-red 0.3s ease-in-out infinite alternate;
+  }
+}
+
+.experience-group {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  padding: $spacing-md $spacing-lg;
+  background-color: rgba(17, 17, 17, 0.9);
+  border-bottom: 2px solid $accent-color;
+  border-radius: 0 0 $border-radius $border-radius;
+  backdrop-filter: blur(10px);
+  gap: 16px 32px; // Row-gap 16px, col-gap 32px
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+
+  .exp-item {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
     align-items: center;
-    border-bottom: none;
-    margin-top: $spacing-md;
-    gap: 16px 32px; // Row-gap 16px, col-gap 32px
+    gap: $spacing-sm;
 
-    .exp-item {
-      display: flex;
-      align-items: center;
-      gap: $spacing-sm;
-
-      span {
-        font-size: 1.1rem;
-        font-family: $font-vampire;
-        color: $accent-color;
-        border-bottom: none;
-        margin-right: 0;
-      }
-
-      .inline-input.number-input {
-        width: 60px;
-        font-size: 1.2rem;
-        border-bottom-color: rgba($accent-color, 0.5);
-        text-align: center;
-
-        &:hover,
-        &:focus {
-          border-bottom-color: $accent-color;
-          background: rgba($accent-color, 0.1);
-        }
-      }
+    span {
+      font-size: 1.1rem;
+      font-family: $font-vampire;
+      color: $accent-color;
+      border-bottom: none;
+      margin-right: 0;
     }
 
-    .freebie-badge {
-      font-size: 0.95rem;
-      background-color: rgba($accent-color, 0.15);
-      color: $accent-color;
-      padding: 4px 14px;
-      border-radius: 20px;
-      border: 1px solid rgba($accent-color, 0.3);
-      font-family: $font-primary;
-      letter-spacing: 0.5px;
-      box-shadow: 0 0 5px rgba($accent-color, 0.2);
-      display: flex;
-      align-items: center;
-      line-height: 1;
+    .inline-input.number-input {
+      width: 60px;
+      font-size: 1.2rem;
+      border-bottom-color: rgba($accent-color, 0.5);
+      text-align: center;
+
+      &:hover,
+      &:focus {
+        border-bottom-color: $accent-color;
+        background: rgba($accent-color, 0.1);
+      }
+    }
+  }
+
+  .freebie-badge {
+    font-size: 0.95rem;
+    background-color: rgba($accent-color, 0.15);
+    color: $accent-color;
+    padding: 4px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba($accent-color, 0.3);
+    font-family: $font-primary;
+    letter-spacing: 0.5px;
+    box-shadow: 0 0 5px rgba($accent-color, 0.2);
+    display: flex;
+    align-items: center;
+    line-height: 1;
+
+    &.negative {
+      background-color: rgba($error-color, 0.15);
+      color: $error-color;
+      border-color: rgba($error-color, 0.3);
+      box-shadow: 0 0 5px rgba($error-color, 0.2);
+    }
+
+    &.exp-badge {
+      background-color: rgba(0, 150, 255, 0.15);
+      color: #add8e6;
+      border-color: rgba(0, 150, 255, 0.3);
+      box-shadow: 0 0 5px rgba(0, 150, 255, 0.2);
 
       &.negative {
         background-color: rgba($error-color, 0.15);
         color: $error-color;
         border-color: rgba($error-color, 0.3);
-        box-shadow: 0 0 5px rgba($error-color, 0.2);
-      }
-
-      &.exp-badge {
-        background-color: rgba(0, 150, 255, 0.15);
-        color: #add8e6;
-        border-color: rgba(0, 150, 255, 0.3);
-        box-shadow: 0 0 5px rgba(0, 150, 255, 0.2);
-
-        &.negative {
-          background-color: rgba($error-color, 0.15);
-          color: $error-color;
-          border-color: rgba($error-color, 0.3);
-        }
       }
     }
-  }
-
-  .flashing-error {
-    animation: flash-red 0.3s ease-in-out infinite alternate;
   }
 }
 
@@ -604,4 +609,5 @@
       background-color: #27ae60;
     }
   }
+}
 }
