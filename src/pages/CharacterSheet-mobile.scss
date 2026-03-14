@@ -63,15 +63,80 @@
 }
 .top-info {
   @media (max-width: 1100px) {
-    grid-template-columns: 1fr;
-    padding: $spacing-md;
+    grid-template-columns: repeat(2, 1fr) !important;
+    padding: $spacing-sm $spacing-sm $spacing-md $spacing-sm; // Extra bottom spacing for button
+    position: relative;
+    transition: all 0.3s ease;
+
+    .info-toggle-btn {
+      display: flex;
+      position: absolute;
+      bottom: -18px; // Overlap bottom edge
+      left: 50%;
+      transform: translateX(-50%);
+      background: $accent-color !important;
+      border: 3px solid #111 !important; // Thick border to make it pop
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      align-items: center;
+      justify-content: center;
+      color: white !important; // White chevron
+      cursor: pointer;
+      z-index: 1000;
+      box-shadow: 0 0 15px rgba($accent-color, 0.6);
+      transition: all 0.2s ease;
+
+      &:hover {
+        transform: translateX(-50%) scale(1.1);
+        box-shadow: 0 0 20px rgba($accent-color, 0.8);
+      }
+      
+      &:active {
+        transform: translateX(-50%) scale(0.9);
+      }
+
+      svg {
+        stroke-width: 3px; // Make chevron thicker
+      }
+    }
+
+    &.collapsed {
+      padding: 0 0 $spacing-xs 0;
+      border: none;
+      background: transparent;
+      box-shadow: none;
+      
+      & > *:not(.experience-group):not(.info-toggle-btn) {
+        display: none !important;
+      }
+
+      .experience-group {
+        width: 100%;
+        margin: 0;
+        padding: $spacing-xs;
+        border: none;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: $border-radius;
+        margin-bottom: $spacing-md;
+      }
+
+      .info-toggle-btn {
+        bottom: -10px; // Adjust position for collapsed state
+      }
+    }
 
     .info-group {
       .inline-input {
-        width: calc(100% - 100px); // Leave room for the label
+        width: calc(100% - 100px);
         max-width: none;
       }
     }
+  }
+
+  @media (max-width: 600px) {
+    padding: $spacing-xs;
+    grid-gap: $spacing-xs;
   }
 }
 

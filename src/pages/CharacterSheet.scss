@@ -211,6 +211,10 @@
   .top-info {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
+
+    .info-toggle-btn {
+      display: none; // Hidden on desktop
+    }
     gap: $spacing-sm;
     padding: $spacing-lg $spacing-lg 0 $spacing-lg;
     background-color: rgba(

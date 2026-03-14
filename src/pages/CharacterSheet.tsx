@@ -17,7 +17,7 @@ import {
   ARCHETYPE_DESCRIPTIONS,
   CLANS,
 } from "../data/vtm";
-import { Lock, LockOpen, Save } from "lucide-react";
+import { Lock, LockOpen, Save, ChevronDown, ChevronUp } from "lucide-react";
 import "./CharacterSheet.scss";
 
 export default function CharacterSheet() {
@@ -47,6 +47,7 @@ export default function CharacterSheet() {
   const [isNewNature, setIsNewNature] = useState(false);
   const [isNewDemeanor, setIsNewDemeanor] = useState(false);
   const [isNewChronicle, setIsNewChronicle] = useState(false);
+  const [isInfoExpanded, setIsInfoExpanded] = useState(true);
 
   const allArchetypes = Array.from(
     new Set([
@@ -545,7 +546,7 @@ export default function CharacterSheet() {
       </header>
 
       <div className="sheet-body card" data-clan={localChar.clan}>
-        <div className="top-info bg-dark">
+        <div className={`top-info bg-dark ${!isInfoExpanded ? "collapsed" : ""}`}>
           <div className="info-group">
             <span>Nombre:</span> {localChar.name}
           </div>
@@ -728,6 +729,14 @@ export default function CharacterSheet() {
               readOnly={isLocked}
             />
           </div>
+
+          <button 
+            className="info-toggle-btn"
+            onClick={() => setIsInfoExpanded(!isInfoExpanded)}
+            title={isInfoExpanded ? "Contraer información" : "Expandir información"}
+          >
+            {isInfoExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          </button>
         </div>
 
         <div className="info-group experience-group">
