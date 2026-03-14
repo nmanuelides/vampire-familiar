@@ -72,8 +72,8 @@
       overflow: visible !important;
       background-color: rgba(17, 17, 17, 0.95);
       border-radius: $border-radius $border-radius 0 0;
-      border-bottom-left-radius: 0 !important;
-      border-bottom-right-radius: 0 !important;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
       backdrop-filter: blur(10px);
       z-index: 101;
       border-bottom: none;
@@ -139,7 +139,7 @@
         justify-content: center;
         color: white;
         cursor: pointer;
-        z-index: 1200;
+        z-index: 9999; // Absolute top
         box-shadow:
           0 4px 12px rgba(0, 0, 0, 0.6),
           0 0 15px rgba($accent-color, 0.4);
@@ -155,7 +155,11 @@
         }
 
         svg {
-          stroke-width: 3.5px;
+          width: 24px;
+          height: 24px;
+          stroke-width: 4px;
+          flex-shrink: 0;
+          display: block;
         }
       }
     }
