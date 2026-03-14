@@ -2,7 +2,7 @@
 
 .character-sheet-container {
   @media (max-width: 1100px) {
-    padding: $spacing-sm $spacing-md $spacing-xl $spacing-md;
+    padding: $spacing-sm $spacing-xs $spacing-xl $spacing-xs;
   }
   .sheet-body {
     @media (max-width: 1100px) {

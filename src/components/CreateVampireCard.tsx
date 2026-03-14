@@ -4,6 +4,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import { useCharacterStore } from "../store/useCharacterStore";
 import { generateRandomVTMCharacter } from "../utils/vtmGenerator";
 import { CLANS, VTM_TRANSLATIONS } from "../data/vtm";
+import CustomSelect from "./CustomSelect";
 import type { Clan } from "../types/vtm";
 import "./CreateVampireCard.scss";
 
@@ -93,24 +94,20 @@ export default function CreateVampireCard() {
         <div className="form-group w-full">
           <label>Crónica</label>
           {!showNewInput ? (
-            <select
-              value={chronicle || existingChronicles[0]}
-              onChange={(e) => {
-                if (e.target.value === "___NEW___") {
+            <CustomSelect
+              value={chronicle}
+              options={existingChronicles}
+              placeholder="Seleccionar..."
+              fullWidth={true}
+              onChange={(val) => {
+                if (val === "___NEW___") {
                   setIsNewChronicle(true);
                   setChronicle("");
                 } else {
-                  setChronicle(e.target.value);
+                  setChronicle(val);
                 }
               }}
-            >
-              {existingChronicles.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-              <option value="___NEW___">+ Crear nueva crónica...</option>
-            </select>
+            />
           ) : (
             <div className="chronicle-input-group">
               <input
@@ -140,16 +137,14 @@ export default function CreateVampireCard() {
         <div className="form-row">
           <div className="form-group">
             <label>Clan</label>
-            <select
+            <CustomSelect
               value={clan}
-              onChange={(e) => setClan(e.target.value as Clan)}
-            >
-              {CLANS.map((c) => (
-                <option key={c} value={c}>
-                  {VTM_TRANSLATIONS[c] || c}
-                </option>
-              ))}
-            </select>
+              options={CLANS as string[]}
+              translations={VTM_TRANSLATIONS}
+              showNewOption={false}
+              fullWidth={true}
+              onChange={(val) => setClan(val as Clan)}
+            />
           </div>
 
           <div className="form-group">

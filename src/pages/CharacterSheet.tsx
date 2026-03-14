@@ -15,6 +15,7 @@ import {
   EXP_COSTS,
   ARCHETYPES,
   ARCHETYPE_DESCRIPTIONS,
+  CLANS,
 } from "../data/vtm";
 import { Lock, LockOpen, Save } from "lucide-react";
 import "./CharacterSheet.scss";
@@ -45,12 +46,21 @@ export default function CharacterSheet() {
   const [spendingError, setSpendingError] = useState<string | null>(null);
   const [isNewNature, setIsNewNature] = useState(false);
   const [isNewDemeanor, setIsNewDemeanor] = useState(false);
+  const [isNewChronicle, setIsNewChronicle] = useState(false);
 
   const allArchetypes = Array.from(
     new Set([
       ...ARCHETYPES,
       ...characters.map((c) => c.nature),
       ...characters.map((c) => c.demeanor),
+    ])
+  )
+    .filter(Boolean)
+    .sort() as string[];
+
+  const allChronicles = Array.from(
+    new Set([
+      ...characters.map((c) => c.chronicle),
     ])
   )
     .filter(Boolean)
@@ -543,7 +553,42 @@ export default function CharacterSheet() {
             <span>Jugador:</span> {localChar.player}
           </div>
           <div className="info-group">
-            <span>Crónica:</span> {localChar.chronicle}
+            <span>Crónica:</span>
+            {!isNewChronicle && !isLocked ? (
+              <CustomSelect
+                value={localChar.chronicle || ""}
+                options={allChronicles}
+                placeholder="Seleccionar..."
+                onChange={(val) => {
+                  if (val === "___NEW___") {
+                    setIsNewChronicle(true);
+                  } else {
+                    handleUpdate(["chronicle"], val);
+                  }
+                }}
+              />
+            ) : (
+              <div className="input-with-cancel">
+                <input
+                  type="text"
+                  value={localChar.chronicle || ""}
+                  onChange={(e) => handleUpdate(["chronicle"], e.target.value)}
+                  className="inline-input"
+                  placeholder="Crónica..."
+                  readOnly={isLocked}
+                  autoFocus={isNewChronicle}
+                />
+                {isNewChronicle && !isLocked && (
+                  <button
+                    className="cancel-small"
+                    onClick={() => setIsNewChronicle(false)}
+                    title="Cancelar"
+                  >
+                    &times;
+                  </button>
+                )}
+              </div>
+            )}
           </div>
           <div className="info-group">
             <div className="tooltip-anchor">
@@ -653,8 +698,20 @@ export default function CharacterSheet() {
             />
           </div>
           <div className="info-group">
-            <span>Clan:</span>{" "}
-            {VTM_TRANSLATIONS[localChar.clan] || localChar.clan}
+            <span>Clan:</span>
+            {!isLocked ? (
+              <CustomSelect
+                value={localChar.clan || ""}
+                options={CLANS as string[]}
+                translations={VTM_TRANSLATIONS}
+                showNewOption={false}
+                onChange={(val) => handleUpdate(["clan"], val)}
+              />
+            ) : (
+              <span className="gen-display">
+                {VTM_TRANSLATIONS[localChar.clan] || localChar.clan}
+              </span>
+            )}
           </div>
           <div className="info-group">
             <span>Generación:</span>

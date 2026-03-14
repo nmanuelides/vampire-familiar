@@ -9,6 +9,18 @@
   font-size: 0.95rem;
   z-index: 1000; // Ensure container has context
 
+  &.full-width {
+    max-width: 100%;
+
+    .custom-select-trigger {
+      width: 100%;
+    }
+
+    .custom-select-dropdown {
+      width: 100%;
+    }
+  }
+
   .custom-select-trigger {
     background: transparent;
     border-bottom: 1px solid rgba($border-color, 0.3);
@@ -50,31 +62,35 @@
     left: 0;
     width: 220px;
     background-color: #111;
-    border: none;
+    border: 1px solid $accent-color; // Back to standard border now that we have padding
     border-radius: $border-radius;
-    box-shadow: 
-      0 0 0 1px $accent-color, // Seamless border using shadow
-      0 4px 20px rgba(0, 0, 0, 0.9);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.9);
     z-index: 9999;
-    margin: 4px 1px 0 1px;
-    max-height: 300px;
-    overflow-y: auto;
-    overflow-x: hidden;
+    margin-top: 4px;
     box-sizing: border-box;
-    display: block;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; // Clips inner scroll to matches rounded corners
 
-    /* Custom scrollbar */
-    &::-webkit-scrollbar {
-      width: 6px;
-    }
-    &::-webkit-scrollbar-track {
-      background: #111;
-    }
-    &::-webkit-scrollbar-thumb {
-      background: rgba($accent-color, 0.5);
-      border-radius: 3px;
-      &:hover {
-        background: $accent-color;
+    .custom-select-options-scroll {
+      max-height: 250px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      box-sizing: border-box;
+      
+      /* Custom scrollbar */
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+      &::-webkit-scrollbar-track {
+        background: #111;
+      }
+      &::-webkit-scrollbar-thumb {
+        background: rgba($accent-color, 0.5);
+        border-radius: 3px;
+        &:hover {
+          background: $accent-color;
+        }
       }
     }
 
