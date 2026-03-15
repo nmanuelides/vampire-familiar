@@ -77,7 +77,7 @@ export default function Login() {
                 required
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
-                placeholder="Introducción tu nombre"
+                placeholder="Ingresa tu nombre"
               />
             </div>
           )}
