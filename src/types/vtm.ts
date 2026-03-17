@@ -115,6 +115,7 @@ export interface VTMCharacter {
 
   merits_and_flaws?: MeritFlaw[];
   experience: number;
+  extra_freebies?: number;
 
   created_at?: string;
   creator_name?: string;

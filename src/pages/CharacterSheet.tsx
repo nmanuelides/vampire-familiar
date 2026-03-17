@@ -54,15 +54,13 @@ export default function CharacterSheet() {
       ...ARCHETYPES,
       ...characters.map((c) => c.nature),
       ...characters.map((c) => c.demeanor),
-    ])
+    ]),
   )
     .filter(Boolean)
     .sort() as string[];
 
   const allChronicles = Array.from(
-    new Set([
-      ...characters.map((c) => c.chronicle),
-    ])
+    new Set([...characters.map((c) => c.chronicle)]),
   )
     .filter(Boolean)
     .sort() as string[];
@@ -72,9 +70,15 @@ export default function CharacterSheet() {
   // between the baseline character (characterFromStore) and the current localChar.
   const calculateDeltaCosts = (
     baseChar: VTMCharacter | null,
-    currentChar: VTMCharacter | null
+    currentChar: VTMCharacter | null,
   ) => {
-    if (!baseChar || !currentChar) return { freebiesSpent: 0, expSpent: 0, expRemaining: 0, baseFreebiesTotal: 0 };
+    if (!baseChar || !currentChar)
+      return {
+        freebiesSpent: 0,
+        expSpent: 0,
+        expRemaining: 0,
+        baseFreebiesTotal: 0,
+      };
 
     interface DiffDot {
       type: string;
@@ -94,9 +98,9 @@ export default function CharacterSheet() {
       type: string,
       freebieCost: number,
       calcExp: (level: number, label: string) => number,
-      poolCategory: string
+      poolCategory: string,
     ) => {
-      Object.keys(current).forEach(key => {
+      Object.keys(current).forEach((key) => {
         const baseLevel = base[key] || 0;
         const currentLevel = current[key] || 0;
         for (let i = baseLevel + 1; i <= currentLevel; i++) {
@@ -106,17 +110,21 @@ export default function CharacterSheet() {
             level: i,
             freebieCost,
             expCost: calcExp(i, key),
-            poolCategory
+            poolCategory,
           });
         }
       });
     };
 
-
-  // 1. Attributes
-    const getAttrBase = (key: string) => (currentChar.clan === "Nosferatu" && key === "appearance" ? 0 : 1);
-    const compareAttr = (base: Record<string, number>, current: Record<string, number>, poolCategory: string) => {
-      Object.keys(current).forEach(key => {
+    // 1. Attributes
+    const getAttrBase = (key: string) =>
+      currentChar.clan === "Nosferatu" && key === "appearance" ? 0 : 1;
+    const compareAttr = (
+      base: Record<string, number>,
+      current: Record<string, number>,
+      poolCategory: string,
+    ) => {
+      Object.keys(current).forEach((key) => {
         const baseLevel = Math.max(base[key] || 0, getAttrBase(key));
         const currentLevel = current[key] || 0;
         for (let i = baseLevel + 1; i <= currentLevel; i++) {
@@ -126,51 +134,122 @@ export default function CharacterSheet() {
             level: i,
             freebieCost: 5,
             expCost: (i - 1) * EXP_COSTS.ATTRIBUTE_MULT,
-            poolCategory
+            poolCategory,
           });
         }
       });
     };
-    compareAttr(baseChar.attributes.physical, currentChar.attributes.physical, "phys");
-    compareAttr(baseChar.attributes.social, currentChar.attributes.social, "soc");
-    compareAttr(baseChar.attributes.mental, currentChar.attributes.mental, "ment");
+    compareAttr(
+      baseChar.attributes.physical,
+      currentChar.attributes.physical,
+      "phys",
+    );
+    compareAttr(
+      baseChar.attributes.social,
+      currentChar.attributes.social,
+      "soc",
+    );
+    compareAttr(
+      baseChar.attributes.mental,
+      currentChar.attributes.mental,
+      "ment",
+    );
 
     // 2. Abilities
-    const calcAbilExp = (level: number) => level === 1 ? EXP_COSTS.NEW_ABILITY : (level - 1) * EXP_COSTS.ABILITY_MULT;
-    compareRecords(baseChar.abilities.talents, currentChar.abilities.talents, "abil", 2, calcAbilExp, "tal");
-    compareRecords(baseChar.abilities.skills, currentChar.abilities.skills, "abil", 2, calcAbilExp, "ski");
-    compareRecords(baseChar.abilities.knowledges, currentChar.abilities.knowledges, "abil", 2, calcAbilExp, "kno");
+    const calcAbilExp = (level: number) =>
+      level === 1
+        ? EXP_COSTS.NEW_ABILITY
+        : (level - 1) * EXP_COSTS.ABILITY_MULT;
+    compareRecords(
+      baseChar.abilities.talents,
+      currentChar.abilities.talents,
+      "abil",
+      2,
+      calcAbilExp,
+      "tal",
+    );
+    compareRecords(
+      baseChar.abilities.skills,
+      currentChar.abilities.skills,
+      "abil",
+      2,
+      calcAbilExp,
+      "ski",
+    );
+    compareRecords(
+      baseChar.abilities.knowledges,
+      currentChar.abilities.knowledges,
+      "abil",
+      2,
+      calcAbilExp,
+      "kno",
+    );
 
     // 3. Disciplines
     const clanDisciplines = CLAN_DISCIPLINES[currentChar.clan] || [];
     const calcDiscExp = (level: number, label: string) => {
       if (level === 1) return EXP_COSTS.NEW_DISCIPLINE;
-      return clanDisciplines.includes(label) 
+      return clanDisciplines.includes(label)
         ? (level - 1) * EXP_COSTS.CLAN_DISCIPLINE_MULT
         : (level - 1) * EXP_COSTS.OTHER_DISCIPLINE_MULT;
     };
-    compareRecords(baseChar.advantages.disciplines, currentChar.advantages.disciplines, "disc", 7, calcDiscExp, "disc");
+    compareRecords(
+      baseChar.advantages.disciplines,
+      currentChar.advantages.disciplines,
+      "disc",
+      7,
+      calcDiscExp,
+      "disc",
+    );
 
     // 4. Backgrounds
-    const calcBackExp = () => Infinity; 
-    compareRecords(baseChar.advantages.backgrounds || {}, currentChar.advantages.backgrounds || {}, "back", 1, calcBackExp, "back");
+    const calcBackExp = () => Infinity;
+    compareRecords(
+      baseChar.advantages.backgrounds || {},
+      currentChar.advantages.backgrounds || {},
+      "back",
+      1,
+      calcBackExp,
+      "back",
+    );
 
     // 5. Virtues (Minimum 1)
     const getVirtueBase = (val: number | undefined) => Math.max(val || 0, 1);
-    Object.keys(currentChar.advantages.virtues).forEach(key => {
+    Object.keys(currentChar.advantages.virtues).forEach((key) => {
       const baseLvl = getVirtueBase((baseChar.advantages.virtues as any)[key]);
       const curLvl = (currentChar.advantages.virtues as any)[key];
       for (let i = baseLvl + 1; i <= curLvl; i++) {
-        addedDots.push({ type: "virtue", label: key, level: i, freebieCost: 2, expCost: (i - 1) * EXP_COSTS.VIRTUE_MULT, poolCategory: "virtue" });
+        addedDots.push({
+          type: "virtue",
+          label: key,
+          level: i,
+          freebieCost: 2,
+          expCost: (i - 1) * EXP_COSTS.VIRTUE_MULT,
+          poolCategory: "virtue",
+        });
       }
     });
 
     // 6. Humanity & Willpower
     for (let i = baseChar.humanity + 1; i <= currentChar.humanity; i++) {
-        addedDots.push({ type: "humanity", label: "humanity", level: i, freebieCost: 1, expCost: (i - 1) * EXP_COSTS.HUMANITY_MULT, poolCategory: "humanity" });
+      addedDots.push({
+        type: "humanity",
+        label: "humanity",
+        level: i,
+        freebieCost: 1,
+        expCost: (i - 1) * EXP_COSTS.HUMANITY_MULT,
+        poolCategory: "humanity",
+      });
     }
     for (let i = baseChar.willpower + 1; i <= currentChar.willpower; i++) {
-        addedDots.push({ type: "wp", label: "willpower", level: i, freebieCost: 1, expCost: (i - 1) * EXP_COSTS.WILLPOWER_MULT, poolCategory: "wp" });
+      addedDots.push({
+        type: "wp",
+        label: "willpower",
+        level: i,
+        freebieCost: 1,
+        expCost: (i - 1) * EXP_COSTS.WILLPOWER_MULT,
+        poolCategory: "wp",
+      });
     }
 
     // Sort added dots predictably so stable additions behave correctly
@@ -178,50 +257,89 @@ export default function CharacterSheet() {
 
     // Calculate how many pool dots were ALREADY used in the BASE character
     const isNosf = currentChar.clan === "Nosferatu";
-    const getBaseAttr = (key: string) => (isNosf && key === "appearance" ? 0 : 1);
-    
+    const getBaseAttr = (key: string) =>
+      isNosf && key === "appearance" ? 0 : 1;
+
     // We calculate available pools based on the BASE character.
     // However, Attributes and Abilities have dynamic 7/5/3 and 15/9/5 allocation.
     // To strictly support creation, we sort the BASE usage to figure out which pool went where.
     const baseAttrs = [
-      Object.entries(baseChar.attributes.physical).reduce((s, [k,v]) => s + Math.max(0, v - getBaseAttr(k)), 0),
-      Object.entries(baseChar.attributes.social).reduce((s, [k,v]) => s + Math.max(0, v - getBaseAttr(k)), 0),
-      Object.entries(baseChar.attributes.mental).reduce((s, [k,v]) => s + Math.max(0, v - getBaseAttr(k)), 0)
+      Object.entries(baseChar.attributes.physical).reduce(
+        (s, [k, v]) => s + Math.max(0, v - getBaseAttr(k)),
+        0,
+      ),
+      Object.entries(baseChar.attributes.social).reduce(
+        (s, [k, v]) => s + Math.max(0, v - getBaseAttr(k)),
+        0,
+      ),
+      Object.entries(baseChar.attributes.mental).reduce(
+        (s, [k, v]) => s + Math.max(0, v - getBaseAttr(k)),
+        0,
+      ),
     ];
     // We map categories to their dynamic sizes by checking which one currently uses the most in BASE
     // But since session additions might cross thresholds, we track global Remaining Pool space for each tier type
-    
+
     // Simpler and more accurate: Base Pools act as global "Free Spaces" per tier
-    const getBaseSum = (data: Record<string, number>, baseValue = 0) => Object.values(data).reduce((s, v) => s + Math.max(0, v - baseValue), 0);
-    
-    let attrPoolRemaining = Math.max(0, 15 - (baseAttrs[0] + baseAttrs[1] + baseAttrs[2])); // 7+5+3 = 15 total attributes
-    
-    const baseAbilsTotal = getBaseSum(baseChar.abilities.talents) + getBaseSum(baseChar.abilities.skills) + getBaseSum(baseChar.abilities.knowledges);
+    const getBaseSum = (data: Record<string, number>, baseValue = 0) =>
+      Object.values(data).reduce((s, v) => s + Math.max(0, v - baseValue), 0);
+
+    let attrPoolRemaining = Math.max(
+      0,
+      15 - (baseAttrs[0] + baseAttrs[1] + baseAttrs[2]),
+    ); // 7+5+3 = 15 total attributes
+
+    const baseAbilsTotal =
+      getBaseSum(baseChar.abilities.talents) +
+      getBaseSum(baseChar.abilities.skills) +
+      getBaseSum(baseChar.abilities.knowledges);
     let abilPoolRemaining = Math.max(0, 29 - baseAbilsTotal); // 15+9+5 = 29
-    
-    let discPoolRemaining = Math.max(0, 3 - getBaseSum(baseChar.advantages.disciplines));
-    let backPoolRemaining = Math.max(0, 5 - getBaseSum(baseChar.advantages.backgrounds || {}));
-    
-    let virtBaseSum = Object.values(baseChar.advantages.virtues).reduce((s, v) => s + Math.max(0, v - 1), 0);
+
+    let discPoolRemaining = Math.max(
+      0,
+      3 - getBaseSum(baseChar.advantages.disciplines),
+    );
+    let backPoolRemaining = Math.max(
+      0,
+      5 - getBaseSum(baseChar.advantages.backgrounds || {}),
+    );
+
+    let virtBaseSum = Object.values(baseChar.advantages.virtues).reduce(
+      (s, v) => s + Math.max(0, v - 1),
+      0,
+    );
     let virtPoolRemaining = Math.max(0, 7 - virtBaseSum);
 
     // First pass: Consume Pools
     const finalDots: DiffDot[] = [];
-    addedDots.forEach(dot => {
+    addedDots.forEach((dot) => {
       let absorbed = false;
       if (dot.type === "attr" && attrPoolRemaining > 0) {
-        attrPoolRemaining--; absorbed = true;
-      } else if (dot.type === "abil" && abilPoolRemaining > 0) {
-        abilPoolRemaining--; absorbed = true;
-      } else if (dot.type === "disc" && discPoolRemaining > 0) {
-        discPoolRemaining--; absorbed = true;
-      } else if (dot.type === "back" && backPoolRemaining > 0) {
-        backPoolRemaining--; absorbed = true;
-      } else if (dot.type === "virtue" && virtPoolRemaining > 0) {
-        virtPoolRemaining--; absorbed = true;
-      } else if (dot.type === "humanity" && dot.level <= (currentChar.advantages.virtues.conscience + currentChar.advantages.virtues.selfControl)) {
+        attrPoolRemaining--;
         absorbed = true;
-      } else if (dot.type === "wp" && dot.level <= currentChar.advantages.virtues.courage) {
+      } else if (dot.type === "abil" && abilPoolRemaining > 0) {
+        abilPoolRemaining--;
+        absorbed = true;
+      } else if (dot.type === "disc" && discPoolRemaining > 0) {
+        discPoolRemaining--;
+        absorbed = true;
+      } else if (dot.type === "back" && backPoolRemaining > 0) {
+        backPoolRemaining--;
+        absorbed = true;
+      } else if (dot.type === "virtue" && virtPoolRemaining > 0) {
+        virtPoolRemaining--;
+        absorbed = true;
+      } else if (
+        dot.type === "humanity" &&
+        dot.level <=
+          currentChar.advantages.virtues.conscience +
+            currentChar.advantages.virtues.selfControl
+      ) {
+        absorbed = true;
+      } else if (
+        dot.type === "wp" &&
+        dot.level <= currentChar.advantages.virtues.courage
+      ) {
         absorbed = true;
       }
       if (!absorbed) finalDots.push(dot);
@@ -229,84 +347,103 @@ export default function CharacterSheet() {
 
     // We must calculate how many freebies the BASE character has already used.
     let baseGlobalFreebies = calculateBaseAbsoluteFreebies(baseChar);
-    let freebiesLeft = Math.max(0, 15 - baseGlobalFreebies);
-    
+    let freebiesLeft = Math.max(0, (15 + (currentChar.extra_freebies || 0)) - baseGlobalFreebies);
+
     let sessionExpSpent = 0;
     let sessionFreebiesSpent = 0;
 
-    finalDots.forEach(dot => {
-        if (freebiesLeft >= dot.freebieCost) {
-            freebiesLeft -= dot.freebieCost;
-            sessionFreebiesSpent += dot.freebieCost;
-        } else {
-            sessionExpSpent += dot.expCost;
-        }
+    finalDots.forEach((dot) => {
+      if (freebiesLeft >= dot.freebieCost) {
+        freebiesLeft -= dot.freebieCost;
+        sessionFreebiesSpent += dot.freebieCost;
+      } else {
+        sessionExpSpent += dot.expCost;
+      }
     });
 
     return {
-        baseFreebiesTotal: baseGlobalFreebies,
-        freebiesSpent: sessionFreebiesSpent,
-        expSpent: sessionExpSpent,
-        expRemaining: (currentChar.experience || 0) - sessionExpSpent
+      baseFreebiesTotal: baseGlobalFreebies,
+      freebiesSpent: sessionFreebiesSpent,
+      expSpent: sessionExpSpent,
+      expRemaining: (currentChar.experience || 0) - sessionExpSpent,
     };
   };
 
   // Helper to calculate total freebies used up by the base character state
   const calculateBaseAbsoluteFreebies = (char: VTMCharacter) => {
-      let spent = 0;
-      
-      // Attr: Base is 1 (except Nosferatu Appearance is 0). Pools are 7/5/3 Extra Dots.
-      const getAttrDots = (data: Record<string, number>, isNosferatu: boolean) => {
-          let extraDots = 0;
-          Object.entries(data).forEach(([key, val]) => {
-              const base = isNosferatu && key === "appearance" ? 0 : 1;
-              extraDots += Math.max(0, val - base);
-          });
-          return extraDots;
-      };
-      const isNosf = char.clan === "Nosferatu";
-      const attrCategories = [
-          getAttrDots(char.attributes.physical, isNosf),
-          getAttrDots(char.attributes.social, isNosf),
-          getAttrDots(char.attributes.mental, isNosf)
-      ].sort((a,b)=>b-a);
-      
-      spent += Math.max(0, attrCategories[0] - 7) * 5;
-      spent += Math.max(0, attrCategories[1] - 5) * 5;
-      spent += Math.max(0, attrCategories[2] - 3) * 5;
+    let spent = 0;
 
-      // Abil: Base is 0. Pools 15/9/5.
-      const getAbilDots = (data: Record<string, number>) => Object.values(data).reduce((a,b)=>a+b,0);
-      const abilCategories = [
-          getAbilDots(char.abilities.talents),
-          getAbilDots(char.abilities.skills),
-          getAbilDots(char.abilities.knowledges)
-      ].sort((a,b)=>b-a);
-      
-      spent += Math.max(0, abilCategories[0] - 15) * 2;
-      spent += Math.max(0, abilCategories[1] - 9) * 2;
-      spent += Math.max(0, abilCategories[2] - 5) * 2;
+    // Attr: Base is 1 (except Nosferatu Appearance is 0). Pools are 7/5/3 Extra Dots.
+    const getAttrDots = (
+      data: Record<string, number>,
+      isNosferatu: boolean,
+    ) => {
+      let extraDots = 0;
+      Object.entries(data).forEach(([key, val]) => {
+        const base = isNosferatu && key === "appearance" ? 0 : 1;
+        extraDots += Math.max(0, val - base);
+      });
+      return extraDots;
+    };
+    const isNosf = char.clan === "Nosferatu";
+    const attrCategories = [
+      getAttrDots(char.attributes.physical, isNosf),
+      getAttrDots(char.attributes.social, isNosf),
+      getAttrDots(char.attributes.mental, isNosf),
+    ].sort((a, b) => b - a);
 
-      // Disc: Base is 0. Pool 3.
-      spent += Math.max(0, Object.values(char.advantages.disciplines).reduce((a,b)=>a+b,0) - 3) * 7;
-      
-      // Back: Base is 0. Pool 5.
-      spent += Math.max(0, Object.values(char.advantages.backgrounds || {}).reduce((a,b)=>a+b,0) - 5) * 1;
-      
-      // Virtues: Base is 1. Pool 7.
-      let virtDots = 0;
-      Object.values(char.advantages.virtues).forEach(v => virtDots += Math.max(0, v - 1));
-      spent += Math.max(0, virtDots - 7) * 2;
-      
-      // Humanity/WP base
-      const baseHum = char.advantages.virtues.conscience + char.advantages.virtues.selfControl;
-      spent += Math.max(0, char.humanity - baseHum) * 1;
-      const baseWp = char.advantages.virtues.courage;
-      spent += Math.max(0, char.willpower - baseWp) * 1;
+    spent += Math.max(0, attrCategories[0] - 7) * 5;
+    spent += Math.max(0, attrCategories[1] - 5) * 5;
+    spent += Math.max(0, attrCategories[2] - 3) * 5;
 
-      // We only care about the absolute 15 freebies. Everything functionally above 15 is EXP math.
-      // This strict cap guarantees we never show negative freebies in the UI.
-      return Math.min(15, spent);
+    // Abil: Base is 0. Pools 15/9/5.
+    const getAbilDots = (data: Record<string, number>) =>
+      Object.values(data).reduce((a, b) => a + b, 0);
+    const abilCategories = [
+      getAbilDots(char.abilities.talents),
+      getAbilDots(char.abilities.skills),
+      getAbilDots(char.abilities.knowledges),
+    ].sort((a, b) => b - a);
+
+    spent += Math.max(0, abilCategories[0] - 15) * 2;
+    spent += Math.max(0, abilCategories[1] - 9) * 2;
+    spent += Math.max(0, abilCategories[2] - 5) * 2;
+
+    // Disc: Base is 0. Pool 3.
+    spent +=
+      Math.max(
+        0,
+        Object.values(char.advantages.disciplines).reduce((a, b) => a + b, 0) -
+          3,
+      ) * 7;
+
+    // Back: Base is 0. Pool 5.
+    spent +=
+      Math.max(
+        0,
+        Object.values(char.advantages.backgrounds || {}).reduce(
+          (a, b) => a + b,
+          0,
+        ) - 5,
+      ) * 1;
+
+    // Virtues: Base is 1. Pool 7.
+    let virtDots = 0;
+    Object.values(char.advantages.virtues).forEach(
+      (v) => (virtDots += Math.max(0, v - 1)),
+    );
+    spent += Math.max(0, virtDots - 7) * 2;
+
+    // Humanity/WP base
+    const baseHum =
+      char.advantages.virtues.conscience + char.advantages.virtues.selfControl;
+    spent += Math.max(0, char.humanity - baseHum) * 1;
+    const baseWp = char.advantages.virtues.courage;
+    spent += Math.max(0, char.willpower - baseWp) * 1;
+
+    // We only care about the absolute (15 + extra) freebies. Everything functionally above 15+extra is EXP math.
+    // This strict cap guarantees we never show negative freebies in the UI for the base calculation.
+    return Math.min(15 + (char.extra_freebies || 0), spent);
   };
 
   useEffect(() => {
@@ -391,28 +528,37 @@ export default function CharacterSheet() {
 
     // 4. Validate costs (Using strict Delta from Store)
     const projectedCosts = calculateDeltaCosts(characterFromStore, updatedChar);
-    
+
     // STRICT BLOCK: Never allow session expRemaining to go negative
-    const projectedExpRemaining = (updatedChar.experience || 0) - projectedCosts.expSpent;
+    const projectedExpRemaining =
+      (updatedChar.experience || 0) - projectedCosts.expSpent;
     const isNowNegative = projectedExpRemaining < 0;
 
     // Total freebies = base global + session delta
-    const totalFreebies = projectedCosts.baseFreebiesTotal + projectedCosts.freebiesSpent;
-    const isExceedingFreebies = totalFreebies > 15;
+    const totalFreebies =
+      projectedCosts.baseFreebiesTotal + projectedCosts.freebiesSpent;
+    const isExceedingFreebies = totalFreebies > 15 + (localChar.extra_freebies || 0);
 
     const isValid = !isNowNegative && !isExceedingFreebies;
 
     // Determine if we are improving (removing dots to recover EXP/Freebies)
     const currentCosts = calculateDeltaCosts(characterFromStore, localChar);
     const isImproving =
-      projectedExpRemaining > ((localChar.experience || 0) - currentCosts.expSpent) ||
-      totalFreebies < (currentCosts.baseFreebiesTotal + currentCosts.freebiesSpent);
+      projectedExpRemaining >
+        (localChar.experience || 0) - currentCosts.expSpent ||
+      totalFreebies <
+        currentCosts.baseFreebiesTotal + currentCosts.freebiesSpent;
 
     if (!isValid && !isImproving) {
       // Trigger error animation on the specific dot being changed
       const traitKey = path[path.length - 1];
-      console.log("Validation Failed: ", traitKey, " Project EXP Details:", projectedCosts);
-      
+      console.log(
+        "Validation Failed: ",
+        traitKey,
+        " Project EXP Details:",
+        projectedCosts,
+      );
+
       // Use a unique string including a timestamp to ensure every click registers a state change
       setSpendingError(`${traitKey}-${Date.now()}`);
       return; // DO NOT update localChar
@@ -432,11 +578,14 @@ export default function CharacterSheet() {
 
     // Calculate strictly the session delta EXP
     const deltaCosts = calculateDeltaCosts(characterFromStore, localChar);
-    
+
     // Deduct only what was newly spent in this session
     const updatedChar = {
       ...localChar,
-      experience: Math.max(0, (localChar.experience || 0) - deltaCosts.expSpent),
+      experience: Math.max(
+        0,
+        (localChar.experience || 0) - deltaCosts.expSpent,
+      ),
       is_locked: true,
     };
 
@@ -476,7 +625,8 @@ export default function CharacterSheet() {
   };
 
   const costDetails = calculateDeltaCosts(characterFromStore, localChar);
-  const totalFreebiesUsed = costDetails.baseFreebiesTotal + costDetails.freebiesSpent;
+  const totalFreebiesUsed =
+    costDetails.baseFreebiesTotal + costDetails.freebiesSpent;
 
   const renderSection = (
     title: string,
@@ -512,7 +662,9 @@ export default function CharacterSheet() {
               desktopAlignRight={desktopAlignRight}
               isDiscipline={isDiscipline}
               readOnly={isLocked}
-              flashing={spendingError?.startsWith(`${key}-`) ? spendingError : ""}
+              flashing={
+                spendingError?.startsWith(`${key}-`) ? spendingError : ""
+              }
             />
           ))}
       </div>
@@ -546,235 +698,293 @@ export default function CharacterSheet() {
       </header>
 
       <div className="sheet-body card" data-clan={localChar.clan}>
-        <div className={`top-info bg-dark ${!isInfoExpanded ? "collapsed" : ""}`}>
+        <div
+          className={`top-info bg-dark ${!isInfoExpanded ? "collapsed" : ""}`}
+        >
           <div className="bio-info-grid">
             <div className="info-group">
-            <span>Nombre:</span> {localChar.name}
-          </div>
-          <div className="info-group">
-            <span>Jugador:</span> {localChar.player}
-          </div>
-          <div className="info-group">
-            <span>Crónica:</span>
-            {!isNewChronicle && !isLocked ? (
-              <CustomSelect
-                value={localChar.chronicle || ""}
-                options={allChronicles}
-                placeholder="Seleccionar..."
-                onChange={(val) => {
-                  if (val === "___NEW___") {
-                    setIsNewChronicle(true);
-                  } else {
-                    handleUpdate(["chronicle"], val);
-                  }
-                }}
+              <span>Nombre:</span> 
+              <input
+                type="text"
+                value={localChar.name || ""}
+                onChange={(e) => handleUpdate(["name"], e.target.value)}
+                className="inline-input"
+                placeholder="Nombre del vampiro..."
+                readOnly={isLocked}
               />
-            ) : (
-              <div className="input-with-cancel">
-                <input
-                  type="text"
+            </div>
+            <div className="info-group">
+              <span>Jugador:</span> {localChar.player}
+            </div>
+            <div className="info-group">
+              <span>Crónica:</span>
+              {!isNewChronicle && !isLocked ? (
+                <CustomSelect
                   value={localChar.chronicle || ""}
-                  onChange={(e) => handleUpdate(["chronicle"], e.target.value)}
-                  className="inline-input"
-                  placeholder="Crónica..."
-                  readOnly={isLocked}
-                  autoFocus={isNewChronicle}
+                  options={allChronicles}
+                  placeholder="Seleccionar..."
+                  onChange={(val) => {
+                    if (val === "___NEW___") {
+                      setIsNewChronicle(true);
+                    } else {
+                      handleUpdate(["chronicle"], val);
+                    }
+                  }}
                 />
-                {isNewChronicle && !isLocked && (
-                  <button
-                    className="cancel-small"
-                    onClick={() => setIsNewChronicle(false)}
-                    title="Cancelar"
-                  >
-                    &times;
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
-          <div className="info-group">
-            <div className="tooltip-anchor">
-              <span>Naturaleza:</span>
-              {localChar.nature && ARCHETYPE_DESCRIPTIONS[localChar.nature] && (
-                <div className="tooltip-box">
-                  <p className="tooltip-desc">{localChar.nature}</p>
-                  <p>{ARCHETYPE_DESCRIPTIONS[localChar.nature]}</p>
+              ) : (
+                <div className="input-with-cancel">
+                  <input
+                    type="text"
+                    value={localChar.chronicle || ""}
+                    onChange={(e) =>
+                      handleUpdate(["chronicle"], e.target.value)
+                    }
+                    className="inline-input"
+                    placeholder="Crónica..."
+                    readOnly={isLocked}
+                    autoFocus={isNewChronicle}
+                  />
+                  {isNewChronicle && !isLocked && (
+                    <button
+                      className="cancel-small"
+                      onClick={() => setIsNewChronicle(false)}
+                      title="Cancelar"
+                    >
+                      &times;
+                    </button>
+                  )}
                 </div>
               )}
             </div>
-            {!isNewNature && !isLocked ? (
-              <CustomSelect
-                value={localChar.nature || ""}
-                options={allArchetypes}
-                descriptions={ARCHETYPE_DESCRIPTIONS}
-                onChange={(val) => {
-                  if (val === "___NEW___") {
-                    setIsNewNature(true);
-                  } else {
-                    handleUpdate(["nature"], val);
-                  }
-                }}
-              />
-            ) : (
-              <div className="input-with-cancel">
-                <input
-                  type="text"
+            <div className="info-group">
+              <div className="tooltip-anchor">
+                <span>Naturaleza:</span>
+                {localChar.nature &&
+                  ARCHETYPE_DESCRIPTIONS[localChar.nature] && (
+                    <div className="tooltip-box">
+                      <p className="tooltip-desc">{localChar.nature}</p>
+                      <p>{ARCHETYPE_DESCRIPTIONS[localChar.nature]}</p>
+                    </div>
+                  )}
+              </div>
+              {!isNewNature && !isLocked ? (
+                <CustomSelect
                   value={localChar.nature || ""}
-                  onChange={(e) => handleUpdate(["nature"], e.target.value)}
-                  className="inline-input"
-                  placeholder="Naturaleza..."
-                  readOnly={isLocked}
-                  autoFocus={isNewNature}
+                  options={allArchetypes}
+                  descriptions={ARCHETYPE_DESCRIPTIONS}
+                  onChange={(val) => {
+                    if (val === "___NEW___") {
+                      setIsNewNature(true);
+                    } else {
+                      handleUpdate(["nature"], val);
+                    }
+                  }}
                 />
-                {isNewNature && !isLocked && (
-                  <button
-                    className="cancel-small"
-                    onClick={() => {
-                      setIsNewNature(false);
-                    }}
-                    title="Volver a lista"
-                  >
-                    ×
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
-          <div className="info-group">
-            <div className="tooltip-anchor">
-              <span>Conducta:</span>
-              {localChar.demeanor && ARCHETYPE_DESCRIPTIONS[localChar.demeanor] && (
-                <div className="tooltip-box">
-                  <p className="tooltip-desc">{localChar.demeanor}</p>
-                  <p>{ARCHETYPE_DESCRIPTIONS[localChar.demeanor]}</p>
+              ) : (
+                <div className="input-with-cancel">
+                  <input
+                    type="text"
+                    value={localChar.nature || ""}
+                    onChange={(e) => handleUpdate(["nature"], e.target.value)}
+                    className="inline-input"
+                    placeholder="Naturaleza..."
+                    readOnly={isLocked}
+                    autoFocus={isNewNature}
+                  />
+                  {isNewNature && !isLocked && (
+                    <button
+                      className="cancel-small"
+                      onClick={() => {
+                        setIsNewNature(false);
+                      }}
+                      title="Volver a lista"
+                    >
+                      ×
+                    </button>
+                  )}
                 </div>
               )}
             </div>
-            {!isNewDemeanor && !isLocked ? (
-              <CustomSelect
-                value={localChar.demeanor || ""}
-                options={allArchetypes}
-                descriptions={ARCHETYPE_DESCRIPTIONS}
-                onChange={(val) => {
-                  if (val === "___NEW___") {
-                    setIsNewDemeanor(true);
-                  } else {
-                    handleUpdate(["demeanor"], val);
-                  }
-                }}
-              />
-            ) : (
-              <div className="input-with-cancel">
-                <input
-                  type="text"
+            <div className="info-group">
+              <div className="tooltip-anchor">
+                <span>Conducta:</span>
+                {localChar.demeanor &&
+                  ARCHETYPE_DESCRIPTIONS[localChar.demeanor] && (
+                    <div className="tooltip-box">
+                      <p className="tooltip-desc">{localChar.demeanor}</p>
+                      <p>{ARCHETYPE_DESCRIPTIONS[localChar.demeanor]}</p>
+                    </div>
+                  )}
+              </div>
+              {!isNewDemeanor && !isLocked ? (
+                <CustomSelect
                   value={localChar.demeanor || ""}
-                  onChange={(e) => handleUpdate(["demeanor"], e.target.value)}
-                  className="inline-input"
-                  placeholder="Conducta..."
-                  readOnly={isLocked}
-                  autoFocus={isNewDemeanor}
+                  options={allArchetypes}
+                  descriptions={ARCHETYPE_DESCRIPTIONS}
+                  onChange={(val) => {
+                    if (val === "___NEW___") {
+                      setIsNewDemeanor(true);
+                    } else {
+                      handleUpdate(["demeanor"], val);
+                    }
+                  }}
                 />
-                {isNewDemeanor && !isLocked && (
-                  <button
-                    className="cancel-small"
-                    onClick={() => {
-                      setIsNewDemeanor(false);
-                    }}
-                    title="Volver a lista"
-                  >
-                    ×
-                  </button>
+              ) : (
+                <div className="input-with-cancel">
+                  <input
+                    type="text"
+                    value={localChar.demeanor || ""}
+                    onChange={(e) => handleUpdate(["demeanor"], e.target.value)}
+                    className="inline-input"
+                    placeholder="Conducta..."
+                    readOnly={isLocked}
+                    autoFocus={isNewDemeanor}
+                  />
+                  {isNewDemeanor && !isLocked && (
+                    <button
+                      className="cancel-small"
+                      onClick={() => {
+                        setIsNewDemeanor(false);
+                      }}
+                      title="Volver a lista"
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+            <div className="info-group">
+              <span>Concepto:</span>
+              <input
+                type="text"
+                value={localChar.concept || ""}
+                onChange={(e) => handleUpdate(["concept"], e.target.value)}
+                className="inline-input"
+                placeholder="Concepto..."
+                readOnly={isLocked}
+              />
+            </div>
+            <div className="info-group">
+              <span>Clan:</span>
+              {!isLocked ? (
+                <CustomSelect
+                  value={localChar.clan || ""}
+                  options={CLANS as string[]}
+                  translations={VTM_TRANSLATIONS}
+                  showNewOption={false}
+                  onChange={(val) => handleUpdate(["clan"], val)}
+                />
+              ) : (
+                <span className="gen-display">
+                  {VTM_TRANSLATIONS[localChar.clan] || localChar.clan}
+                </span>
+              )}
+            </div>
+            <div className="info-group">
+              <span>Generación:</span>
+              <span className="gen-display">{localChar.generation}ª</span>
+            </div>
+            <div className="info-group">
+              <span>Sire:</span>
+              <input
+                type="text"
+                value={localChar.sire || ""}
+                onChange={(e) => handleUpdate(["sire"], e.target.value)}
+                className="inline-input"
+                placeholder="Sire..."
+                readOnly={isLocked}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="info-group experience-group">
+          <div className="exp-item">
+            <span>Experiencia:</span>
+            <input
+              type="number"
+              min="0"
+              value={localChar.experience || 0}
+              onChange={(e) =>
+                handleUpdate(["experience"], parseInt(e.target.value) || 0)
+              }
+              className="inline-input number-input"
+              readOnly={isLocked || !canEditExperience}
+            />
+          </div>
+          {!isLocked && (
+            <>
+              <div
+                className={`freebie-badge ${costDetails.expRemaining < 0 ? "negative" : ""}`}
+              >
+                Puntos Gratuitos:{" "}
+                {canEditExperience ? (
+                  <div className="admin-freebie-controls">
+                    <button
+                      className="admin-btn minus"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Allow extra_freebies to go negative if penalizing 
+                        const current = localChar.extra_freebies || 0;
+                        handleUpdate(["extra_freebies"], current - 1);
+                      }}
+                      title="Quitar punto (Admin)"
+                    >
+                      -
+                    </button>
+                    <span className="extra-count" title="Puntos Totales (Base + Extra - Gastados)">
+                      {Math.max(
+                        0,
+                        15 + (localChar.extra_freebies || 0) - totalFreebiesUsed
+                      )}
+                    </span>
+                    <button
+                      className="admin-btn plus"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const current = localChar.extra_freebies || 0;
+                        handleUpdate(["extra_freebies"], current + 1);
+                      }}
+                      title="Añadir punto (Admin)"
+                    >
+                      +
+                    </button>
+                  </div>
+                ) : (
+                  Math.max(
+                    0,
+                    15 + (localChar.extra_freebies || 0) - totalFreebiesUsed
+                  )
                 )}
               </div>
-            )}
-          </div>
-          <div className="info-group">
-            <span>Concepto:</span>
-            <input
-              type="text"
-              value={localChar.concept || ""}
-              onChange={(e) => handleUpdate(["concept"], e.target.value)}
-              className="inline-input"
-              placeholder="Concepto..."
-              readOnly={isLocked}
-            />
-          </div>
-          <div className="info-group">
-            <span>Clan:</span>
-            {!isLocked ? (
-              <CustomSelect
-                value={localChar.clan || ""}
-                options={CLANS as string[]}
-                translations={VTM_TRANSLATIONS}
-                showNewOption={false}
-                onChange={(val) => handleUpdate(["clan"], val)}
-              />
-            ) : (
-              <span className="gen-display">
-                {VTM_TRANSLATIONS[localChar.clan] || localChar.clan}
-              </span>
-            )}
-          </div>
-          <div className="info-group">
-            <span>Generación:</span>
-            <span className="gen-display">{localChar.generation}ª</span>
-          </div>
-          <div className="info-group">
-            <span>Sire:</span>
-            <input
-              type="text"
-              value={localChar.sire || ""}
-              onChange={(e) => handleUpdate(["sire"], e.target.value)}
-              className="inline-input"
-              placeholder="Sire..."
-              readOnly={isLocked}
-            />
-          </div>
-        </div>
-      </div>
+              {costDetails.expSpent > 0 && (
+                <div
+                  className={`freebie-badge exp-badge ${costDetails.expRemaining < 0 ? "negative" : ""}`}
+                >
+                  Exp Gastada: {costDetails.expSpent} | Restante:{" "}
+                  {costDetails.expRemaining}
+                </div>
+              )}
+            </>
+          )}
 
-      <div className="info-group experience-group">
-        <div className="exp-item">
-          <span>Experiencia:</span>
-          <input
-            type="number"
-            min="0"
-            value={localChar.experience || 0}
-            onChange={(e) =>
-              handleUpdate(["experience"], parseInt(e.target.value) || 0)
+          <button
+            className="info-toggle-btn"
+            onClick={() => setIsInfoExpanded(!isInfoExpanded)}
+            title={
+              isInfoExpanded ? "Contraer información" : "Expandir información"
             }
-            className="inline-input number-input"
-            readOnly={isLocked || !canEditExperience}
-          />
-        </div>
-        {!isLocked && (
-          <>
-            <div
-              className={`freebie-badge ${costDetails.expRemaining < 0 ? "negative" : ""}`}
-            >
-              Puntos Gratuitos: {Math.max(0, 15 - totalFreebiesUsed)}
-            </div>
-            {costDetails.expSpent > 0 && (
-              <div
-                className={`freebie-badge exp-badge ${costDetails.expRemaining < 0 ? "negative" : ""}`}
-              >
-                Exp Gastada: {costDetails.expSpent} | Restante:{" "}
-                {costDetails.expRemaining}
-              </div>
+          >
+            {isInfoExpanded ? (
+              <ChevronUp size={24} />
+            ) : (
+              <ChevronDown size={24} />
             )}
-          </>
-        )}
-        
-        <button 
-          className="info-toggle-btn"
-          onClick={() => setIsInfoExpanded(!isInfoExpanded)}
-          title={isInfoExpanded ? "Contraer información" : "Expandir información"}
-        >
-          {isInfoExpanded ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
-        </button>
-      </div>
+          </button>
+        </div>
 
-      <div className="sheet-grid">
+        <div className="sheet-grid">
           {/* Attributes */}
           <div className="grid-section attributes">
             <h2 className="main-title text-center">— Atributos —</h2>
