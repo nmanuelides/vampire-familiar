@@ -608,6 +608,46 @@ export default function CharacterSheet() {
     }
   };
 
+  const handleResetStats = async () => {
+    if (!characterFromStore?.id || !localChar || isLocked) return;
+    if (
+      window.confirm(
+        "¿Estás ABSOLUTAMENTE SEGURO de querer resetear este personaje?\nPerderá TODOS los atributos, habilidades, disciplinas y toda la Exp gastada. Solo conservará su Nombre, Clan, Generación y Trasfondo.\nEsta acción NO se puede deshacer.",
+      )
+    ) {
+      const isNosf = localChar.clan === "Nosferatu";
+      const resetChar: VTMCharacter = {
+        ...localChar,
+        attributes: {
+          physical: { strength: 1, dexterity: 1, stamina: 1 },
+          social: { charisma: 1, manipulation: 1, appearance: isNosf ? 0 : 1 },
+          mental: { perception: 1, intelligence: 1, wits: 1 },
+        },
+        abilities: {
+          talents: { alertness: 0, athletics: 0, brawl: 0, dodge: 0, empathy: 0, expression: 0, intimidation: 0, leadership: 0, streetwise: 0, subterfuge: 0 },
+          skills: { animalKen: 0, crafts: 0, drive: 0, etiquette: 0, firearms: 0, melee: 0, performance: 0, security: 0, stealth: 0, survival: 0 },
+          knowledges: { academics: 0, computer: 0, finance: 0, investigation: 0, law: 0, linguistics: 0, medicine: 0, occult: 0, politics: 0, science: 0 },
+        },
+        advantages: {
+          backgrounds: { ...COMMON_BACKGROUNDS.reduce((acc, bg) => ({ ...acc, [bg]: 0 }), {}) },
+          disciplines: {},
+          virtues: { conscience: 1, selfControl: 1, courage: 1 },
+        },
+        humanity: 2, // Conscience 1 + Self-Control 1
+        willpower: 1, // Courage 1
+        willpower_current: 1,
+        experience: 0,
+        extra_freebies: 0,
+        blood_pool_current: localChar.blood_pool || 10,
+        merits_and_flaws: [],
+        inventory_ids: localChar.inventory_ids || [], // Keep inventory
+      };
+
+      await updateCharacter(characterFromStore.id, resetChar);
+      setLocalChar(resetChar);
+    }
+  };
+
   const getPointsSpent = (
     data: Record<string, number>,
     type: "attribute" | "ability" | "virtue" | "other",
@@ -1331,7 +1371,12 @@ export default function CharacterSheet() {
         )}
       </div>
 
-      <div className="sheet-navigation" style={{ justifyContent: "center" }}>
+      <div className="sheet-navigation" style={{ justifyContent: "center", gap: "15px" }}>
+        {!isLocked && (
+          <button className="delete-btn" style={{ backgroundColor: "#ffaa00", color: "#1a1a1a" }} onClick={handleResetStats}>
+            Resetear Stats
+          </button>
+        )}
         {isAdmin && (
           <button className="delete-btn" onClick={handleDelete}>
             Eliminar Personaje
