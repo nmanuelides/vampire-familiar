@@ -1343,6 +1343,7 @@ export default function CharacterSheet() {
         <InventoryModal
           inventoryIds={localChar.inventory_ids || []}
           isAdmin={isAdmin}
+          isLocked={isLocked}
           onClose={() => setShowInventory(false)}
           onUpdateInventory={(newIds) => {
             handleUpdate(["inventory_ids"], newIds);

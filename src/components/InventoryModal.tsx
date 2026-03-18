@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { X, Plus, Trash2 } from "lucide-react";
+import { X, Plus } from "lucide-react";
 import { useItemStore } from "../store/useItemStore";
 import "./InventoryModal.scss";
 
 interface Props {
   inventoryIds: string[];
   isAdmin: boolean;
+  isLocked: boolean;
   onClose: () => void;
   onUpdateInventory: (newIds: string[]) => void;
 }
@@ -13,6 +14,7 @@ interface Props {
 export default function InventoryModal({
   inventoryIds,
   isAdmin,
+  isLocked,
   onClose,
   onUpdateInventory,
 }: Props) {
@@ -23,10 +25,14 @@ export default function InventoryModal({
     fetchItems();
   }, [fetchItems]);
 
-  // Items currently owned by the character (allowing duplicates)
-  const ownedItemsList = inventoryIds.map((id, index) => {
-    const itemDef = items.find((item) => item.id === id);
-    return itemDef ? { ...itemDef, instanceId: `${id}-${index}` } : null;
+  // Group owned items to calculate counts
+  const itemCounts = inventoryIds.reduce((acc, id) => {
+    acc[id] = (acc[id] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const uniqueOwnedItems = Object.keys(itemCounts).map((id) => {
+    return items.find((item) => item.id === id);
   }).filter(Boolean) as any[];
 
   // Items available to add (all items are available, users can add multiple)
@@ -36,10 +42,13 @@ export default function InventoryModal({
     onUpdateInventory([...inventoryIds, itemId]);
   };
 
-  const handleRemoveItem = (indexToRemove: number) => {
+  const handleRemoveItem = (itemId: string) => {
     const newIds = [...inventoryIds];
-    newIds.splice(indexToRemove, 1);
-    onUpdateInventory(newIds);
+    const indexToRemove = newIds.indexOf(itemId);
+    if (indexToRemove !== -1) {
+      newIds.splice(indexToRemove, 1);
+      onUpdateInventory(newIds);
+    }
   };
 
   return (
@@ -59,13 +68,18 @@ export default function InventoryModal({
         ) : (
           <>
             <div className="inventory-grid">
-              {ownedItemsList.length === 0 ? (
+              {uniqueOwnedItems.length === 0 ? (
                 <p className="empty-text glass">El inventario está vacío.</p>
               ) : (
-                ownedItemsList.map((item, index) => (
-                  <div key={item.instanceId} className="inventory-item">
+                uniqueOwnedItems.map((item) => (
+                  <div key={item.id} className="inventory-item">
                     <div className="item-image-container tooltip-anchor">
                       <img src={item.image_url} alt={item.name} />
+                      {itemCounts[item.id!] > 1 && (
+                        <div className="item-count-badge">
+                          x{itemCounts[item.id!]}
+                        </div>
+                      )}
                       
                       <div className="tooltip-box item-tooltip">
                         <strong className="item-name">{item.name}</strong>
@@ -77,13 +91,17 @@ export default function InventoryModal({
                         )}
                       </div>
                     </div>
-                    {isAdmin && (
+                    {isAdmin && !isLocked && (
                       <button
                         className="remove-item-btn"
-                        onClick={() => handleRemoveItem(index)}
-                        title="Eliminar del inventario"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          handleRemoveItem(item.id!);
+                        }}
+                        title="Eliminar una unidad del inventario"
                       >
-                        <Trash2 size={14} />
+                        &times;
                       </button>
                     )}
                   </div>
@@ -91,7 +109,7 @@ export default function InventoryModal({
               )}
             </div>
 
-            {isAdmin && (
+            {isAdmin && !isLocked && (
               <div className="admin-inventory-controls">
                 <button
                   className="btn-primary toggle-add-btn"

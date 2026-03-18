@@ -64,6 +64,21 @@
           object-fit: cover;
         }
 
+        .item-count-badge {
+          position: absolute;
+          bottom: 4px;
+          right: 4px;
+          background-color: $accent-color;
+          color: white;
+          font-family: $font-primary;
+          font-weight: bold;
+          font-size: 0.75rem;
+          padding: 2px 6px;
+          border-radius: 12px;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.8);
+          pointer-events: none;
+        }
+
         /* Reusing the logic from DotTracker tooltips but adapted for items */
         .item-tooltip {
           position: absolute;
@@ -124,24 +139,34 @@
 
       .remove-item-btn {
         position: absolute;
-        top: -5px;
-        right: -5px;
-        background: rgba($error-color, 0.9);
+        top: -8px;
+        right: -8px;
+        z-index: 10;
+        background: $error-color;
         color: white;
-        border: none;
-        width: 24px;
-        height: 24px;
+        border: 2px solid #1a1a1a;
+        width: 28px;
+        height: 28px;
+        min-width: 28px;
+        min-height: 28px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
+        box-sizing: border-box;
+        padding: 0;
         cursor: pointer;
         transition: transform 0.2s;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        box-shadow: 0 2px 6px rgba(0,0,0,0.8);
+        font-size: 24px;
+        font-weight: bold;
+        line-height: 0;
+        padding-bottom: 3px; // Optical adjustment for times entity
+        font-family: Arial, sans-serif;
 
         &:hover {
           transform: scale(1.15);
-          background: $error-color;
+          background: adjust-color($error-color, $lightness: 10%);
         }
       }
     }
