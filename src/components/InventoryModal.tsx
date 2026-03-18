@@ -72,24 +72,24 @@ export default function InventoryModal({
                 <p className="empty-text glass">El inventario está vacío.</p>
               ) : (
                 uniqueOwnedItems.map((item) => (
-                  <div key={item.id} className="inventory-item">
-                    <div className="item-image-container tooltip-anchor">
+                  <div key={item.id} className="inventory-item tooltip-anchor">
+                    <div className="item-image-container">
                       <img src={item.image_url} alt={item.name} />
                       {itemCounts[item.id!] > 1 && (
                         <div className="item-count-badge">
                           x{itemCounts[item.id!]}
                         </div>
                       )}
-                      
-                      <div className="tooltip-box item-tooltip">
-                        <strong className="item-name">{item.name}</strong>
-                        {item.damage && (
-                          <span className="item-damage">Daño: {item.damage}</span>
-                        )}
-                        {item.description && (
-                          <p className="item-desc">{item.description}</p>
-                        )}
-                      </div>
+                    </div>
+
+                    <div className="tooltip-box item-tooltip">
+                      <strong className="item-name">{item.name}</strong>
+                      {item.damage && (
+                        <span className="item-damage">Daño: {item.damage}</span>
+                      )}
+                      {item.description && (
+                        <p className="item-desc">{item.description}</p>
+                      )}
                     </div>
                     {isAdmin && !isLocked && (
                       <button
