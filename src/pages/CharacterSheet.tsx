@@ -4,6 +4,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import { useCharacterStore } from "../store/useCharacterStore";
 import DotTracker from "../components/DotTracker";
 import CustomSelect from "../components/CustomSelect";
+import InventoryModal from "../components/InventoryModal";
 import type { VTMCharacter } from "../types/vtm";
 import {
   getMaxTraitRating,
@@ -17,7 +18,7 @@ import {
   ARCHETYPE_DESCRIPTIONS,
   CLANS,
 } from "../data/vtm";
-import { Lock, LockOpen, Save, ChevronDown, ChevronUp } from "lucide-react";
+import { Lock, LockOpen, Save, ChevronDown, ChevronUp, Backpack } from "lucide-react";
 import "./CharacterSheet.scss";
 
 export default function CharacterSheet() {
@@ -48,6 +49,7 @@ export default function CharacterSheet() {
   const [isNewDemeanor, setIsNewDemeanor] = useState(false);
   const [isNewChronicle, setIsNewChronicle] = useState(false);
   const [isInfoExpanded, setIsInfoExpanded] = useState(true);
+  const [showInventory, setShowInventory] = useState(false);
 
   const allArchetypes = Array.from(
     new Set([
@@ -1294,6 +1296,19 @@ export default function CharacterSheet() {
         </div>
       </div>
 
+      {/* Inventory Floating Action Button */}
+      {characterFromStore && (
+        <div className="fab-container left">
+          <button
+            className="fab-button backpack"
+            onClick={() => setShowInventory(true)}
+            title="Abrir Inventario"
+          >
+            <Backpack />
+          </button>
+        </div>
+      )}
+
       {/* Floating Action Button */}
       <div className="fab-container">
         {isAdmin && (
@@ -1323,6 +1338,17 @@ export default function CharacterSheet() {
           </button>
         )}
       </div>
+
+      {showInventory && localChar && (
+        <InventoryModal
+          inventoryIds={localChar.inventory_ids || []}
+          isAdmin={isAdmin}
+          onClose={() => setShowInventory(false)}
+          onUpdateInventory={(newIds) => {
+            handleUpdate(["inventory_ids"], newIds);
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { useAuthStore } from "./store/useAuthStore";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import CharacterSheet from "./pages/CharacterSheet";
+import ItemCreator from "./pages/ItemCreator";
 import "./styles/global.scss"; // Ensure global styles are loaded
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -53,6 +54,15 @@ function App() {
           element={
             <ProtectedRoute>
               <CharacterSheet />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/create-item"
+          element={
+            <ProtectedRoute>
+              <ItemCreator />
             </ProtectedRoute>
           }
         />

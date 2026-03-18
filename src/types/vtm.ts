@@ -17,6 +17,16 @@ export interface MeritFlaw {
   name: string;
 }
 
+export interface VTMItem {
+  id?: string;
+  user_id?: string;
+  name: string;
+  description?: string;
+  damage?: string;
+  image_url: string;
+  created_at?: string;
+}
+
 export interface VTMCharacter {
   id?: string;
   user_id?: string;
@@ -116,6 +126,7 @@ export interface VTMCharacter {
   merits_and_flaws?: MeritFlaw[];
   experience: number;
   extra_freebies?: number;
+  inventory_ids?: string[];
 
   created_at?: string;
   creator_name?: string;

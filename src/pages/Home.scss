@@ -34,6 +34,32 @@
     display: flex;
     align-items: center;
     gap: $spacing-lg;
+
+    .admin-tools-btn {
+      background: rgba($accent-color, 0.15);
+      border: 1px solid rgba($accent-color, 0.4);
+      color: $accent-color;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      svg {
+        width: 24px;
+        height: 24px;
+      }
+
+      &:hover {
+        background: $accent-color;
+        color: white;
+        transform: scale(1.1);
+        box-shadow: 0 0 10px rgba($accent-color, 0.5);
+      }
+    }
   }
 
   .user-profile {

@@ -17,6 +17,24 @@
     right: 20px;
   }
 
+  &.left {
+    right: auto;
+    left: 40px;
+
+    @media (max-width: 768px) {
+      left: 20px;
+    }
+
+    .fab-button {
+      background-color: #8b5a2b; // Leather-like color for the backpack
+      
+      &:hover {
+        background-color: #6b4423;
+        box-shadow: 0 6px 20px rgba(#8b5a2b, 0.4);
+      }
+    }
+  }
+
   .fab-button {
     width: 60px;
     height: 60px;

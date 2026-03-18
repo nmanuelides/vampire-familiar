@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useCharacterStore } from "../store/useCharacterStore";
+import { useNavigate } from "react-router-dom";
+import { Anvil } from "lucide-react";
 import CreateVampireCard from "../components/CreateVampireCard";
 import CharacterList from "../components/CharacterList";
 import AvatarUploadModal from "../components/AvatarUploadModal";
@@ -20,6 +22,8 @@ export default function Home() {
   const userName =
     user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Vampiro";
   const avatarUrl = user?.user_metadata?.avatar_url;
+  const isAdmin = user?.email === "magatsu82@gmail.com";
+  const navigate = useNavigate();
 
   return (
     <div className="home-container">
@@ -27,6 +31,16 @@ export default function Home() {
         <h1 className="title">Vampire Familiar</h1>
 
         <div className="header-actions">
+          {isAdmin && (
+            <button 
+              className="admin-tools-btn"
+              onClick={() => navigate("/create-item")}
+              title="Creador de Items"
+            >
+              <Anvil size={24} />
+            </button>
+          )}
+
           <div className="user-profile">
             <div
               className="avatar-circle"
