@@ -132,9 +132,7 @@ export default function ItemCreator() {
         });
 
         if (!createResult) {
-          throw new Error(
-            "createItem devolvió null, revisa la consola para ver el error exacto de la DB",
-          );
+          throw new Error("Ocurrió un error al guardar el ítem en la base de datos.");
         }
       }
 

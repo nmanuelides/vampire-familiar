@@ -23,19 +23,23 @@ export default function InventoryModal({
     fetchItems();
   }, [fetchItems]);
 
-  // Items currently owned by the character
-  const ownedItems = items.filter((item) => inventoryIds.includes(item.id!));
-  // Items available to add (not currently owned)
-  const availableItems = items.filter(
-    (item) => !inventoryIds.includes(item.id!)
-  );
+  // Items currently owned by the character (allowing duplicates)
+  const ownedItemsList = inventoryIds.map((id, index) => {
+    const itemDef = items.find((item) => item.id === id);
+    return itemDef ? { ...itemDef, instanceId: `${id}-${index}` } : null;
+  }).filter(Boolean) as any[];
+
+  // Items available to add (all items are available, users can add multiple)
+  const availableItems = items;
 
   const handleAddItem = (itemId: string) => {
     onUpdateInventory([...inventoryIds, itemId]);
   };
 
-  const handleRemoveItem = (itemId: string) => {
-    onUpdateInventory(inventoryIds.filter((id) => id !== itemId));
+  const handleRemoveItem = (indexToRemove: number) => {
+    const newIds = [...inventoryIds];
+    newIds.splice(indexToRemove, 1);
+    onUpdateInventory(newIds);
   };
 
   return (
@@ -55,11 +59,11 @@ export default function InventoryModal({
         ) : (
           <>
             <div className="inventory-grid">
-              {ownedItems.length === 0 ? (
+              {ownedItemsList.length === 0 ? (
                 <p className="empty-text glass">El inventario está vacío.</p>
               ) : (
-                ownedItems.map((item) => (
-                  <div key={item.id} className="inventory-item">
+                ownedItemsList.map((item, index) => (
+                  <div key={item.instanceId} className="inventory-item">
                     <div className="item-image-container tooltip-anchor">
                       <img src={item.image_url} alt={item.name} />
                       
@@ -76,7 +80,7 @@ export default function InventoryModal({
                     {isAdmin && (
                       <button
                         className="remove-item-btn"
-                        onClick={() => handleRemoveItem(item.id!)}
+                        onClick={() => handleRemoveItem(index)}
                         title="Eliminar del inventario"
                       >
                         <Trash2 size={14} />
