@@ -177,7 +177,7 @@
 
         &:hover {
           transform: scale(1.15);
-          background: adjust-color($error-color, $lightness: 10%);
+          background: color.adjust($error-color, $lightness: 10%);
         }
       }
     }

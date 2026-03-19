@@ -36,7 +36,15 @@
     .main-title {
       flex: 1;
       margin: 0;
+      margin-left: 48px;
       font-size: 2.2rem;
+      padding: 0 90px; // Safe zones for absolute buttons on corners
+      box-sizing: border-box;
+
+      @media (max-width: 600px) {
+        font-size: 1.6rem;
+        padding: 0 60px;
+      }
     }
   }
 

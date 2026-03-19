@@ -37,7 +37,7 @@ export default function Home() {
               onClick={() => navigate("/create-item")}
               title="Creador de Items"
             >
-              <Anvil size={24} />
+              <Anvil size={32} />
             </button>
           )}
 
