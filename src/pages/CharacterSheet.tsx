@@ -73,6 +73,7 @@ export default function CharacterSheet() {
   const calculateDeltaCosts = (
     baseChar: VTMCharacter | null,
     currentChar: VTMCharacter | null,
+    preClickChar?: VTMCharacter | null, // state BEFORE this click, used for accurate freebiesLeft
   ) => {
     if (!baseChar || !currentChar)
       return {
@@ -204,16 +205,25 @@ export default function CharacterSheet() {
       "disc",
     );
 
-    // 4. Backgrounds
-    const calcBackExp = () => Infinity;
-    compareRecords(
-      baseChar.advantages.backgrounds || {},
-      currentChar.advantages.backgrounds || {},
-      "back",
-      1,
-      calcBackExp,
-      "back",
-    );
+    // 4. Backgrounds — compare NET TOTALS above pool, not individual traits.
+    // This handles "swapping" (remove one, add another) correctly: if the total
+    // above pool (5) doesn't change, 0 session PG/EXP are charged.
+    // Backgrounds can never be raised with EXP, so expCost = Infinity to block it.
+    const getBackSum = (data: Record<string, number>) =>
+      Object.values(data).reduce((s, v) => s + v, 0);
+    const backBaseAbovePool = Math.max(0, getBackSum(baseChar.advantages.backgrounds || {}) - 5);
+    const backCurrentAbovePool = Math.max(0, getBackSum(currentChar.advantages.backgrounds || {}) - 5);
+    const netNewBackAbovePool = Math.max(0, backCurrentAbovePool - backBaseAbovePool);
+    for (let i = 0; i < netNewBackAbovePool; i++) {
+      addedDots.push({
+        type: "back",
+        label: "backgrounds",
+        level: backBaseAbovePool + i + 1,
+        freebieCost: 1,
+        expCost: Infinity,
+        poolCategory: "back",
+      });
+    }
 
     // 5. Virtues (Minimum 1)
     const getVirtueBase = (val: number | undefined) => Math.max(val || 0, 1);
@@ -347,9 +357,12 @@ export default function CharacterSheet() {
       if (!absorbed) finalDots.push(dot);
     });
 
-    // We must calculate how many freebies the BASE character has already used.
-    let baseGlobalFreebies = calculateBaseAbsoluteFreebies(baseChar);
-    let freebiesLeft = Math.max(0, (15 + (currentChar.extra_freebies || 0)) - baseGlobalFreebies);
+    // For freebiesLeft, use preClickChar (state before this click) if provided, otherwise
+    // fall back to currentChar. This correctly reflects freed freebies from prior removals
+    // when computing whether a new addition can be absorbed by freebies instead of EXP.
+    const refForFreebies = preClickChar ?? currentChar;
+    let baseGlobalFreebies = calculateBaseAbsoluteFreebies(refForFreebies);
+    let freebiesLeft = Math.max(0, (15 + ((refForFreebies?.extra_freebies) || 0)) - baseGlobalFreebies);
 
     let sessionExpSpent = 0;
     let sessionFreebiesSpent = 0;
@@ -529,27 +542,33 @@ export default function CharacterSheet() {
     }
 
     // 4. Validate costs (Using strict Delta from Store)
-    const projectedCosts = calculateDeltaCosts(characterFromStore, updatedChar);
+    // Pass localChar as preClickChar so freebiesLeft is computed from the pre-click state.
+    // This ensures a freebie freed by removing a dot is immediately available for the next addition.
+    const projectedCosts = calculateDeltaCosts(characterFromStore, updatedChar, localChar);
+
 
     // STRICT BLOCK: Never allow session expRemaining to go negative
     const projectedExpRemaining =
       (updatedChar.experience || 0) - projectedCosts.expSpent;
     const isNowNegative = projectedExpRemaining < 0;
 
-    // Total freebies = base global + session delta
-    const totalFreebies =
-      projectedCosts.baseFreebiesTotal + projectedCosts.freebiesSpent;
-    const isExceedingFreebies = totalFreebies > 15 + (localChar.extra_freebies || 0);
+    // FREEBIE VALIDATION: use a direct absolute check on the projected state.
+    // The delta approach (base + session) double-counts when the user swaps dots
+    // within the same session (remove one trait, add another) because the delta
+    // only tracks additions, not the credit from the removal.
+    const projectedAbsoluteFreebies = calculateBaseAbsoluteFreebies(updatedChar);
+    const isExceedingFreebies =
+      projectedAbsoluteFreebies > 15 + (localChar.extra_freebies || 0);
 
     const isValid = !isNowNegative && !isExceedingFreebies;
 
     // Determine if we are improving (removing dots to recover EXP/Freebies)
     const currentCosts = calculateDeltaCosts(characterFromStore, localChar);
+    const currentAbsoluteFreebies = calculateBaseAbsoluteFreebies(localChar);
     const isImproving =
       projectedExpRemaining >
         (localChar.experience || 0) - currentCosts.expSpent ||
-      totalFreebies <
-        currentCosts.baseFreebiesTotal + currentCosts.freebiesSpent;
+      projectedAbsoluteFreebies < currentAbsoluteFreebies;
 
     if (!isValid && !isImproving) {
       // Trigger error animation on the specific dot being changed
