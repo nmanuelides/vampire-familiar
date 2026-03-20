@@ -22,10 +22,6 @@
   position: relative;
   @include nm-raised($radius: $border-radius, $blur: 24px);
   // Extra accent glow
-  box-shadow:
-    10px 10px 24px $nm-shadow-dark,
-    -10px -10px 24px $nm-shadow-light,
-    0 0 0 1px rgba($accent-color, 0.15);
   animation: modal-in 0.3s ease-out;
 
   .close-btn {
