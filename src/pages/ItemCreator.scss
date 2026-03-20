@@ -18,6 +18,7 @@
       top: 50%;
       transform: translateY(-50%);
       background: none;
+      box-shadow: none;
       border: none;
       color: $text-color;
       font-size: 1rem;
@@ -30,6 +31,13 @@
 
       &:hover {
         color: $accent-color;
+        background: none;
+        box-shadow: none;
+      }
+
+      &:active {
+        box-shadow: none;
+        transform: translateY(-50%) scale(0.97);
       }
     }
 
@@ -38,7 +46,7 @@
       margin: 0;
       margin-left: 48px;
       font-size: 2.2rem;
-      padding: 0 90px; // Safe zones for absolute buttons on corners
+      padding: 0 90px;
       box-sizing: border-box;
 
       @media (max-width: 600px) {
@@ -55,7 +63,10 @@
     padding: 40px 30px;
     max-width: 900px;
     margin: 0 auto;
-    
+    @include nm-raised($radius: $border-radius, $blur: 18px);
+    background-color: rgba(15, 15, 15, 0.65);
+    backdrop-filter: blur(8px);
+
     @media (min-width: 768px) {
       flex-direction: row;
       align-items: flex-start;
@@ -68,7 +79,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    
+
     h3 {
       font-family: $font-primary;
       color: $accent-color;
@@ -94,19 +105,22 @@
     .item-preview-container {
       width: 250px;
       height: 250px;
-      border-radius: 12px;
-      border: 2px dashed rgba($accent-color, 0.4);
+      border-radius: 16px;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
       position: relative;
-      background: rgba(0, 0, 0, 0.3);
+      background: rgba(10, 10, 10, 0.5);
       cursor: pointer;
-      transition: border-color 0.2s;
+      transition: box-shadow 0.25s ease;
+      @include nm-inset($radius: 16px, $blur: 12px);
 
       &:hover {
-        border-color: $accent-color;
+        box-shadow:
+          inset 5px 5px 14px $nm-shadow-dark,
+          inset -5px -5px 14px $nm-shadow-light,
+          0 0 0 1px rgba($accent-color, 0.3);
       }
 
       .cropper-container {
@@ -156,19 +170,26 @@
     }
 
     .change-image-btn {
-      background: rgba($accent-color, 0.1);
-      border: 1px solid rgba($accent-color, 0.3);
+      background: rgba($bg-color, 0.6);
       color: $accent-color;
-      padding: 6px 12px;
+      padding: 6px 14px;
       border-radius: 20px;
       font-size: 0.85rem;
       cursor: pointer;
       font-family: $font-primary;
       transition: all 0.2s;
+      @include nm-raised($radius: 20px, $blur: 6px);
 
       &:hover {
-        background: rgba($accent-color, 0.2);
-        box-shadow: 0 0 8px rgba($accent-color, 0.3);
+        background: rgba($accent-color, 0.15);
+        box-shadow:
+          3px 3px 7px $nm-shadow-dark,
+          -3px -3px 7px $nm-shadow-light,
+          0 0 8px rgba($accent-color, 0.2);
+      }
+
+      &:active {
+        @include nm-inset($radius: 20px, $blur: 5px);
       }
     }
   }
@@ -196,19 +217,20 @@
 
       input,
       textarea {
-        background: rgba(0, 0, 0, 0.5);
-        border: 1px solid rgba($accent-color, 0.3);
+        background: rgba($bg-color, 0.7);
         padding: 12px 16px;
-        border-radius: 8px;
         color: $text-color;
         font-family: $font-primary;
         font-size: 1rem;
         transition: all 0.2s ease;
+        @include nm-inset($radius: $border-radius, $blur: 8px);
 
         &:focus {
           outline: none;
-          border-color: $accent-color;
-          box-shadow: 0 0 10px rgba($accent-color, 0.2);
+          box-shadow:
+            inset 3px 3px 10px $nm-shadow-dark,
+            inset -3px -3px 10px $nm-shadow-light,
+            0 0 0 1px rgba($accent-color, 0.35);
         }
 
         &::placeholder {
@@ -227,9 +249,11 @@
       font-size: 0.9rem;
       text-align: center;
       padding: 10px;
-      border-radius: 6px;
-      background: rgba($error-color, 0.1);
-      border: 1px solid rgba($error-color, 0.3);
+      border-radius: 8px;
+      background: rgba($error-color, 0.08);
+      box-shadow:
+        inset 2px 2px 6px rgba(0, 0, 0, 0.5),
+        inset -2px -2px 4px rgba($error-color, 0.05);
       margin: 0;
     }
 
@@ -241,17 +265,35 @@
       gap: 10px;
       padding: 14px;
       font-size: 1.1rem;
+      @include nm-raised($radius: $border-radius, $blur: 10px);
+      background-color: $accent-color;
+
+      &:hover {
+        background-color: $accent-hover;
+        box-shadow:
+          4px 4px 10px $nm-shadow-dark,
+          -4px -4px 10px $nm-shadow-light,
+          0 0 15px rgba($accent-color, 0.25);
+      }
+
+      &:active {
+        @include nm-inset($radius: $border-radius, $blur: 6px);
+        background-color: $accent-hover;
+      }
 
       &:disabled {
         opacity: 0.5;
         cursor: not-allowed;
+        box-shadow:
+          2px 2px 5px $nm-shadow-dark,
+          -2px -2px 5px $nm-shadow-light;
       }
     }
   }
 
   .created-items-section {
     margin-top: 40px;
-    
+
     .section-title {
       font-family: $font-vampire;
       color: $accent-color;
@@ -280,13 +322,22 @@
         gap: 15px;
         padding: 15px;
         align-items: center;
+        @include nm-raised($radius: $border-radius, $blur: 10px);
+        background-color: rgba(15, 15, 15, 0.6);
+        transition: box-shadow 0.2s ease;
+
+        &:hover {
+          box-shadow:
+            5px 5px 14px $nm-shadow-dark,
+            -5px -5px 14px $nm-shadow-light;
+        }
 
         .item-thumb {
           width: 60px;
           height: 60px;
           object-fit: cover;
-          border-radius: 8px;
-          border: 1px solid rgba($accent-color, 0.4);
+          border-radius: 10px;
+          @include nm-raised($radius: 10px, $blur: 6px);
         }
 
         .item-details {
@@ -324,8 +375,7 @@
           gap: 10px;
 
           .action-btn {
-            background: transparent;
-            border: 1px solid transparent;
+            background: rgba($bg-color, 0.5);
             width: 36px;
             height: 36px;
             border-radius: 50%;
@@ -335,25 +385,37 @@
             cursor: pointer;
             transition: all 0.2s;
             padding: 0;
-            color: $text-color;
+            @include nm-raised($radius: 50%, $blur: 5px);
 
             &.edit {
               color: #4facfe;
-              border-color: rgba(#4facfe, 0.3);
-              
+
               &:hover {
-                background: #4facfe;
-                color: white;
+                background: rgba(#4facfe, 0.15);
+                box-shadow:
+                  3px 3px 6px $nm-shadow-dark,
+                  -3px -3px 6px $nm-shadow-light,
+                  0 0 8px rgba(#4facfe, 0.25);
+              }
+
+              &:active {
+                @include nm-inset($radius: 50%, $blur: 4px);
               }
             }
 
             &.delete {
               color: $error-color;
-              border-color: rgba($error-color, 0.3);
-              
+
               &:hover {
-                background: $error-color;
-                color: white;
+                background: rgba($error-color, 0.15);
+                box-shadow:
+                  3px 3px 6px $nm-shadow-dark,
+                  -3px -3px 6px $nm-shadow-light,
+                  0 0 8px rgba($error-color, 0.25);
+              }
+
+              &:active {
+                @include nm-inset($radius: 50%, $blur: 4px);
               }
             }
           }

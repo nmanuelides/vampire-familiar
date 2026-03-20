@@ -26,11 +26,14 @@
     }
 
     .fab-button {
-      background-color: #8b5a2b; // Leather-like color for the backpack
-      
+      background-color: #8b5a2b;
+
       &:hover {
         background-color: #6b4423;
-        box-shadow: 0 6px 20px rgba(#8b5a2b, 0.4);
+        box-shadow:
+          6px 6px 14px $nm-shadow-dark,
+          -6px -6px 14px $nm-shadow-light,
+          0 0 18px rgba(#8b5a2b, 0.35);
       }
     }
   }
@@ -41,8 +44,7 @@
     border-radius: 50%;
     background-color: $accent-color;
     color: white;
-    border: none;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    @include nm-raised($radius: 50%, $blur: 12px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -51,11 +53,15 @@
 
     &:hover {
       transform: scale(1.1) rotate(5deg);
-      background-color: color.adjust($accent-color, $lightness: 10%);
-      box-shadow: 0 6px 20px rgba($accent-color, 0.4);
+      background-color: color.adjust($accent-color, $lightness: 8%);
+      box-shadow:
+        6px 6px 14px $nm-shadow-dark,
+        -6px -6px 14px $nm-shadow-light,
+        0 0 20px rgba($accent-color, 0.4);
     }
 
     &:active {
+      @include nm-inset($radius: 50%, $blur: 8px);
       transform: scale(0.95);
     }
 
@@ -69,10 +75,13 @@
     }
 
     &.save {
-      background-color: #2ecc71; // Success green for saving
+      background-color: #2ecc71;
       &:hover {
         background-color: #27ae60;
-        box-shadow: 0 6px 20px rgba(#27ae60, 0.4);
+        box-shadow:
+          6px 6px 14px $nm-shadow-dark,
+          -6px -6px 14px $nm-shadow-light,
+          0 0 20px rgba(#27ae60, 0.4);
       }
     }
   }
@@ -109,13 +118,16 @@
         width: 64px;
         height: 64px;
         border-radius: 50%;
-        border: 2px solid $accent-color;
         object-fit: cover;
-        box-shadow: 0 0 8px rgba($accent-color, 0.4);
+        @include nm-raised($radius: 50%, $blur: 10px);
+        box-shadow:
+          4px 4px 10px $nm-shadow-dark,
+          -4px -4px 10px $nm-shadow-light,
+          0 0 10px rgba($accent-color, 0.3);
       }
 
       .header-avatar-placeholder {
-        background-color: rgba(0, 0, 0, 0.4);
+        background-color: rgba($bg-color, 0.5);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -128,45 +140,55 @@
 
   .back-btn,
   .delete-btn {
-    background-color: transparent;
-    border: 1px solid $border-color;
+    background-color: rgba($bg-color, 0.5);
     color: $text-color;
+    @include nm-raised($radius: $border-radius, $blur: 7px);
+    transition: all $transition-speed ease;
 
     &:hover {
-      background-color: color.adjust($secondary-bg, $lightness: 10%);
+      box-shadow:
+        4px 4px 8px $nm-shadow-dark,
+        -4px -4px 8px $nm-shadow-light;
+    }
+
+    &:active {
+      @include nm-inset($radius: $border-radius, $blur: 5px);
     }
   }
 
   .delete-btn {
-    border-color: $error-color;
     color: $error-color;
+
     &:hover {
-      background-color: $error-color;
-      color: white;
+      background-color: rgba($error-color, 0.15);
+      box-shadow:
+        4px 4px 8px $nm-shadow-dark,
+        -4px -4px 8px $nm-shadow-light,
+        0 0 8px rgba($error-color, 0.2);
     }
   }
 }
 
 .sheet-body {
-  background-color: rgba(20, 20, 20, 0.4) !important;
-  padding: 0; // overrides card padding
-  overflow: visible; // Allows sticky to work
+  background-color: rgba(15, 15, 15, 0.55) !important;
+  padding: 0;
+  overflow: visible;
   position: relative;
+  @include nm-raised($radius: $border-radius, $blur: 20px);
 
   &::before {
     content: "";
     position: absolute;
-    top: 55%; // Slightly lower to avoid top header info
+    top: 55%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 80%; // Slightly smaller to keep it contained
+    width: 80%;
     height: 80%;
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
-    opacity: 0.2; // Slightly more visible for confirmation
+    opacity: 0.2;
     pointer-events: none;
-    filter: grayscale(1) invert(1) opacity(0.3); // Keep it monochrome
     filter: invert(21%) sepia(100%) saturate(7414%) hue-rotate(359deg)
       brightness(94%) contrast(117%) opacity(0.4);
   }
@@ -175,12 +197,10 @@
   &[data-clan="Tremere"]::before {
     background-image: url("../assets/clans/Tremere.png");
   }
-  // ... (rest of clans)
   &[data-clan="Tzimisce"]::before {
     background-image: url("../assets/clans/Tzimisce.png");
   }
   &[data-clan="Tzimice"]::before {
-    // Adding fallback for the typo in the file system
     background-image: url("../assets/clans/Tzimice.png");
   }
   &[data-clan="Brujah"]::before {
@@ -216,20 +236,15 @@
   &[data-clan="Ravnos"]::before {
     background-image: url("../assets/clans/Ravnos.png");
   }
-  &[data-clan="Tzimisce"]::before,
-  &[data-clan="Tzimice"]::before {
-    background-image: url("../assets/clans/Tzimisce.png");
-  }
-  // Optional: handle if user really named it Tzimice.png
   &[data-clan="Tzimisce"]::before {
     background-image:
-      url("../assets/clans/Tzimisce.png"), url("../assets/clans/Tzimice.png"); // Fallback check? No, CSS doesn't work like that for existence.
+      url("../assets/clans/Tzimisce.png"), url("../assets/clans/Tzimice.png");
   }
 
   .top-info {
     display: flex;
     flex-direction: column;
-    background-color: rgba(17, 17, 17, 0.95);
+    background-color: rgba(14, 14, 14, 0.96);
     border-radius: $border-radius $border-radius 0 0;
     backdrop-filter: blur(10px);
     position: relative;
@@ -248,7 +263,8 @@
     .info-group {
       font-size: 0.95rem;
       color: color.adjust($text-color, $lightness: 10%);
-      border-bottom: 1px solid $border-color;
+      // Inset bottom separator per field
+      box-shadow: 0 2px 0 0 $nm-shadow-dark, 0 3px 0 0 rgba($nm-shadow-light, 0.3);
       padding-bottom: $spacing-xs;
       position: relative;
       overflow: visible;
@@ -257,7 +273,7 @@
         position: relative;
         display: inline-flex;
         cursor: help;
-        border-bottom: 1px dotted rgba($text-color, 0.3);
+        border-bottom: 1px dotted rgba($text-color, 0.25);
 
         &:hover .tooltip-box {
           opacity: 1;
@@ -274,8 +290,8 @@
 
       .inline-input {
         background: transparent;
-        border: 1px solid transparent;
-        border-bottom: 1px solid rgba($border-color, 0.3);
+        border: none;
+        border-bottom: 1px solid rgba($border-color, 0.25);
         color: $text-color;
         font-family: inherit;
         font-size: inherit;
@@ -285,6 +301,7 @@
         transition: all 0.2s ease;
         width: 100%;
         max-width: 150px;
+        box-shadow: none;
 
         &::placeholder {
           color: rgba($text-color, 0.3);
@@ -294,7 +311,8 @@
         &:hover,
         &:focus {
           border-bottom-color: $accent-color;
-          background: rgba(0, 0, 0, 0.2);
+          background: rgba($bg-color, 0.3);
+          box-shadow: none;
         }
       }
 
@@ -312,6 +330,7 @@
         .cancel-small {
           background: transparent;
           border: none;
+          box-shadow: none;
           color: rgba($text-color, 0.4);
           font-size: 1.2rem;
           cursor: pointer;
@@ -321,6 +340,12 @@
 
           &:hover {
             color: $error-color;
+            background: transparent;
+            box-shadow: none;
+          }
+
+          &:active {
+            box-shadow: none;
           }
         }
       }
@@ -330,7 +355,7 @@
         cursor: pointer;
 
         option {
-          background-color: #222;
+          background-color: #1a1a1a;
           color: $text-color;
         }
       }
@@ -359,16 +384,20 @@
     justify-content: center;
     align-items: center;
     padding: $spacing-md $spacing-lg $spacing-md $spacing-lg;
-    background-color: rgba(17, 17, 17, 0.95);
-    border-bottom: 2px solid $accent-color;
+    background-color: rgba(14, 14, 14, 0.97);
     border-radius: 0 0 $border-radius $border-radius;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px);
     gap: 16px 32px;
-    box-shadow: none;
-    margin-top: -1px; // Ensure no gap between bio and exp
+    margin-top: -1px;
+    // Bottom accent line via shadow
+    box-shadow:
+      0 4px 0 0 rgba($accent-color, 0.3),
+      0 5px 0 0 $nm-shadow-dark,
+      4px 0 0 0 rgba($nm-shadow-dark, 0.5),
+      -4px 0 0 0 rgba($nm-shadow-dark, 0.5);
 
     .info-toggle-btn {
-      display: none; // Hidden on desktop
+      display: none;
     }
 
     .exp-item {
@@ -387,40 +416,47 @@
       .inline-input.number-input {
         width: 90px;
         font-size: 1.2rem;
-        border-bottom-color: rgba($accent-color, 0.5);
+        border-bottom-color: rgba($accent-color, 0.4);
         text-align: center;
+        background: transparent;
+        border: none;
+        box-shadow: none;
 
         &:hover,
         &:focus {
           border-bottom-color: $accent-color;
           background: transparent;
+          box-shadow: none;
         }
       }
     }
 
     .freebie-badge {
       font-size: 0.95rem;
-      background-color: rgba($accent-color, 0.15);
+      background-color: rgba($bg-color, 0.7);
       color: $accent-color;
-      padding: 4px 14px;
+      padding: 6px 16px;
       border-radius: 20px;
-      border: 1px solid rgba($accent-color, 0.3);
       font-family: $font-primary;
       letter-spacing: 0.5px;
-      box-shadow: 0 0 5px rgba($accent-color, 0.2);
       display: flex;
       align-items: center;
       line-height: 1;
       gap: 10px;
+      @include nm-raised($radius: 20px, $blur: 8px);
+      box-shadow:
+        4px 4px 8px $nm-shadow-dark,
+        -4px -4px 8px $nm-shadow-light,
+        0 0 0 1px rgba($accent-color, 0.2);
 
       .admin-freebie-controls {
         display: flex;
         align-items: center;
         gap: 6px;
-        background: rgba(0, 0, 0, 0.3);
+        background: rgba($bg-color, 0.5);
         padding: 2px 6px;
         border-radius: 12px;
-        border: 1px solid rgba($accent-color, 0.2);
+        @include nm-inset($radius: 12px, $blur: 5px);
 
         .admin-btn {
           display: inline-flex;
@@ -429,8 +465,7 @@
           width: 20px;
           height: 20px;
           border-radius: 50%;
-          border: none;
-          background: rgba($accent-color, 0.2);
+          background: rgba($bg-color, 0.6);
           color: $text-color;
           font-weight: bold;
           font-size: 1.1rem;
@@ -438,15 +473,20 @@
           outline: none;
           transition: all 0.2s;
           line-height: 1;
+          @include nm-raised($radius: 50%, $blur: 4px);
 
           &:hover {
-            background: $accent-color;
+            background: rgba($accent-color, 0.3);
             color: white;
             transform: scale(1.1);
           }
 
           &.minus:hover {
-            background: rgba($error-color, 0.8);
+            background: rgba($error-color, 0.3);
+          }
+
+          &:active {
+            @include nm-inset($radius: 50%, $blur: 3px);
           }
         }
 
@@ -460,33 +500,35 @@
       }
 
       &.negative {
-        background-color: rgba($error-color, 0.15);
+        background-color: rgba($bg-color, 0.7);
         color: $error-color;
-        border-color: rgba($error-color, 0.3);
-        box-shadow: 0 0 5px rgba($error-color, 0.2);
+        box-shadow:
+          4px 4px 8px $nm-shadow-dark,
+          -4px -4px 8px $nm-shadow-light,
+          0 0 0 1px rgba($error-color, 0.25);
 
         .admin-freebie-controls {
-          border-color: rgba($error-color, 0.2);
-          
           .admin-btn {
-            background: rgba($error-color, 0.2);
             &:hover {
-              background: $error-color;
+              background: rgba($error-color, 0.3);
             }
           }
         }
       }
 
       &.exp-badge {
-        background-color: rgba(0, 150, 255, 0.15);
         color: #add8e6;
-        border-color: rgba(0, 150, 255, 0.3);
-        box-shadow: 0 0 5px rgba(0, 150, 255, 0.2);
+        box-shadow:
+          4px 4px 8px $nm-shadow-dark,
+          -4px -4px 8px $nm-shadow-light,
+          0 0 0 1px rgba(0, 150, 255, 0.2);
 
         &.negative {
-          background-color: rgba($error-color, 0.15);
           color: $error-color;
-          border-color: rgba($error-color, 0.3);
+          box-shadow:
+            4px 4px 8px $nm-shadow-dark,
+            -4px -4px 8px $nm-shadow-light,
+            0 0 0 1px rgba($error-color, 0.25);
         }
       }
     }
@@ -506,7 +548,7 @@
   .main-title {
     font-size: 1.8rem;
     margin: $spacing-xl 0 $spacing-lg 0;
-    color: $text-color; // Set back to white/standard
+    color: $text-color;
     text-transform: uppercase;
     letter-spacing: 2px;
     text-align: center;
@@ -554,11 +596,11 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.3); // Darker but semi-transparent
+    background-color: rgba(12, 12, 12, 0.5);
     padding: $spacing-lg;
     border-radius: $border-radius;
-    border: 1px solid rgba($border-color, 0.5);
-    backdrop-filter: blur(1px);
+    backdrop-filter: blur(2px);
+    @include nm-raised($radius: $border-radius, $blur: 12px);
 
     .section-title {
       font-size: 1.4rem;
@@ -571,10 +613,10 @@
 
   .merits-flaws-container {
     padding: $spacing-md $spacing-lg;
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: rgba(12, 12, 12, 0.4);
     border-radius: $border-radius;
-    border: 1px solid rgba($border-color, 0.5);
     margin-bottom: $spacing-lg;
+    @include nm-raised($radius: $border-radius, $blur: 10px);
 
     .mf-add-row {
       display: flex;
@@ -585,14 +627,17 @@
         flex: 1;
         font-size: 0.9rem;
         padding: 8px 12px;
-        background-color: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba($border-color, 0.5);
-        border-radius: 4px;
+        background-color: rgba($bg-color, 0.6);
+        border-radius: 6px;
         color: $text-color;
+        @include nm-inset($radius: 6px, $blur: 6px);
 
         &:focus {
-          border-color: $accent-color;
           outline: none;
+          box-shadow:
+            inset 2px 2px 7px $nm-shadow-dark,
+            inset -2px -2px 7px $nm-shadow-light,
+            0 0 0 1px rgba($accent-color, 0.3);
         }
       }
 
@@ -606,13 +651,17 @@
         font-size: 1.5rem;
         background-color: $accent-color;
         color: white;
-        border: none;
-        border-radius: 4px;
+        border-radius: 8px;
         cursor: pointer;
-        transition: background-color 0.2s;
+        @include nm-raised($radius: 8px, $blur: 6px);
+        transition: all 0.2s;
 
         &:hover {
-          background-color: color.adjust($accent-color, $lightness: -10%);
+          background-color: color.adjust($accent-color, $lightness: -8%);
+        }
+
+        &:active {
+          @include nm-inset($radius: 8px, $blur: 5px);
         }
       }
     }
@@ -627,9 +676,14 @@
         align-items: center;
         justify-content: space-between;
         padding: 6px 12px;
-        background: rgba(255, 255, 255, 0.03);
-        border-radius: 4px;
-        border-left: 2px solid $accent-color;
+        background: rgba($bg-color, 0.4);
+        border-radius: 6px;
+        @include nm-raised($radius: 6px, $blur: 5px);
+        // Left accent line via inset shadow
+        box-shadow:
+          3px 3px 6px $nm-shadow-dark,
+          -3px -3px 6px $nm-shadow-light,
+          inset 3px 0 0 rgba($accent-color, 0.6);
 
         .mf-name {
           font-size: 0.95rem;
@@ -639,6 +693,7 @@
         .mf-remove {
           background: transparent;
           border: none;
+          box-shadow: none;
           color: rgba($text-color, 0.4);
           font-size: 1.2rem;
           cursor: pointer;
@@ -648,6 +703,12 @@
 
           &:hover {
             color: $error-color;
+            background: transparent;
+            box-shadow: none;
+          }
+
+          &:active {
+            box-shadow: none;
           }
         }
       }
@@ -659,15 +720,19 @@
     grid-template-columns: repeat(10, 1fr);
     gap: 6px;
     justify-items: center;
-    max-width: 300px; // Increased to fit 10 dots comfortably
+    max-width: 320px;
     margin: $spacing-md auto;
 
     .blood-box {
-      width: 22px;
-      height: 22px;
-      border: 1px solid $accent-color;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
-      background-color: transparent;
+      // Empty: concave socket
+      background: radial-gradient(
+        circle at 35% 35%,
+        rgba(255, 255, 255, 0.06) 0%,
+        rgba($bg-color, 0.9) 60%
+      );
       cursor: pointer;
       transition: all $transition-speed ease;
       position: relative;
@@ -675,6 +740,9 @@
       align-items: center;
       justify-content: center;
       overflow: hidden;
+      box-shadow:
+        inset 2px 2px 6px $nm-shadow-dark,
+        inset -2px -2px 4px $nm-shadow-light;
 
       &::after {
         content: "";
@@ -683,22 +751,42 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: $accent-color;
+        // Sphere fill gradient for the "blood" fill animation
+        background:
+          radial-gradient(
+            circle at 32% 32%,
+            rgba(255, 255, 255, 0.5) 0%,
+            rgba(255, 255, 255, 0.0) 44%
+          ),
+          radial-gradient(
+            circle at 55% 55%,
+            color.adjust($accent-color, $lightness: 18%) 0%,
+            $accent-color 40%,
+            color.adjust($accent-color, $lightness: -22%) 100%
+          );
         transform: translateY(100%);
         opacity: 0;
-        // Vaciado (vuelve al estado original): Todo sincronizado a 0.6s
         transition:
           transform 0.4s ease-in,
           opacity 0.4s ease-in;
       }
 
       &.filled {
-        box-shadow: 0 0 8px rgba($accent-color, 0.4);
+        // Filled: raised sphere
+        background: radial-gradient(
+          circle at 35% 35%,
+          rgba(255, 255, 255, 0.06) 0%,
+          rgba($bg-color, 0.9) 60%
+        );
+        box-shadow:
+          1px 2px 6px rgba(0, 0, 0, 0.7),
+          0 0 9px rgba($accent-color, 0.5),
+          inset -1px -2px 3px rgba(0, 0, 0, 0.35),
+          inset 1px 1px 2px rgba(255, 255, 255, 0.18);
 
         &::after {
           transform: translateY(0);
           opacity: 1;
-          // Llenado: Todo sincronizado a 0.4s
           transition:
             transform 0.4s ease-out,
             opacity 0.4s ease-out;
@@ -706,8 +794,7 @@
       }
 
       &:hover {
-        box-shadow: 0 0 8px $accent-color;
-        transform: scale(1.1);
+        transform: scale(1.18);
       }
     }
   }
@@ -720,7 +807,8 @@
     gap: $spacing-sm;
 
     .health-level {
-      border-bottom: 1px dashed $border-color;
+      // Soft divider
+      box-shadow: 0 1px 0 0 $nm-shadow-dark, 0 2px 0 0 rgba($nm-shadow-light, 0.3);
       padding-bottom: $spacing-xs;
 
       .health-label {
@@ -733,5 +821,5 @@
         height: 18px;
       }
     }
-  } // Final closing for .sheet-body
+  }
 }

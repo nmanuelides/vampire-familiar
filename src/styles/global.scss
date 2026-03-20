@@ -66,41 +66,62 @@ a {
 }
 
 button {
+  @include nm-raised($radius: $border-radius, $blur: 8px);
   background-color: $accent-color;
   color: white;
-  border: none;
   padding: $spacing-sm $spacing-md;
-  border-radius: $border-radius;
   font-family: $font-primary;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color $transition-speed ease;
+  transition:
+    background-color $transition-speed ease,
+    box-shadow $transition-speed ease,
+    transform $transition-speed ease;
 
   &:hover {
     background-color: $accent-hover;
+    box-shadow:
+      3px 3px 6px $nm-shadow-dark,
+      -3px -3px 6px $nm-shadow-light;
+  }
+
+  &:active {
+    @include nm-inset($radius: $border-radius, $blur: 6px);
+    background-color: $accent-hover;
+    transform: scale(0.98);
   }
 
   &:disabled {
-    background-color: $border-color;
+    background-color: #2a2a2a;
+    color: rgba($text-color, 0.3);
     cursor: not-allowed;
+    box-shadow:
+      2px 2px 4px $nm-shadow-dark,
+      -2px -2px 4px $nm-shadow-light;
   }
 }
 
 input,
 select,
 textarea {
-  background-color: $input-bg;
+  @include nm-inset($radius: $border-radius, $blur: 7px);
+  background-color: rgba($bg-color, 0.6);
   color: $text-color;
-  border: 1px solid $border-color;
   padding: $spacing-sm $spacing-md;
-  border-radius: $border-radius;
   font-family: $font-primary;
   font-size: 1.15rem;
   width: 100%;
+  transition:
+    box-shadow $transition-speed ease,
+    background-color $transition-speed ease;
 
   &:focus {
     outline: none;
-    border-color: $accent-color;
+    box-shadow:
+      inset 3px 3px 8px $nm-shadow-dark,
+      inset -3px -3px 8px $nm-shadow-light,
+      0 0 0 1px rgba($accent-color, 0.4);
+    background-color: rgba($bg-color, 0.8);
   }
 }
 
@@ -123,9 +144,8 @@ input[list] {
   background-repeat: no-repeat;
   background-position: right $spacing-md center;
   background-size: 1em;
-  padding-right: 2.5rem; // Leave space for the arrow
+  padding-right: 2.5rem;
 
-  // Custom webkit arrow hiding (the native one is often ugly)
   &::-webkit-calendar-picker-indicator {
     opacity: 0;
   }
@@ -141,17 +161,10 @@ select {
 }
 
 .card {
-  background-color: rgba(
-    20,
-    20,
-    20,
-    0.25
-  ); // Semi-transparent version of $secondary-bg
+  @include nm-raised($radius: $border-radius, $blur: 14px);
+  background-color: rgba(20, 20, 20, 0.5);
   backdrop-filter: blur(6px);
-  border: 1px solid rgba($border-color, 0.5);
-  border-radius: $border-radius;
   padding: $spacing-xl;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 // Utility classes for layout

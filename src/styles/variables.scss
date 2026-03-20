@@ -8,6 +8,11 @@ $input-bg: #2b2b2b;
 $success-color: #4bb543;
 $error-color: #f32013;
 
+// ─── Neumorphism shadow palette ───────────────────────────────────────────────
+$nm-shadow-dark: #090909;    // Deeper than bg – "pushes down" one side
+$nm-shadow-light: #1a1919;   // Lighter than bg – "lifts" opposite side
+$nm-radius: 14px;            // Rounder corners reinforce the soft look
+
 $font-primary:
   "Fondamento",
   "Inter",
@@ -27,5 +32,36 @@ $spacing-lg: 1.5rem;
 $spacing-xl: 2rem;
 $spacing-xxl: 3rem;
 
-$border-radius: 8px;
+$border-radius: 12px;
 $transition-speed: 0.2s;
+
+// ─── Neumorphism mixins ───────────────────────────────────────────────────────
+
+// Raised element: appears to float above the surface
+// Includes a 1px top-left inset sheen (white → transparent at 45°) to simulate a gloss border
+@mixin nm-raised($radius: $nm-radius, $blur: 10px, $spread: 0px, $intensity: 1) {
+  border-radius: $radius;
+  box-shadow:
+    #{$blur * $intensity * 0.4} #{$blur * $intensity * 0.4} #{$blur * $intensity} #{$nm-shadow-dark},
+    #{-$blur * $intensity * 0.4} #{-$blur * $intensity * 0.4} #{$blur * $intensity} #{$nm-shadow-light},
+    inset 1px 1px 0 rgba(255, 255, 255, 0.1);   // gloss sheen: white edge top-left → transparent
+  border: none;
+}
+
+// Inset / pressed element: appears recessed into the surface
+@mixin nm-inset($radius: $nm-radius, $blur: 8px) {
+  border-radius: $radius;
+  box-shadow:
+    inset #{$blur * 0.4} #{$blur * 0.4} #{$blur} #{$nm-shadow-dark},
+    inset #{-$blur * 0.4} #{-$blur * 0.4} #{$blur} #{$nm-shadow-light};
+  border: none;
+}
+
+// Flat / active state: minimal shadow (used for active/hover pressed states)
+@mixin nm-flat($radius: $nm-radius) {
+  border-radius: $radius;
+  box-shadow:
+    2px 2px 4px #{$nm-shadow-dark},
+    -2px -2px 4px #{$nm-shadow-light};
+  border: none;
+}

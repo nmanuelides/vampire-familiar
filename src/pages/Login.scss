@@ -20,11 +20,16 @@
 
 .login-card {
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
+  @include nm-raised($radius: $border-radius, $blur: 20px);
+  background-color: rgba(18, 18, 18, 0.85);
+  padding: $spacing-xl;
+  backdrop-filter: blur(10px);
 
   h2 {
     margin-bottom: $spacing-lg;
     color: $text-color;
+    text-align: center;
   }
 }
 
@@ -36,6 +41,7 @@
   label {
     font-weight: 600;
     color: color.adjust($border-color, $lightness: 30%);
+    letter-spacing: 0.5px;
   }
 
   .password-input-wrapper {
@@ -43,7 +49,7 @@
     width: 100%;
 
     input {
-      padding-right: 45px; // Space for the eye icon
+      padding-right: 45px;
     }
 
     .eye-toggle {
@@ -53,6 +59,7 @@
       transform: translateY(-50%);
       background: none !important;
       border: none;
+      box-shadow: none !important;
       padding: 4px;
       display: flex;
       align-items: center;
@@ -60,11 +67,15 @@
       color: color.adjust($border-color, $lightness: 20%);
       cursor: pointer;
       transition: color $transition-speed ease;
-      box-shadow: none !important;
 
       &:hover {
         color: $accent-color;
         background: none !important;
+      }
+
+      &:active {
+        box-shadow: none !important;
+        transform: translateY(-50%) scale(0.9);
       }
     }
   }
@@ -78,10 +89,12 @@
 
 .error-message {
   color: $error-color;
-  background-color: rgba($error-color, 0.1);
-  border: 1px solid rgba($error-color, 0.3);
-  padding: $spacing-sm;
+  background-color: rgba($error-color, 0.08);
+  box-shadow:
+    inset 2px 2px 6px rgba(0, 0, 0, 0.4),
+    inset -2px -2px 4px rgba($error-color, 0.05);
   border-radius: $border-radius;
+  padding: $spacing-sm;
   margin-bottom: $spacing-md;
   text-align: center;
 }
@@ -89,6 +102,7 @@
 .toggle-text {
   margin-top: $spacing-lg;
   color: color.adjust($border-color, $lightness: 40%);
+  text-align: center;
 
   .toggle-link {
     color: $accent-color;

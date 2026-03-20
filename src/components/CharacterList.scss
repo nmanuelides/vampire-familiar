@@ -22,13 +22,12 @@
   text-align: center;
   margin-bottom: $spacing-lg;
   width: 100%;
-  color: $text-color; // Ensure it stays white/standard
+  color: $text-color;
 }
 
 .character-card {
-  background-color: rgba(20, 20, 20, 0.25);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba($border-color, 0.5);
+  background-color: rgba(15, 15, 15, 0.6);
+  backdrop-filter: blur(10px);
   border-radius: $border-radius;
   cursor: pointer;
   transition: all $transition-speed ease;
@@ -37,10 +36,14 @@
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
-  box-shadow: inset 4px 0 0 $accent-color;
+  // nm-raised + left red accent line via extra inset shadow
+  box-shadow:
+    4px 4px 12px $nm-shadow-dark,
+    -4px -4px 12px $nm-shadow-light,
+    inset 4px 0 0 $accent-color;
 
   @media (min-width: 769px) {
-    padding: 0; // Remove padding to let footer be edge-to-edge
+    padding: 0;
   }
 
   &::before {
@@ -71,9 +74,10 @@
   }
 
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     box-shadow:
-      0 6px 12px rgba(0, 0, 0, 0.4),
+      7px 7px 18px $nm-shadow-dark,
+      -7px -7px 18px $nm-shadow-light,
       inset 6px 0 0 $accent-color;
 
     &::before {
@@ -96,17 +100,18 @@
   }
 
   &.is-shared {
-    border-color: rgba($accent-color, 0.4);
     box-shadow:
+      4px 4px 12px $nm-shadow-dark,
+      -4px -4px 12px $nm-shadow-light,
       inset 4px 0 0 $accent-color,
-      inset 0 0 15px rgba($accent-color, 0.05);
+      0 0 0 1px rgba($accent-color, 0.2);
 
     &:hover {
-      border-color: $accent-color;
       box-shadow:
-        0 6px 12px rgba(0, 0, 0, 0.4),
-        0 0 15px rgba($accent-color, 0.2),
-        inset 6px 0 0 $accent-color;
+        7px 7px 18px $nm-shadow-dark,
+        -7px -7px 18px $nm-shadow-light,
+        inset 6px 0 0 $accent-color,
+        0 0 16px rgba($accent-color, 0.15);
     }
   }
 
@@ -163,10 +168,12 @@
           display: flex;
           align-items: center;
           gap: 8px;
-          background: rgba(0, 0, 0, 0.4);
+          background: rgba(0, 0, 0, 0.5);
           padding: 4px 12px 4px 4px;
           border-radius: 16px;
-          border: 1px solid rgba($accent-color, 0.2);
+          box-shadow:
+            inset 2px 2px 5px $nm-shadow-dark,
+            inset -2px -2px 4px rgba($nm-shadow-light, 0.8);
           width: fit-content;
 
           .creator-avatar,
@@ -209,8 +216,9 @@
     @media (min-width: 769px) {
       padding: $spacing-sm $spacing-md;
     }
-    border-top: 1px solid rgba($accent-color, 0.3);
-    background: rgba(0, 0, 0, 0.35);
+    // Inset top divider instead of border-top
+    box-shadow: inset 0 1px 0 0 rgba($accent-color, 0.2);
+    background: rgba(0, 0, 0, 0.45);
     width: 100%;
     box-sizing: border-box;
 
@@ -248,7 +256,7 @@
   text-align: center;
   color: color.adjust($text-color, $lightness: -40%);
   padding: $spacing-xl;
-  background-color: rgba(255, 255, 255, 0.02);
   border-radius: $border-radius;
-  border: 1px dashed $border-color;
+  @include nm-inset($radius: $border-radius, $blur: 10px);
+  background-color: rgba(10, 10, 10, 0.3);
 }

@@ -5,6 +5,10 @@
   max-width: 900px;
   margin: 0 auto;
   width: 100%;
+  @include nm-raised($radius: $border-radius, $blur: 16px);
+  background-color: rgba(15, 15, 15, 0.6);
+  padding: $spacing-xl;
+  backdrop-filter: blur(6px);
 }
 
 .vampire-form {
@@ -50,12 +54,19 @@
     }
 
     .cancel-btn {
-      background-color: #555;
+      background-color: rgba(50, 50, 50, 0.8);
+      color: rgba($text-color, 0.7);
       padding: 0 1rem;
-      width: auto; // Override global button width if any
+      width: auto;
+      @include nm-raised($radius: $border-radius, $blur: 6px);
 
       &:hover {
-        background-color: #666;
+        background-color: rgba(70, 70, 70, 0.8);
+        color: $text-color;
+      }
+
+      &:active {
+        @include nm-inset($radius: $border-radius, $blur: 5px);
       }
     }
   }

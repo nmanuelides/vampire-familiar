@@ -21,7 +21,7 @@
     flex-wrap: wrap;
     gap: 15px;
     justify-content: center;
-    padding-bottom: 100px; // Expansion zone to absorb absolute tooltip drop without scrollbars
+    padding-bottom: 100px;
 
     .empty-text {
       font-style: italic;
@@ -40,18 +40,17 @@
       .item-image-container {
         width: 80px;
         height: 80px;
-        border-radius: 12px;
+        border-radius: 14px;
         position: relative;
-        border: 2px solid rgba($accent-color, 0.3);
-        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        @include nm-raised($radius: 14px, $blur: 8px);
         cursor: pointer;
-        transition: transform 0.2s, border-color 0.2s;
+        transition: box-shadow 0.2s, transform 0.2s;
 
         img {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          border-radius: 10px; // slightly smaller to fit inside border
+          border-radius: 12px;
         }
 
         .item-count-badge {
@@ -65,40 +64,40 @@
           font-size: 0.75rem;
           padding: 2px 6px;
           border-radius: 12px;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.8);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
           pointer-events: none;
         }
-
       }
 
-      // Reusing the logic from DotTracker tooltips but adapted for items
       .item-tooltip {
         position: absolute;
-        top: calc(100% + 5px); // push it down below the item
+        top: calc(100% + 5px);
         bottom: auto;
         left: 50%;
         transform: translateX(-50%);
-        background-color: rgba(15, 15, 15, 0.95);
-        border: 1px solid rgba($accent-color, 0.6);
-        border-radius: 8px;
+        background-color: rgba($bg-color, 0.97);
+        border-radius: 10px;
         padding: 10px;
         color: color.adjust($text-color, $alpha: -0.1);
         font-family: $font-primary;
         font-size: 0.85rem;
-        width: 180px;      // narrower to avoid horizontal scrollbars
+        width: 180px;
         max-width: 80vw;
-        z-index: 1000;     // ensure it blasts over everything
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        @include nm-raised($radius: 10px, $blur: 14px);
+        box-shadow:
+          6px 6px 16px $nm-shadow-dark,
+          -6px -6px 16px $nm-shadow-light,
+          0 0 0 1px rgba($accent-color, 0.3);
         pointer-events: none;
         display: flex;
         flex-direction: column;
         gap: 6px;
-        
+
         visibility: hidden;
         opacity: 0;
         transition: all 0.2s ease-out;
 
-        // Little arrow pointing UP instead of down
         &::after {
           content: "";
           position: absolute;
@@ -108,15 +107,15 @@
           transform: translateX(-50%);
           border-width: 6px;
           border-style: solid;
-          border-color: transparent transparent rgba($accent-color, 0.6) transparent;
+          border-color: transparent transparent rgba($accent-color, 0.5) transparent;
         }
 
         .item-name {
           color: $accent-color;
           font-family: $font-primary;
           font-size: 1.1rem;
-          text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-          border-bottom: 1px solid rgba($accent-color, 0.3);
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+          box-shadow: 0 1px 0 0 rgba($accent-color, 0.25);
           padding-bottom: 3px;
         }
 
@@ -131,21 +130,20 @@
         }
       }
 
-      // Tooltip activation logic (works for hover on desktop, active/tap on mobile)
       &.tooltip-anchor:hover .tooltip-box,
       &.tooltip-anchor:active .tooltip-box {
         visibility: visible;
         opacity: 1;
-        // The translateY is now 0 since we hardcoded calc(100% + 5px) in top
         transform: translateX(-50%) translateY(0);
       }
 
-      // Also scale the image when the item container is hovered/tapped
       &.tooltip-anchor:hover .item-image-container,
       &.tooltip-anchor:active .item-image-container {
-        transform: scale(1.05);
-        border-color: $accent-color;
-        box-shadow: 0 0 10px rgba($accent-color, 0.5);
+        transform: scale(1.08);
+        box-shadow:
+          5px 5px 12px $nm-shadow-dark,
+          -5px -5px 12px $nm-shadow-light,
+          0 0 12px rgba($accent-color, 0.35);
       }
 
       .remove-item-btn {
@@ -155,7 +153,7 @@
         z-index: 10;
         background: $error-color;
         color: white;
-        border: 2px solid #1a1a1a;
+        border: 2px solid $bg-color;
         width: 28px;
         height: 28px;
         min-width: 28px;
@@ -168,11 +166,13 @@
         padding: 0;
         cursor: pointer;
         transition: transform 0.2s;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.8);
+        box-shadow:
+          3px 3px 6px $nm-shadow-dark,
+          -3px -3px 6px $nm-shadow-light;
         font-size: 24px;
         font-weight: bold;
         line-height: 0;
-        padding-bottom: 3px; // Optical adjustment for times entity
+        padding-bottom: 3px;
         font-family: Arial, sans-serif;
 
         &:hover {
@@ -185,8 +185,9 @@
 
   .admin-inventory-controls {
     margin-top: 20px;
-    border-top: 1px solid rgba($accent-color, 0.3);
     padding-top: 20px;
+    // nm inset top separator instead of border-top
+    box-shadow: inset 0 1px 0 0 $nm-shadow-dark, inset 0 2px 0 0 rgba($nm-shadow-light, 0.3);
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -203,37 +204,42 @@
       flex-direction: column;
       gap: 10px;
       padding: 15px;
-      border-radius: 8px;
+      border-radius: $border-radius;
       max-height: 200px;
       overflow-y: auto;
+      @include nm-inset($radius: $border-radius, $blur: 8px);
+      background-color: rgba($bg-color, 0.5);
 
       .available-item-row {
         display: flex;
         align-items: center;
         gap: 15px;
-        background: rgba(0, 0, 0, 0.5);
+        background: rgba($bg-color, 0.4);
         padding: 8px 12px;
-        border-radius: 8px;
-        border: 1px solid transparent;
-        transition: border-color 0.2s;
+        border-radius: 10px;
+        transition: box-shadow 0.2s, background 0.2s;
+        @include nm-raised($radius: 10px, $blur: 6px);
 
         &:hover {
-          border-color: rgba($accent-color, 0.5);
+          box-shadow:
+            4px 4px 8px $nm-shadow-dark,
+            -4px -4px 8px $nm-shadow-light,
+            0 0 0 1px rgba($accent-color, 0.3);
         }
 
         .tiny-avatar {
           width: 40px;
           height: 40px;
-          border-radius: 6px;
+          border-radius: 8px;
           object-fit: cover;
-          border: 1px solid rgba($accent-color, 0.3);
+          @include nm-raised($radius: 8px, $blur: 5px);
         }
 
         .item-info {
           flex: 1;
           display: flex;
           flex-direction: column;
-          
+
           strong {
             color: $text-color;
             font-family: $font-primary;
@@ -247,8 +253,7 @@
         }
 
         .btn-add-small {
-          background: transparent;
-          border: 1px solid $accent-color;
+          background: rgba($bg-color, 0.6);
           color: $accent-color;
           width: 30px;
           height: 30px;
@@ -259,11 +264,19 @@
           font-size: 1.2rem;
           cursor: pointer;
           transition: all 0.2s;
+          @include nm-raised($radius: 50%, $blur: 5px);
 
           &:hover {
-            background: $accent-color;
-            color: white;
+            background: rgba($accent-color, 0.15);
+            box-shadow:
+              3px 3px 6px $nm-shadow-dark,
+              -3px -3px 6px $nm-shadow-light,
+              0 0 10px rgba($accent-color, 0.3);
             transform: scale(1.1);
+          }
+
+          &:active {
+            @include nm-inset($radius: 50%, $blur: 4px);
           }
         }
       }

@@ -6,12 +6,13 @@
   justify-content: space-between;
   align-items: center;
   padding: $spacing-xs 0;
-  border-bottom: 1px dotted rgba($border-color, 0.5);
+  // Soft neumorphic inset line instead of dotted border
+  box-shadow: 0 1px 0 0 rgba($nm-shadow-dark, 0.8), 0 2px 0 0 rgba($nm-shadow-light, 0.4);
   margin-bottom: $spacing-xs;
-  position: relative; // Anchor for tooltips on wide rows? No, nested in label container is fine.
+  position: relative;
 
   &:last-child {
-    border-bottom: none;
+    box-shadow: none;
   }
 }
 
@@ -23,7 +24,7 @@
 
 .tooltip-anchor {
   position: relative;
-  display: inline-block; // Fits exactly to the text width
+  display: inline-block;
 
   &:hover .tooltip-box {
     opacity: 1;
@@ -39,20 +40,24 @@
   padding-right: $spacing-sm;
   cursor: help;
   user-select: none;
-  display: block; // Ensures it defines the anchor width
+  display: block;
 }
 
 .tooltip-box {
   position: absolute;
   top: 100%;
-  left: 0; // Default: Start at beginning of label
+  left: 0;
   width: 250px;
   max-width: calc(100vw - 40px);
-  background-color: $secondary-bg;
-  border: 1px solid $accent-color;
+  background-color: rgba($bg-color, 0.95);
   padding: $spacing-sm;
   border-radius: $border-radius;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  @include nm-raised($radius: $border-radius, $blur: 14px);
+  // Override with accent highlight edge
+  box-shadow:
+    5px 5px 14px $nm-shadow-dark,
+    -5px -5px 14px $nm-shadow-light,
+    0 0 0 1px rgba($accent-color, 0.35);
   z-index: 1000;
 
   opacity: 0;
@@ -68,17 +73,17 @@
     content: "";
     position: absolute;
     bottom: 100%;
-    left: 15px; // Default: Arrow near the start
+    left: 15px;
     border-width: 5px;
     border-style: solid;
-    border-color: transparent transparent $accent-color transparent;
+    border-color: transparent transparent rgba($accent-color, 0.5) transparent;
   }
 
   // ALIGNMENT LOGIC
   &.mobile-align-right {
     @media (max-width: 768px) {
       left: auto;
-      right: 0; // Start at end of label, expand left
+      right: 0;
       &::after {
         left: auto;
         right: 15px;
@@ -89,7 +94,7 @@
   &.desktop-align-right {
     @media (min-width: 769px) {
       left: auto;
-      right: 0; // Start at end of label, expand left
+      right: 0;
       &::after {
         left: auto;
         right: 15px;
@@ -97,7 +102,6 @@
     }
   }
 
-  // Deprecated classes cleanup
   &.align-left {
     left: 0;
     right: auto;
@@ -116,9 +120,8 @@
     }
   }
 
-  // Refinement for knowledge etc on mobile
   @media (max-width: 480px) {
-    width: 220px; // Slightly smaller on very narrow screens
+    width: 220px;
   }
 }
 
@@ -130,7 +133,7 @@
     margin: 0 0 $spacing-xs 0;
     font-weight: bold;
     color: color.adjust($text-color, $lightness: 20%);
-    border-bottom: 1px solid rgba($border-color, 0.5);
+    border-bottom: 1px solid rgba($nm-shadow-light, 0.6);
     padding-bottom: $spacing-xs;
     user-select: none;
   }
@@ -165,33 +168,85 @@
 
 .dots-container {
   display: flex;
-  gap: 4px;
+  gap: 6px;
 
   .dot {
     cursor: pointer;
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
     border-radius: 50%;
-    border: 1px solid $border-color;
     display: inline-block;
     transition: all $transition-speed ease;
     user-select: none;
+    // Empty dot: concave socket look
+    background: radial-gradient(
+      circle at 35% 35%,
+      rgba(255, 255, 255, 0.06) 0%,
+      rgba($bg-color, 0.9) 60%
+    );
+    box-shadow:
+      inset 2px 2px 5px $nm-shadow-dark,
+      inset -1px -1px 3px $nm-shadow-light;
 
     &.filled {
-      background-color: $accent-color;
-      border-color: $accent-color;
+      // 3D sphere: specular highlight + color gradient + drop shadow
+      background:
+        radial-gradient(
+          circle at 32% 32%,
+          rgba(255, 200, 200, 0.5) 0%,
+          rgba(255, 255, 255, 0.0) 45%
+        ),
+        radial-gradient(
+          circle at 55% 55%,
+          color.adjust($accent-color, $lightness: 18%) 0%,
+          $accent-color 40%,
+          color.adjust($accent-color, $lightness: -22%) 100%
+        );
+      box-shadow:
+        1px 2px 5px rgba(0, 0, 0, 0.7),
+        0 0 7px rgba($accent-color, 0.45),
+        inset -1px -2px 3px rgba(0, 0, 0, 0.35),
+        inset 1px 1px 2px rgba(255, 255, 255, 0.18);
+        border: 1px solid $accent-color;
     }
 
     &.empty {
-      background-color: transparent;
+      background: radial-gradient(
+        circle at 35% 35%,
+        rgba(255, 255, 255, 0.06) 0%,
+        rgba($bg-color, 0.9) 60%
+      );
     }
 
     &:hover:not(.read-only) {
-      transform: scale(1.3);
-      border-color: color.adjust($accent-color, $lightness: 20%);
+      transform: scale(1.4);
+
+      &.empty {
+        box-shadow:
+          inset 2px 2px 5px $nm-shadow-dark,
+          inset -1px -1px 3px $nm-shadow-light,
+          0 0 4px rgba($accent-color, 0.2);
+      }
 
       &.filled {
-        background-color: color.adjust($accent-color, $lightness: 20%);
+        // Brighter sphere on hover
+        background:
+          radial-gradient(
+            circle at 32% 32%,
+            rgba(255, 255, 255, 0.7) 0%,
+            rgba(255, 255, 255, 0.0) 45%
+          ),
+          radial-gradient(
+            circle at 55% 55%,
+            color.adjust($accent-color, $lightness: 25%) 0%,
+            color.adjust($accent-color, $lightness: 8%) 40%,
+            color.adjust($accent-color, $lightness: -18%) 100%
+          );
+        box-shadow:
+          2px 3px 8px rgba(0, 0, 0, 0.8),
+          0 0 12px rgba($accent-color, 0.6),
+          inset -1px -2px 3px rgba(0, 0, 0, 0.35),
+          inset 1px 1px 3px rgba(255, 255, 255, 0.25);
       }
     }
 

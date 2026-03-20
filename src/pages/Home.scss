@@ -18,11 +18,11 @@
   width: 100%;
   display: flex;
   justify-content: space-between;
-  align-items: center; // Changed to center for better profile alignment
+  align-items: center;
 
   .title {
     margin: 0;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
 
     @media (min-width: 769px) {
       font-size: 3rem;
@@ -36,8 +36,7 @@
     gap: $spacing-lg;
 
     .admin-tools-btn {
-      background: rgba($accent-color, 0.15);
-      border: 1px solid rgba($accent-color, 0.4);
+      background: rgba($bg-color, 0.7);
       color: $accent-color;
       width: 56px;
       height: 56px;
@@ -46,7 +45,8 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.25s ease;
+      @include nm-raised($radius: 50%, $blur: 8px);
 
       svg {
         width: 32px;
@@ -54,10 +54,17 @@
       }
 
       &:hover {
-        background: $accent-color;
         color: white;
-        transform: scale(1.1);
-        box-shadow: 0 0 10px rgba($accent-color, 0.5);
+        background: rgba($accent-color, 0.85);
+        box-shadow:
+          4px 4px 8px $nm-shadow-dark,
+          -4px -4px 8px $nm-shadow-light,
+          0 0 12px rgba($accent-color, 0.3);
+      }
+
+      &:active {
+        @include nm-inset($radius: 50%, $blur: 6px);
+        background: rgba($accent-color, 0.7);
       }
     }
   }
@@ -83,19 +90,25 @@
       width: 64px;
       height: 64px;
       border-radius: 50%;
-      border: 1px solid $accent-color;
-      background-color: rgba(0, 0, 0, 0.4);
+      background-color: rgba($bg-color, 0.6);
       cursor: pointer;
       overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
       transition: all $transition-speed ease;
-      box-shadow: 0 0 10px rgba($accent-color, 0.3);
+      @include nm-raised($radius: 50%, $blur: 10px);
+      box-shadow:
+        4px 4px 10px $nm-shadow-dark,
+        -4px -4px 10px $nm-shadow-light,
+        0 0 12px rgba($accent-color, 0.2);
 
       &:hover {
-        transform: scale(1.1);
-        box-shadow: 0 0 15px rgba($accent-color, 0.5);
+        transform: scale(1.08);
+        box-shadow:
+          5px 5px 12px $nm-shadow-dark,
+          -5px -5px 12px $nm-shadow-light,
+          0 0 18px rgba($accent-color, 0.4);
       }
 
       img {
@@ -113,17 +126,24 @@
   }
 
   .logout-btn {
-    background-color: transparent;
-    border: 1px solid $accent-color;
+    background-color: rgba($bg-color, 0.5);
     color: $accent-color;
     white-space: nowrap;
     height: 40px;
     padding: 0 $spacing-md;
     font-size: 1rem;
+    @include nm-raised($radius: $border-radius, $blur: 7px);
 
     &:hover {
       background-color: $accent-color;
       color: white;
+      box-shadow:
+        3px 3px 7px $nm-shadow-dark,
+        -3px -3px 7px $nm-shadow-light;
+    }
+
+    &:active {
+      @include nm-inset($radius: $border-radius, $blur: 5px);
     }
   }
 }
@@ -141,11 +161,12 @@
 
 .section-title {
   color: $accent-color;
-  border-bottom: 1px solid $border-color;
   padding-bottom: $spacing-sm;
   margin-bottom: $spacing-lg;
   font-family: $font-vampire;
   width: 100%;
+  // Neumorphic bottom line using box-shadow instead of border-bottom
+  box-shadow: 0 2px 0 0 rgba($accent-color, 0.25), 0 3px 0 0 $nm-shadow-dark;
 }
 
 .loading-text {
@@ -153,5 +174,3 @@
   color: color.adjust($border-color, $lightness: 30%);
   font-style: italic;
 }
-
-// No longer using global .w-full utility
