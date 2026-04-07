@@ -685,7 +685,7 @@ export default function CharacterSheet() {
     }, 0);
   };
 
-  const costDetails = calculateDeltaCosts(characterFromStore, localChar);
+  const costDetails = calculateDeltaCosts(characterFromStore, localChar, characterFromStore);
   const totalFreebiesUsed =
     costDetails.baseFreebiesTotal + costDetails.freebiesSpent;
 
