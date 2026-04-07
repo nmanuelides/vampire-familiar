@@ -73,7 +73,6 @@ export default function CharacterSheet() {
   const calculateDeltaCosts = (
     baseChar: VTMCharacter | null,
     currentChar: VTMCharacter | null,
-    preClickChar?: VTMCharacter | null, // state BEFORE this click, used for accurate freebiesLeft
   ) => {
     if (!baseChar || !currentChar)
       return {
@@ -311,10 +310,6 @@ export default function CharacterSheet() {
       0,
       3 - getBaseSum(baseChar.advantages.disciplines),
     );
-    let backPoolRemaining = Math.max(
-      0,
-      5 - getBaseSum(baseChar.advantages.backgrounds || {}),
-    );
 
     let virtBaseSum = Object.values(baseChar.advantages.virtues).reduce(
       (s, v) => s + Math.max(0, v - 1),
@@ -335,9 +330,6 @@ export default function CharacterSheet() {
       } else if (dot.type === "disc" && discPoolRemaining > 0) {
         discPoolRemaining--;
         absorbed = true;
-      } else if (dot.type === "back" && backPoolRemaining > 0) {
-        backPoolRemaining--;
-        absorbed = true;
       } else if (dot.type === "virtue" && virtPoolRemaining > 0) {
         virtPoolRemaining--;
         absorbed = true;
@@ -357,12 +349,39 @@ export default function CharacterSheet() {
       if (!absorbed) finalDots.push(dot);
     });
 
-    // For freebiesLeft, use preClickChar (state before this click) if provided, otherwise
-    // fall back to currentChar. This correctly reflects freed freebies from prior removals
-    // when computing whether a new addition can be absorbed by freebies instead of EXP.
-    const refForFreebies = preClickChar ?? currentChar;
-    let baseGlobalFreebies = calculateBaseAbsoluteFreebies(refForFreebies);
-    let freebiesLeft = Math.max(0, (15 + ((refForFreebies?.extra_freebies) || 0)) - baseGlobalFreebies);
+    // To correctly allow freeing up freebies by reducing base traits, calculate
+    // the absolute freebies consumed by the "retained" base traits (minChar).
+    const minRecord = (cur: any, bas: any) => {
+      const res: any = {};
+      Object.keys(bas).forEach((k) => { res[k] = Math.min(cur[k] || 0, bas[k] || 0); });
+      Object.keys(cur).forEach((k) => { if (res[k] === undefined) res[k] = Math.min(cur[k] || 0, bas[k] || 0); });
+      return res;
+    };
+    
+    const minChar = {
+      ...baseChar,
+      attributes: {
+        physical: minRecord(currentChar.attributes.physical, baseChar.attributes.physical),
+        social: minRecord(currentChar.attributes.social, baseChar.attributes.social),
+        mental: minRecord(currentChar.attributes.mental, baseChar.attributes.mental),
+      },
+      abilities: {
+        talents: minRecord(currentChar.abilities.talents, baseChar.abilities.talents),
+        skills: minRecord(currentChar.abilities.skills, baseChar.abilities.skills),
+        knowledges: minRecord(currentChar.abilities.knowledges, baseChar.abilities.knowledges),
+      },
+      advantages: {
+        ...baseChar.advantages,
+        disciplines: minRecord(currentChar.advantages.disciplines, baseChar.advantages.disciplines),
+        backgrounds: minRecord(currentChar.advantages.backgrounds || {}, baseChar.advantages.backgrounds || {}),
+        virtues: minRecord(currentChar.advantages.virtues, baseChar.advantages.virtues),
+      },
+      humanity: Math.min(currentChar.humanity || 0, baseChar.humanity || 0),
+      willpower: Math.min(currentChar.willpower || 0, baseChar.willpower || 0),
+    } as VTMCharacter;
+
+    let baseGlobalFreebies = calculateBaseAbsoluteFreebies(minChar);
+    let freebiesLeft = Math.max(0, (15 + ((baseChar.extra_freebies) || 0)) - baseGlobalFreebies);
 
     let sessionExpSpent = 0;
     let sessionFreebiesSpent = 0;
@@ -544,7 +563,7 @@ export default function CharacterSheet() {
     // 4. Validate costs (Using strict Delta from Store)
     // Pass localChar as preClickChar so freebiesLeft is computed from the pre-click state.
     // This ensures a freebie freed by removing a dot is immediately available for the next addition.
-    const projectedCosts = calculateDeltaCosts(characterFromStore, updatedChar, localChar);
+    const projectedCosts = calculateDeltaCosts(characterFromStore, updatedChar);
 
 
     // STRICT BLOCK: Never allow session expRemaining to go negative
@@ -685,7 +704,7 @@ export default function CharacterSheet() {
     }, 0);
   };
 
-  const costDetails = calculateDeltaCosts(characterFromStore, localChar, characterFromStore);
+  const costDetails = calculateDeltaCosts(characterFromStore, localChar);
   const totalFreebiesUsed =
     costDetails.baseFreebiesTotal + costDetails.freebiesSpent;
 
