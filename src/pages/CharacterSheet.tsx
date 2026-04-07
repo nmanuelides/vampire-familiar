@@ -1148,7 +1148,11 @@ export default function CharacterSheet() {
               )}
               {renderSection(
                 "Disciplinas",
-                localChar.advantages.disciplines,
+                {
+                  ...( (CLAN_DISCIPLINES[localChar.clan as keyof typeof CLAN_DISCIPLINES] || [])
+                    .reduce((acc, d) => ({ ...acc, [d]: 0 }), {}) ),
+                  ...(localChar.advantages.disciplines || {}),
+                },
                 ["advantages", "disciplines"],
                 "(pool: 3 | costo extra: 7)",
                 true,
