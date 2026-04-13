@@ -28,7 +28,7 @@ export default function Home() {
   return (
     <div className="home-container">
       <header className="home-header">
-        <h1 className="title">Vampire Familiar</h1>
+        <h1 className="title">Vampire Familiar</h1
 
         <div className="header-actions">
           {isAdmin && (
